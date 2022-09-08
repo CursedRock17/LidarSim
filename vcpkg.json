@@ -1,0 +1,5 @@
+{
+    "name" : "lidarsim",
+    "dependencies" : [ "glad", "sdl2" ],
+    "version" : "1.0" 
+}
