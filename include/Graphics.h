@@ -7,6 +7,10 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 
+//Standard Libraries
+#include <cmath>
+#include <iostream>
+
 
 class GraphicsClass {
 public:
@@ -17,6 +21,9 @@ GraphicsClass();
 bool graphics_should_stop{false};
 void Check_Status();
 void Graphics_Loop();
+
+//Lidar Equipment
+void CreateLidar(float radius);
 
 private:
 

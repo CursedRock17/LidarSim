@@ -5,6 +5,6 @@ int main(int argc, char** argv){
     std::cout << "Hello World" << std::endl;
     Lidar l;
     
-    l.Bob();
+    l.MainLoop();
     return 0;
 }

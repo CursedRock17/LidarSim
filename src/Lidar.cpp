@@ -1,7 +1,14 @@
 #include "../include/Lidar.h"
 
-void Lidar::Bob(){
-    GraphicsClass g;
+Lidar::Lidar()
+{}
+
+Lidar::~Lidar(){}
+
+
+void Lidar::MainLoop()
+{
+    g.CreateLidar(lidarRadius);
 
     while(!g.graphics_should_stop)
     {

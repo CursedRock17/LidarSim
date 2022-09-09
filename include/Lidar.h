@@ -4,10 +4,18 @@
 #include "Graphics.h"
 
 class Lidar {
+
 public:
-void Bob();
+Lidar();
+~Lidar();
+
+void MainLoop();
 
 private:
+//Need to draw stuff inside of the lidar
+GraphicsClass g;
+
+float lidarRadius = 100.0f;
 
 
 };
