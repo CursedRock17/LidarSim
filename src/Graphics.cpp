@@ -61,7 +61,6 @@ SDL_Quit();
 
 }
 
-
 // --------- Lidar Graphics --------- //
 
 void GraphicsClass::CreateLidar(float radius)
