@@ -25,7 +25,6 @@ void GraphicsClass::Graphics_Loop()
 
     Add_Delay();
 }
-
 void GraphicsClass::Add_Delay()
 {
     SDL_Delay(10);
