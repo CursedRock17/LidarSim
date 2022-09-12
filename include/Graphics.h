@@ -38,5 +38,4 @@ int WINDOW_WIDTH = 960;
 int WINDOW_HEIGHT = 480;
 
 };
-
 #endif
