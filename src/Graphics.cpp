@@ -31,7 +31,6 @@ void GraphicsClass::Add_Delay()
     SDL_Delay(10);
 }
 
-
 void GraphicsClass::Check_Status()
 {
     while(SDL_PollEvent(&event))
