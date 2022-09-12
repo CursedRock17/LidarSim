@@ -1,10 +1,14 @@
 #include <iostream>
-#include "include/Lidar.h"
+#include "include/Graphics.h"
 
 int main(int argc, char** argv){
-    std::cout << "Hello World" << std::endl;
-    Lidar l;
-    
-    l.MainLoop();
+    GraphicsClass gfx;
+
+    while(!gfx.graphics_should_stop)
+    {
+        gfx.Graphics_Loop();
+        gfx.Check_Status();
+    }
+
     return 0;
 }

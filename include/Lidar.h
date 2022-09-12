@@ -1,7 +1,8 @@
 #ifndef LIDAR_H
 #define LIDAR_H
 
-#include "Graphics.h"
+#include "Node.h"
+#include <array>
 
 class Lidar {
 
@@ -11,11 +12,10 @@ Lidar();
 
 void MainLoop();
 
-private:
-//Need to draw stuff inside of the lidar
-GraphicsClass g;
+//TODO:: Allow user to fine tune size of the grid
+std::array<Node, 2048> grid;
 
-float lidarRadius = 100.0f;
+private:
 
 
 };
