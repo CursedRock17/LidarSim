@@ -22,9 +22,6 @@ bool graphics_should_stop{false};
 void Check_Status();
 void Graphics_Loop();
 
-//Lidar Equipment
-void CreateLidar(float radius);
-
 private:
 
 //All the SDL objects

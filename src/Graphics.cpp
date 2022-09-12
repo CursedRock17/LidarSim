@@ -63,27 +63,6 @@ SDL_Quit();
 
 // --------- Lidar Graphics --------- //
 
-void GraphicsClass::CreateLidar(float radius)
-{
-
-    //going to draw a circle in the middle of the screen by drawing 360 line, this will then be added to a sin() to 
-    //Create those values outword lying angles
-
-
-    float center_x = {(static_cast<float>(WINDOW_WIDTH) / 2)};
-    float center_y = {(static_cast<float>(WINDOW_HEIGHT) / 2)};
-
-    SDL_SetRenderDrawColor(renderer, 125, 125, 125, 1);
-    for(int displace = -180; displace < 180; ++displace)
-    {
-        SDL_RenderDrawPoint(renderer, (center_x + radius + cos(displace)), (center_y + radius + sin(displace)));
-    }
-
-    SDL_RenderPresent(renderer);
-
-
-}
-
 
 // --------- Lidar Graphics --------- //
 
