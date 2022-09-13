@@ -19,8 +19,7 @@ GraphicsClass::~GraphicsClass()
 
 void GraphicsClass::Graphics_Loop()
 {
-    //Need to clear the colors and make sure we start by drawing on a black backgrfound
-
+    //Need to clear the colors and make sure we start by drawing on a black background
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
 	SDL_RenderClear(renderer);
 
@@ -48,9 +47,10 @@ void GraphicsClass::Check_Status()
 void GraphicsClass::GraphicsInit()
 {
 
-SDL_Init(SDL_INIT_VIDEO);
 window = SDL_CreateWindow("Lidar Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 renderer = SDL_CreateRenderer(window, -1, 0);
+
+SDL_Init(SDL_INIT_VIDEO);
 
 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
 SDL_RenderClear(renderer);
@@ -88,11 +88,7 @@ int GraphicsClass::CreateGrid()
             Pixel.y = pixel_size * y;
 
             //Set A Basic state for all of the grid
-            lidar_ref.grid[y * grid_width + x].visited = false;
-            lidar_ref.grid[y * grid_width + x].obstacle = false;
-            lidar_ref.grid[y * grid_width + x].x_coord = x;
-            lidar_ref.grid[y * grid_width + x].y_coord = y;
-            lidar_ref.grid[y * grid_width + x].parent = nullptr;
+            lidar_ref.ResetGrid(x, y);
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 1);
         
@@ -119,11 +115,14 @@ int GraphicsClass::CreateGrid()
         }
     }
 
+    //Just have to make sure to set the middle node to be the lidar node, it should always be in the middle of the scan
+    lidar_ref.grid[(grid_height / 2) * grid_width + (grid_width / 2)].is_lidar = true;
+
     return -1;
 }
 
 void GraphicsClass::GraphicsUpdate()
-{
+{   
     for(auto node : lidar_ref.grid){
             //We already have the coordinate data stored in the Node Class so we can just use that
             Pixel.x = pixel_size * node.x_coord;
@@ -136,6 +135,9 @@ void GraphicsClass::GraphicsUpdate()
             }
 
             //May need a way to check for local position TODO::
+            else if(node.is_lidar){
+                SDL_SetRenderDrawColor(renderer, 150, 150, 10, 1);
+            }
 
             else if(node.visited){
                 SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1);  
@@ -148,7 +150,6 @@ void GraphicsClass::GraphicsUpdate()
             //Fill the pxiels will whatever color needs to be set for out path
             SDL_RenderDrawRect(renderer, &Pixel);
             SDL_RenderFillRect(renderer, &Pixel);
-
         }
 }
 

@@ -6,8 +6,8 @@ int main(int argc, char** argv){
 
     while(!gfx.graphics_should_stop)
     {
-        gfx.Graphics_Loop();
         gfx.Check_Status();
+        gfx.Graphics_Loop();
     }
 
     return 0;

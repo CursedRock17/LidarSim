@@ -12,12 +12,13 @@ class Node {
     unsigned short y_coord;
     
     //Sample to see if it needs to go back over
-    bool visited = false;
-    bool obstacle = false;
+    bool visited{false};
+    bool obstacle{false};
+    bool is_lidar{false};
 
     //Global Val is the f(x)
-    float global_val = FLT_MAX;
-    float local_val = FLT_MAX;
+    float global_val{FLT_MAX};
+    float local_val{FLT_MAX};
 
     std::vector<Node*> neighbors;
     Node* parent = nullptr;
