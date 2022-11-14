@@ -1,8 +1,6 @@
-add_library(src Graphics)
+add_executable(Graphics Graphics.cpp)
 
 find_package(glad CONFIG REQUIRED)
-
-add_subdirectory(Graphics)
 
 target_link_libraries(src
 PUBLIC

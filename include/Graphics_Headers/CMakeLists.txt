@@ -1,11 +1,8 @@
-add_library(include INTERFACE)
+add_library(include INTERFACE Graphics.h)
 
 find_package(glad CONFIG REQUIRED)
-
-add_subdirectory(Graphics_Headers)
 
 target_link_libraries(include
 INTERFACE
 glad::glad
-Graphics_Headers
 )

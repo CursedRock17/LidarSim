@@ -1,5 +1,5 @@
 {
     "name" : "lidarsim",
-    "dependencies" : [ "glad", "sdl2" ],
+    "dependencies" : [ "glad" ],
     "version" : "1.0" 
 }
