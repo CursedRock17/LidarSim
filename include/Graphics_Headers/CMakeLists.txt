@@ -1,8 +1,10 @@
-add_library(include INTERFACE Graphics.h)
+add_library(Graphics_Headers INTERFACE Graphics.h)
 
 find_package(glad CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
-target_link_libraries(include
+target_link_libraries(Graphics_Headers
 INTERFACE
 glad::glad
+glfw
 )

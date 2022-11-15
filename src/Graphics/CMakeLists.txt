@@ -1,10 +1,10 @@
-add_executable(Graphics Graphics.cpp)
+add_library(Graphics Graphics.cpp)
 
 find_package(glad CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
-target_link_libraries(src
+target_link_libraries(Graphics
 PUBLIC
 glad::glad
+glfw
 )
-
-

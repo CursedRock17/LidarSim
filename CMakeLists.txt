@@ -6,22 +6,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-add_subdirectory(src)
 add_subdirectory(include)
+add_subdirectory(src)
 
+find_package(glad CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
-PUBLIC
-src
-include
+PRIVATE
+Graphics
+Graphics_Headers
+glad::glad
+glfw
 )
 
 
 target_include_directories(${PROJECT_NAME}
 PUBLIC
 "${PROJECT_BINARY_DIR}"
-"${PROJECT_SOURCE_DIR}/src"
 "${PROJECT_SOURCE_DIR}/include"
+"${PROJECT_SOURCE_DIR}/src"
 )
 
 
