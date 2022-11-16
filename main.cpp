@@ -4,6 +4,7 @@
 
 int main(int argc, char** argv){
     Graphics g;
+    g.CreateShaders();
     g.RenderingLoop();
     return 0;
 }

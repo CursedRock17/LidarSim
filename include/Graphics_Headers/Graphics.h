@@ -12,6 +12,7 @@ Graphics();
 ~Graphics();
 
 void RenderingLoop();
+void CreateShaders();
 
 private:
 void RenderingInit();
@@ -26,6 +27,11 @@ void AcceptInput(GLFWwindow* window);
 GLFWwindow* window;
 int windowWidth = 800;
 int windowHeight = 600;
+
+unsigned int VBO, VAO, EBO;
+unsigned int shaderProgram;
+
+int verticesAmount = 3;
 
 };
 
