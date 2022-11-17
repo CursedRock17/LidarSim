@@ -1,7 +1,7 @@
 #include "../../include/Graphics_Headers/Graphics.h"
 Graphics::Graphics()
 {
-    RenderingInit();
+    RenderingInit("/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/vertex.glsl", "/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/fragment.glsl");
 }
 
 Graphics::~Graphics()
@@ -10,7 +10,7 @@ Graphics::~Graphics()
 }
 
 
-void Graphics::RenderingInit()
+void Graphics::RenderingInit(const char* vertexPath, const char* fragmentPath)
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -37,7 +37,25 @@ void Graphics::RenderingInit()
     }
     glViewport(0, 0, windowWidth, windowHeight);
 
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
+    //Going to immediatily load in our shading files
+    try {
+        //Copying the glsl files into cpp code
+        vertexFile.open(vertexPath);
+        fragmentFile.open(fragmentPath);
+
+        std::stringstream VertexStreamString, FragmentStreamString; 
+        VertexStreamString << vertexFile.rdbuf();
+        FragmentStreamString << fragmentFile.rdbuf();
+
+        vertexFile.close();
+        fragmentFile.close();
+
+        vertexBuffer = VertexStreamString.str();
+        fragmentBuffer = FragmentStreamString.str();
+
+    } catch (std::exception& e){
+        std::cout << e.what() << std::endl;
+    }
 }
 
 void Graphics::RenderingLoop()
@@ -80,34 +98,20 @@ void Graphics::CreateShaders()
 {
     //These are the corners(vertices) of a triangle
     float vertices[] = {
-        0.5f, 0.5f, 0.0f, // top right
-        0.5f, -0.5f, 0.0f, // bottom right
-        -0.5f,  -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f  // top left
+        //Location          //Colors
+        0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // top right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom right
+        0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f            // bottom left
     }; 
 
     //Use this to represent the order to draw for the EBO
     unsigned int indices[] = {
-        0, 1, 3, //First Triangle in this case
-        1, 2, 3  //Second Triangle
+        0, 1, 2, //First Triangle in this case
+        //2, 3, 1  //Second Triangle
     };
 
-    //Offshore code being used inside this file
-    const char *vertexShaderSource = "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "}\0";
-        
-    const char *fragmentShaderSource = "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "void main()\n"
-        "{\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-        "}\n\0";
-
-
+    const char* vertexShaderSource = vertexBuffer.c_str();
+    const char* fragmentShaderSource = fragmentBuffer.c_str();
 
     //Compile the vertex shader through glsl
     unsigned int vertexShader;
@@ -170,10 +174,35 @@ void Graphics::CreateShaders()
 
 
     //Set up the triangle
-    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, verticesAmount * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    //Set up color
+    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Graphics::RenderTextures()
+{
+    //Coordinate for textures are an x-y plane ranging from (0, 1) from origin bottom left
+    float textureCoords[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0,
+        0.5f, 1.0
+    };
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); //X coords
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); //Y coords
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
 }
 
 /* Additional OpenGL funcitons */
