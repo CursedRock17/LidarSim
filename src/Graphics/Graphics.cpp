@@ -1,7 +1,13 @@
 #include "../../include/Graphics_Headers/Graphics.h"
+//Outer Libraries : STB can only go here in this order *Can only be in one CPP file //
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../include/Graphics_Headers/stb_image.h"
+//Outer Libraries //
+#include <filesystem>
+
 Graphics::Graphics()
 {
-    RenderingInit("/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/vertex.glsl", "/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/fragment.glsl");
+    RenderingInit("./src/Graphics/vertex.glsl", "./src/Graphics/fragment.glsl");
 }
 
 Graphics::~Graphics()
@@ -38,8 +44,8 @@ void Graphics::RenderingInit(const char* vertexPath, const char* fragmentPath)
     glViewport(0, 0, windowWidth, windowHeight);
 
     //Going to immediatily load in our shading files
-    try {
-        //Copying the glsl files into cpp code
+    try { 
+	//Copying the glsl files into cpp code
         vertexFile.open(vertexPath);
         fragmentFile.open(fragmentPath);
 
@@ -69,13 +75,14 @@ void Graphics::RenderingLoop()
         //Rendering Actions
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
         glClear(GL_COLOR_BUFFER_BIT);
-        //Drawing shapes 
 
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-        glUseProgram(shaderProgram);
+        glBindTexture(GL_TEXTURE_2D, texture);
+	glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        //glBindVertexArray(0);
 
         // Check Buffers of Data
         glfwSwapBuffers(window);
@@ -97,17 +104,20 @@ void Graphics::RenderingEnd()
 void Graphics::CreateShaders()
 {
     //These are the corners(vertices) of a triangle
+    //Then we have the color values to pass compared to the vertices
+    //After we have where the textures need to be mapped similar to how colors work, but only xy plane
     float vertices[] = {
-        //Location          //Colors
-        0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // top right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom right
-        0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f            // bottom left
+        //Location              Colors            Textures
+        0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
+        0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
+        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
+        -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f              // top left
     }; 
 
     //Use this to represent the order to draw for the EBO
     unsigned int indices[] = {
-        0, 1, 2, //First Triangle in this case
-        //2, 3, 1  //Second Triangle
+        0, 1, 3, //First Triangle in this case
+        1, 2, 3  //Second Triangle
     };
 
     const char* vertexShaderSource = vertexBuffer.c_str();
@@ -174,35 +184,48 @@ void Graphics::CreateShaders()
 
 
     //Set up the triangle
-    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Set up color
-    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    //Set up the textures
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Graphics::RenderTextures()
 {
-    //Coordinate for textures are an x-y plane ranging from (0, 1) from origin bottom left
-    float textureCoords[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0,
-        0.5f, 1.0
-    };
+    //Doing Loading from images, may have to be processed for more modularity
+    int imgW, imgH, numImgColChannels;
+    unsigned char *imgData = stbi_load("/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/test.jpg", &imgW, &imgH, &numImgColChannels, 0);
+
+    //Create and bind the texture
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); //X coords
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); //Y coords
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    //Generate the image as a form of respect to perspective
+    //glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
+    if(imgData){
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgW, imgH, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+    	glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+	std::cout << "Failed to Load Texture" << std::endl;	
+    }
 
+    stbi_image_free(imgData);
 }
 
 /* Additional OpenGL funcitons */

@@ -1,4 +1,4 @@
-add_library(Graphics_Headers INTERFACE Graphics.h)
+add_library(Graphics_Headers INTERFACE Graphics.h stb_image.h)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

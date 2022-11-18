@@ -1,4 +1,5 @@
 #ifndef GRAPHICS_H
+
 #define GRAPHICS_H
 
 // Rendering Libraries //
@@ -8,6 +9,8 @@
 #include <fstream>
 #include <sstream>
 // Rendering Libraries //
+
+
 class Graphics {
 public:
 Graphics();
@@ -15,11 +18,11 @@ Graphics();
 
 void RenderingLoop();
 void CreateShaders();
+void RenderTextures();
 
 private:
 void RenderingInit(const char* vertexPath, const char* fragmentPath);
 void RenderingEnd();
-void RenderTextures();
 
 /* Additional OpenGL funcitons */
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -41,6 +44,9 @@ std::ifstream vertexFile;
 std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
+
+
+unsigned int texture;
 
 };
 
