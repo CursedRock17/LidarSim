@@ -11,13 +11,17 @@ add_subdirectory(src)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
 PRIVATE
 Graphics
 Graphics_Headers
+Space
+Space_Headers
 glad::glad
 glfw
+glm::glm
 )
 
 
