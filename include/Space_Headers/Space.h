@@ -1,10 +1,14 @@
 #ifndef SPACE_H
 #define SPACE_H
 
-//Math libraries from opengl, needed for things like rotational matrices and dot products
+/* OpenGL Libraries
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+*/
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 class Space 
 {

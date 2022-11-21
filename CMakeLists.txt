@@ -17,8 +17,13 @@ target_link_libraries(${PROJECT_NAME}
 PRIVATE
 Graphics
 Graphics_Headers
+
 Space
 Space_Headers
+
+Gizmos
+Gizmos_Headers
+
 glad::glad
 glfw
 glm::glm

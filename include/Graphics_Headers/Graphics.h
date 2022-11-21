@@ -1,5 +1,4 @@
 #ifndef GRAPHICS_H
-
 #define GRAPHICS_H
 
 // Rendering Libraries //
@@ -10,6 +9,8 @@
 #include <sstream>
 // Rendering Libraries //
 
+// Additional Classes Needed //
+#include "../Gizmos_Headers/Gizmos.h"
 
 class Graphics {
 public:
@@ -17,11 +18,10 @@ Graphics();
 ~Graphics();
 
 void RenderingLoop();
-void CreateShaders();
-void RenderTextures();
+
 
 private:
-void RenderingInit(const char* vertexPath, const char* fragmentPath);
+void RenderingInit();
 void RenderingEnd();
 
 /* Additional OpenGL funcitons */
@@ -34,20 +34,9 @@ GLFWwindow* window;
 int windowWidth = 800;
 int windowHeight = 600;
 
-unsigned int VBO, VAO, EBO;
-unsigned int shaderProgram;
-
-int verticesAmount = 3;
-
-//Reading from other files
-std::ifstream vertexFile;
-std::ifstream fragmentFile;
-std::string vertexBuffer;
-std::string fragmentBuffer;
-
-
-unsigned int texture;
-
+// Extra Objects for the Main Loop //
+Gizmos gizmosObject;
+// Extra Objects for the Main Loop //
 };
 
 #endif
