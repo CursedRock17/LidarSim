@@ -18,17 +18,23 @@ Gizmos::~Gizmos()
 void Gizmos::GizmosLoop()
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-        glBindTexture(GL_TEXTURE_2D, texture);
-	glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
+        glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
+	BasicMove();
+
+        glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 
-void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
+void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies)
 {
 
+	//Initialize Variables needed for this gizmo
+	totalPoints = totPoints;
+	vertices = verts;	
+	indicies = indies;
     //Going to immediatily load in our shading files
     try { 
 	//Copying the glsl files into cpp code
@@ -48,23 +54,6 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
     } catch (std::exception& e){
         std::cout << e.what() << std::endl;
     }
-
-    //These are the corners(vertices) of a triangle
-    //Then we have the color values to pass compared to the vertices
-    //After we have where the textures need to be mapped similar to how colors work, but only xy plane
-    float vertices[] = {
-        //Location              Colors            Textures
-        0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
-        0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
-        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
-        -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f              // top left
-    }; 
-
-    //Use this to represent the order to draw for the EBO
-    unsigned int indices[] = {
-        0, 1, 3, //First Triangle in this case
-        1, 2, 3  //Second Triangle
-    };
 
     const char* vertexShaderSource = vertexBuffer.c_str();
     const char* fragmentShaderSource = fragmentBuffer.c_str();
@@ -113,6 +102,25 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    //- - - - - - End of Shader Code - - - - - -//
+
+    //These are the corners(vertices) of a triangle
+    //Then we have the color values to pass compared to the vertices
+    //After we have where the textures need to be mapped similar to how colors work, but only xy plane
+    float vertices[] = {
+        //Location              Colors            Textures
+        0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
+        0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
+        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
+        -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f               // top left
+    }; 
+
+    //Use this to represent the order to draw for the EBO
+    unsigned int indices[] = {
+        0, 1, 3, //First Triangle in this case
+        1, 2, 3  //Second Triangle
+    };
+
 
     //Creating the Vertex Array Object then Vertex Buffer Object, then the Element Buffer Object
     glGenVertexArrays(1, &VAO);
@@ -130,15 +138,15 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
 
 
     //Set up the triangle
-    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Set up color
-    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Set up the textures
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -149,6 +157,7 @@ void Gizmos::GizmosCleanUp()
     //When finished with the program we can delete everything
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 }
 
@@ -157,7 +166,7 @@ void Gizmos::RenderTextures()
 {
     //Doing Loading from images, may have to be processed for more modularity
     int imgW, imgH, numImgColChannels;
-    unsigned char *imgData = stbi_load("/Users/cursedrock17/Documents/Coding/CPP/LidarSim/src/Graphics/test.jpg", &imgW, &imgH, &numImgColChannels, 0);
+    unsigned char *imgData = stbi_load("./src/Gizmos/test.jpg", &imgW, &imgH, &numImgColChannels, 0);
 
     //Create and bind the texture
     glGenTextures(1, &texture);
@@ -166,7 +175,7 @@ void Gizmos::RenderTextures()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); //X coords
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); //Y coords
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     //Generate the image as a form of respect to perspective
@@ -184,12 +193,14 @@ void Gizmos::RenderTextures()
 }
 
 
-void Gizmos::BasicMove(unsigned int shaderID)
+void Gizmos::BasicMove()
 {
-	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-	glm::mat4 trans_dir = glm::mat4(1.0f);
-	trans_dir = glm::rotate(trans_dir, glm::radians(90.0f), glm::vec3(0.0, 0.0, 0.0));
-	trans_dir = glm::scale(trans_dir, glm::vec3(0.5, 0.5, 0.5));
-	vec = trans_dir * vec;
-	std::cout << vec.x << " " << vec.y << " " << vec.z << " " << std::endl;
+        // create transformations
+        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	glUseProgram(shaderProgram);
+	unsigned int transformLocation = glGetUniformLocation(shaderProgram, "spaceTransform");
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 }

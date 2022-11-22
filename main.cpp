@@ -4,14 +4,10 @@
 
 int main(int argc, char** argv){
     Graphics g;
-    Space spc;
-    Gizmos giz;
 
-    // Setup for Rendering Cycle //
-    giz.CreateShaders("./src/Graphics/vertex.glsl", "./src/Graphics/fragment.glsl");
-    giz.RenderTextures();
+    g.SimulationSetup();
     // Run the cycle //
-    g.RenderingLoop();
+    g.SimulationLoop();
 
     return 0;
 }

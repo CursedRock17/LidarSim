@@ -1,6 +1,7 @@
 #include "../../include/Graphics_Headers/Graphics.h"
 //Outer Libraries //
 #include <filesystem>
+#include <vector>
 
 Graphics::Graphics()
 {
@@ -41,7 +42,27 @@ void Graphics::RenderingInit()
     glViewport(0, 0, windowWidth, windowHeight);
 }
 
-void Graphics::RenderingLoop()
+void Graphics::SimulationSetup()
+{
+	
+	std::vector<unsigned int> indices = {
+        	0, 1, 3, //First Triangle in this case
+        	1, 2, 3  //Second Triangle
+    	};
+
+	std::vector<float> vertices = {
+        	//Location              Colors            Textures
+        	0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
+        	0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
+        	-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
+        	-0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f              // top left
+	}; 
+
+	gizmosRef->CreateShaders("./src/Gizmos/vertex.glsl", "./src/Gizmos/fragment.glsl", 8, vertices, indices);
+	gizmosRef->RenderTextures();
+}
+
+void Graphics::SimulationLoop()
 {
     //Create the infinite Loop that will run the window
     while(!glfwWindowShouldClose(window))
@@ -54,7 +75,7 @@ void Graphics::RenderingLoop()
         glClear(GL_COLOR_BUFFER_BIT);
 	
 	//Each Objects Loop function
-	gizmosObject.GizmosLoop();
+	gizmosRef->GizmosLoop();
 	//Each Objects Loop function
 	
         // Check Buffers of Data

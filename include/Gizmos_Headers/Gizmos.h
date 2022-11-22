@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 // Rendering Libraries //
 
 class Gizmos
@@ -20,8 +21,8 @@ public:
 Gizmos();
 ~Gizmos();
 
-void BasicMove(unsigned int shaderID);
-void CreateShaders(const char* vertexPath, const char* fragmentPath);
+void BasicMove();
+void CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies);
 void RenderTextures();
 void GizmosLoop();
 
@@ -30,7 +31,11 @@ private:
 unsigned int VBO, VAO, EBO;
 unsigned int shaderProgram;
 
+//Describing the Object to Create
 int verticesAmount = 3;
+int totalPoints;
+std::vector<float> vertices;
+std::vector<unsigned int> indicies;
 
 //Reading from other files
 std::ifstream vertexFile;
@@ -39,7 +44,6 @@ std::string vertexBuffer;
 std::string fragmentBuffer;
 
 unsigned int texture;
-
 void GizmosCleanUp();
 };
 
