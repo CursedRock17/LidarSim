@@ -1,6 +1,6 @@
 #include <iostream>
 #include "./include/Graphics_Headers/Graphics.h"
-#include "./include/Space_Headers/Space.h"
+#include "./include/Camera_Headers/Camera.h"
 
 int main(int argc, char** argv){
     Graphics g;

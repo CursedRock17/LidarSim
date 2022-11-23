@@ -18,8 +18,8 @@ PRIVATE
 Graphics
 Graphics_Headers
 
-Space
-Space_Headers
+Camera
+Camera_Headers
 
 Gizmos
 Gizmos_Headers

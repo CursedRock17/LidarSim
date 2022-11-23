@@ -23,19 +23,21 @@ Gizmos();
 
 void BasicMove();
 void CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies);
-void RenderTextures();
+void RenderTextures(const char* imgLocation);
 void GizmosLoop();
+
+unsigned int shaderProgram;
 
 private:
 
 unsigned int VBO, VAO, EBO;
-unsigned int shaderProgram;
 
 //Describing the Object to Create
 int verticesAmount = 3;
 int totalPoints;
 std::vector<float> vertices;
 std::vector<unsigned int> indicies;
+
 
 //Reading from other files
 std::ifstream vertexFile;

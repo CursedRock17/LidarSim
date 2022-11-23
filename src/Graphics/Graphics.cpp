@@ -58,8 +58,14 @@ void Graphics::SimulationSetup()
         	-0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f              // top left
 	}; 
 
+	const char* imgLoc = "./src/Gizmos/test.jpg";
+
+	//Setting up this current object
 	gizmosRef->CreateShaders("./src/Gizmos/vertex.glsl", "./src/Gizmos/fragment.glsl", 8, vertices, indices);
-	gizmosRef->RenderTextures();
+	gizmosRef->RenderTextures(imgLoc);
+	
+	//Setting up the Camera
+	cameraRef->createView(800, 600, 45.0f, gizmosRef->shaderProgram);
 }
 
 void Graphics::SimulationLoop()

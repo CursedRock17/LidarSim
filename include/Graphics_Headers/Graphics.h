@@ -12,7 +12,7 @@
 
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"
-#include "../Space_Headers/Space.h"
+#include "../Camera_Headers/Camera.h"
 
 class Graphics {
 public:
@@ -36,7 +36,7 @@ GLFWwindow* window;
 int windowWidth = 800;
 int windowHeight = 600;
 
-std::shared_ptr<Space> spaceRef = std::make_shared<Space>();
+std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();
 
 };

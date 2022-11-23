@@ -162,11 +162,11 @@ void Gizmos::GizmosCleanUp()
 }
 
 
-void Gizmos::RenderTextures()
+void Gizmos::RenderTextures(const char* imgLocation)
 {
     //Doing Loading from images, may have to be processed for more modularity
     int imgW, imgH, numImgColChannels;
-    unsigned char *imgData = stbi_load("./src/Gizmos/test.jpg", &imgW, &imgH, &numImgColChannels, 0);
+    unsigned char *imgData = stbi_load(imgLocation, &imgW, &imgH, &numImgColChannels, 0);
 
     //Create and bind the texture
     glGenTextures(1, &texture);
