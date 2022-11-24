@@ -28,7 +28,7 @@ void Gizmos::GizmosLoop()
 }
 
 
-void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies)
+void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies) 
 {
 
 	//Initialize Variables needed for this gizmo
@@ -104,37 +104,20 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int
 
     //- - - - - - End of Shader Code - - - - - -//
 
-    //These are the corners(vertices) of a triangle
-    //Then we have the color values to pass compared to the vertices
-    //After we have where the textures need to be mapped similar to how colors work, but only xy plane
-    float vertices[] = {
-        //Location              Colors            Textures
-        0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
-        0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
-        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
-        -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f               // top left
-    }; 
-
-    //Use this to represent the order to draw for the EBO
-    unsigned int indices[] = {
-        0, 1, 3, //First Triangle in this case
-        1, 2, 3  //Second Triangle
-    };
-
-
     //Creating the Vertex Array Object then Vertex Buffer Object, then the Element Buffer Object
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
+
     //Copy all the data from the VBO
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices.data()), vertices.data(), GL_STATIC_DRAW);
 
     //Create all the bindings for the EBO similar to VBO
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies.data()), indicies.data(), GL_STATIC_DRAW);
 
 
     //Set up the triangle
@@ -148,6 +131,8 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int
     //Set up the textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -195,6 +180,7 @@ void Gizmos::RenderTextures(const char* imgLocation)
 
 void Gizmos::BasicMove()
 {
+	/*
         // create transformations
         glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
@@ -203,4 +189,5 @@ void Gizmos::BasicMove()
 	glUseProgram(shaderProgram);
 	unsigned int transformLocation = glGetUniformLocation(shaderProgram, "spaceTransform");
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+	*/
 }

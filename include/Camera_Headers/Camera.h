@@ -1,11 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-/* OpenGL Libraries
+/* OpenGL Libraries */
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-*/
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -17,15 +16,16 @@ Camera();
 ~Camera();
 
 void CameraLoop();
-private:
 
 void createView(int screenWidth, int screenHeight, float POV, int shaderID);
 
-glm::mat4* model{nullptr};
-glm::mat4* view{nullptr);
-glm::mat4* perspective{nullptr}
+private:
 
+glm::mat4 model;
+glm::mat4 view;
+glm::mat4 perspective;
 
+unsigned int shaderID;
 };
 
 #endif

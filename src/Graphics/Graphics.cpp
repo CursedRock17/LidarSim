@@ -51,11 +51,11 @@ void Graphics::SimulationSetup()
     	};
 
 	std::vector<float> vertices = {
-        	//Location              Colors            Textures
-        	0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,              // top right
-        	0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,              // bottom right
-        	-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,              // bottom left
-        	-0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f              // top left
+        	//Location              Colors             Textures 
+        	0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,             // top right
+        	0.5f,  -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,  1.0f, 0.0f,             // bottom right
+        	-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,             // bottom left
+        	-0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f             // top left
 	}; 
 
 	const char* imgLoc = "./src/Gizmos/test.jpg";
@@ -81,6 +81,7 @@ void Graphics::SimulationLoop()
         glClear(GL_COLOR_BUFFER_BIT);
 	
 	//Each Objects Loop function
+	cameraRef->CameraLoop();
 	gizmosRef->GizmosLoop();
 	//Each Objects Loop function
 	
