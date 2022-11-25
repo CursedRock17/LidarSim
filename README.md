@@ -6,3 +6,12 @@ bringing in different libraries to test.
 
 created a space file on whcih our camera and other objects
 can fit into
+
+when working with a camera everything in 3D terms
+is just based on perspective 
+
+## Libraries being used
+- glm
+- opengl
+- glfw
+- glad
