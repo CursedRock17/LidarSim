@@ -20,12 +20,20 @@ void Gizmos::GizmosLoop()
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
         glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
+    	
+	glUseProgram(shaderProgram);
 
 	BasicMove();
-
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
+
+void Gizmos::RenderContainer()
+{
+	//Finish rendering the entire shape
+	
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies) 
@@ -119,20 +127,17 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath, int
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies.data()), indicies.data(), GL_STATIC_DRAW);
 
-
     //Set up the triangle
-    glVertexAttribPointer(0, verticesAmount, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Set up color
-    glVertexAttribPointer(1, verticesAmount, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Set up the textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-
-
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -157,8 +162,8 @@ void Gizmos::RenderTextures(const char* imgLocation)
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); //X coords
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); //Y coords
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -175,19 +180,23 @@ void Gizmos::RenderTextures(const char* imgLocation)
     }
 
     stbi_image_free(imgData);
+
+    //Link these textures in the glsl files
+    glUseProgram(shaderProgram);
+    glUniform1i(glGetUniformLocation(texture, "texture"), 0);
 }
 
 
 void Gizmos::BasicMove()
 {
-	/*
+
+	glUseProgram(shaderProgram);
+
         // create transformations
         glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
         transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	glUseProgram(shaderProgram);
 	unsigned int transformLocation = glGetUniformLocation(shaderProgram, "spaceTransform");
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
-	*/
 }
