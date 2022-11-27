@@ -22,7 +22,8 @@ Gizmos();
 ~Gizmos();
 
 void BasicMove();
-void CreateShaders(const char* vertexPath, const char* fragmentPath, int totPoints, std::vector<float> verts, std::vector<unsigned int> indies);
+void CreateShaders(const char* vertexPath, const char* fragmentPath);
+void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts)
 void RenderTextures(const char* imgLocation);
 
 void GizmosLoop();
