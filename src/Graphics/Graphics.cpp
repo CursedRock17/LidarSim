@@ -99,7 +99,7 @@ void Graphics::SimulationSetup()
 	const char* imgLoc = "./src/Gizmos/test.jpg";
 
 	//Setting up this current object
-	gizmosRef->CreateShaders("./src/Gizmos/vertex.glsl", "./src/Gizmos/fragment.glsl");
+	gizmosRef->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	gizmosRef->CreateTextures(8, indices, vertices);
 	gizmosRef->RenderTextures(imgLoc);
 	
@@ -112,20 +112,19 @@ void Graphics::SimulationLoop()
     //Create the infinite Loop that will run the window
     while(!glfwWindowShouldClose(window))
     {
-        // Input
-        AcceptInput(window);
-
-        //Rendering Actions
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-        glClear(GL_COLOR_BUFFER_BIT);
+    // Input
+    AcceptInput(window);
+    
+    //Rendering Actions
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	//Each Objects Loop function
 	gizmosRef->GizmosLoop();
-	cameraRef->createView(800, 600, 45.0f, gizmosRef->shaderProgram);
-	//Each Objects Loop function
 	gizmosRef->RenderContainer();
-	
-        // Check Buffers of Data
+	//Each Objects Loop function
+        
+	// Check Buffers of Data
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

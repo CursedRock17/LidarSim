@@ -22,8 +22,9 @@ Gizmos();
 ~Gizmos();
 
 void BasicMove();
+
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
-void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts)
+void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts);
 void RenderTextures(const char* imgLocation);
 
 void GizmosLoop();
@@ -31,16 +32,20 @@ void RenderContainer();
 
 unsigned int shaderProgram;
 
-private:
+//Setting Features for Each Object
+glm::vec3 SetRotation(float xRotation, float yRotation, float zRotation);
+glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslation);
 
+
+private:
 unsigned int VBO, VAO, EBO;
 
 //Describing the Object to Create
 int verticesAmount = 3;
 int totalPoints;
-std::vector<float> vertices;
-std::vector<unsigned int> indicies;
 
+glm::vec3 Rotation;
+glm::vec3 Translation;
 
 //Reading from other files
 std::ifstream vertexFile;
@@ -48,7 +53,7 @@ std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
 
-unsigned int texture;
+unsigned int texture0;
 void GizmosCleanUp();
 };
 
