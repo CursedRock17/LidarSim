@@ -23,7 +23,7 @@ void Gizmos::GizmosLoop()
     	
 	glUseProgram(shaderProgram);
 
-	SetRotation(0.0f, 0.0f, 0.0f);
+	SetRotation(1.0f, 0.3f, 0.5f);
 	SetTranslation(0.0f, 0.0f, 0.0f);
 
 	BasicMove();
@@ -45,9 +45,8 @@ glm::vec3 Gizmos::SetTranslation(float xTranslation, float yTranslation, float z
 void Gizmos::RenderContainer()
 {
 	//Finish rendering the entire shape
-	
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 //	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -215,7 +214,7 @@ void Gizmos::BasicMove()
 {
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 	model = glm::translate(model, Translation);
-        model = glm::rotate(model, (float)glfwGetTime(), Rotation);
+	model = glm::rotate(model, (float)glfwGetTime(), Rotation);
 
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

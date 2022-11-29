@@ -44,8 +44,8 @@ unsigned int VBO, VAO, EBO;
 int verticesAmount = 3;
 int totalPoints;
 
-glm::vec3 Rotation;
-glm::vec3 Translation;
+glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
 
 //Reading from other files
 std::ifstream vertexFile;

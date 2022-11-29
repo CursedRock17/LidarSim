@@ -27,7 +27,6 @@ void RenderingInit();
 void RenderingEnd();
 
 /* Additional OpenGL funcitons */
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void AcceptInput(GLFWwindow* window);
 /* Additional OpenGL funcitons */
 

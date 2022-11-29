@@ -13,6 +13,22 @@ Graphics::~Graphics()
     RenderingEnd();
 }
 
+//Allow resizing of window on every frame
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+    {
+        glViewport(0, 0, 800, 600);
+    }
+
+
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+	//cameraRef->RotateCamera(xPos, yPos);
+}
+
+void zoom_callback(GLFWwindow* window, double xOffset, double yOffset)
+{	
+	//cameraRef->ZoomCamera(xOffset, yOffset);
+}
 
 void Graphics::RenderingInit()
 {
@@ -33,13 +49,21 @@ void Graphics::RenderingInit()
         glfwTerminate();
     }
 
+
+	auto mouse_call = [this](GLFWwindow* window, double x, double y)  {
+		this->cameraRef->RotateCamera(x, y);
+	};
+    	
+
     glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, &framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, static_cast<GLFWcursorposfun>(mouse_call));
+    glfwSetScrollCallback(window, &zoom_callback);
 
     //Need to initalize all glad features before opengl features
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "Couldn't Init Glad" << std::endl;
     }
-    glViewport(0, 0, windowWidth, windowHeight);
 }
 
 void Graphics::SimulationSetup()
@@ -96,7 +120,7 @@ void Graphics::SimulationSetup()
 
 
 	glEnable(GL_DEPTH_TEST);
-	const char* imgLoc = "./src/Gizmos/test.jpg";
+	const char* imgLoc = "./resources/test.jpg";
 
 	//Setting up this current object
 	gizmosRef->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
@@ -104,7 +128,7 @@ void Graphics::SimulationSetup()
 	gizmosRef->RenderTextures(imgLoc);
 	
 	//Setting up the Camera
-	cameraRef->createView(800, 600, 45.0f, gizmosRef->shaderProgram);
+	cameraRef->createView(windowWidth, windowHeight, 45.0f, gizmosRef->shaderProgram);
 }
 
 void Graphics::SimulationLoop()
@@ -122,6 +146,9 @@ void Graphics::SimulationLoop()
 	//Each Objects Loop function
 	gizmosRef->GizmosLoop();
 	gizmosRef->RenderContainer();
+
+	cameraRef->CameraLoop();
+
 	//Each Objects Loop function
         
 	// Check Buffers of Data
@@ -136,18 +163,26 @@ void Graphics::RenderingEnd()
 }
 
 /* Additional OpenGL funcitons */
-//Allow resizing of window on every frame
-void Graphics::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-    {
-        glViewport(0, 0, windowWidth, windowHeight);
-    }
-
 //Getting input from the user, this is how we can interact with the screen
 void Graphics::AcceptInput(GLFWwindow* window)
 {
+	
     // --- Follow this format anytime a key action needs to be recorded --- //
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    // Deal with Camera Settings such as Zoom and Camera Position
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	cameraRef->MoveForward();
+
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	cameraRef->MoveBackward();
+
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	cameraRef->MoveLeft();
+
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	cameraRef->MoveRight();
 }
 
 /* Additional OpenGL funcitons */
