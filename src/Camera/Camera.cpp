@@ -30,6 +30,9 @@ void Camera::CameraLoop()
 
 	//Can now set up the camera object in comparison to objects
 	perspective = glm::perspective(glm::radians(FOV_), aspect, 0.1f, 100.0f);
+
+	unsigned int perspectLocation = glGetUniformLocation(shaderID ,"perspective");
+	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 }
 
 void Camera::MoveForward()
@@ -56,7 +59,7 @@ void Camera::MoveRight()
 	cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
-void Camera::RotateCamera(double xPos, double yPos)
+void Camera::RotateCamera(float xPos, float yPos)
 {
 	float yaw = -90.0f;
 	float pitch = 0.0f;
@@ -92,9 +95,9 @@ void Camera::RotateCamera(double xPos, double yPos)
 }
 
 
-void Camera::ZoomCamera(double xOffset, double yOffset)
+void Camera::ZoomCamera(float xOffset, float yOffset)
 {
-	FOV_ -= static_cast<float>(yOffset);
+	FOV_ = yOffset;
 	if(FOV_ < 1.0f)
 		FOV_ = 1.0f;
 	if(FOV_ > 45.0f)
@@ -108,10 +111,7 @@ void Camera::createView(int screenWidth, int screenHeight, float FOV, int shader
 screenWidth_ = screenWidth;
 screenHeight_ = screenHeight;
 FOV_ = FOV;
-
-
 shaderID = shaderID_;
-
 
 //Have to use the &[0][0] for all Matrices
 unsigned int viewLocation = glGetUniformLocation(shaderID ,"viewer");

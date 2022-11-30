@@ -35,17 +35,28 @@ unsigned int shaderProgram;
 //Setting Features for Each Object
 glm::vec3 SetRotation(float xRotation, float yRotation, float zRotation);
 glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslation);
+glm::vec3 SetScale(float xScale, float yScale, float zScale);
+glm::vec3 SetColor(float red, float green, float blue);
 
+int ID;
+std::string objectName;
 
 private:
 unsigned int VBO, VAO, EBO;
 
 //Describing the Object to Create
-int verticesAmount = 3;
-int totalPoints;
+int totalVerticeArgs;
+int totalVerticeShaderArgs;
 
-glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+//Where the Object is in Space: These methods are handled with setter functions
+glm::vec3 Rotation = glm::vec3(1.0f, 0.3f, 0.5f);
 glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 Scale = glm::vec3(1.0f);
+
+//Coloring for the object
+glm::vec3 lightShader = glm::vec3(1.0f);
+glm::vec3 objectColor = glm::vec3(1.0f);
+unsigned int texture0;
 
 //Reading from other files
 std::ifstream vertexFile;
@@ -53,7 +64,6 @@ std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
 
-unsigned int texture0;
 void GizmosCleanUp();
 };
 

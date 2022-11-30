@@ -41,12 +41,23 @@ glm::vec3 Gizmos::SetTranslation(float xTranslation, float yTranslation, float z
 	return Translation;
 }
 
+glm::vec3 Gizmos::SetScale(float xScale, float yScale, float zScale)
+{
+	Scale = glm::vec3(xScale, yScale, zScale);
+	return Scale;
+}
+
+glm::vec3 Gizmos::SetColor(float red, float green, float blue)
+{
+	objectColor = glm::vec3(red, green, blue);
+	return objectColor;
+}
 
 void Gizmos::RenderContainer()
 {
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
 //	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -128,7 +139,8 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
 
 void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts) {	
     //Initialize Variables needed for this gizmo
-    totalPoints = totPoints;
+    totalVerticeShaderArgs = totPoints;
+    totalVerticeArgs = verts.size() / totPoints;
 
     //Creating the Vertex Array Object then Vertex Buffer Object, then the Element Buffer Object
     glGenVertexArrays(1, &VAO);
@@ -151,18 +163,18 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indies.data()), indies.data(), GL_STATIC_DRAW);
 
     //Set up the triangle
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Set up color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Set up the textures
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalPoints * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
 void Gizmos::GizmosCleanUp()
@@ -207,6 +219,11 @@ void Gizmos::RenderTextures(const char* imgLocation)
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "texture0"), 0);
+   
+    //Setting up the colors for the object
+    SetColor(1.0f, 0.5f, 0.31f);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 }
 
 
@@ -214,7 +231,10 @@ void Gizmos::BasicMove()
 {
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 	model = glm::translate(model, Translation);
-	model = glm::rotate(model, (float)glfwGetTime(), Rotation);
+	model = glm::rotate(model, 0.0f, Rotation);
+	model = glm::scale(model, Scale);
+
+	//For the spinning use (float)glfwGetTime();
 
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

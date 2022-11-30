@@ -29,8 +29,8 @@ void MoveBackward();
 void MoveLeft();
 void MoveRight();
 
-void RotateCamera(double xPos, double yPos);
-void ZoomCamera(double xOffset, double yOffset);
+void RotateCamera(float xPos, float yPos);
+void ZoomCamera(float xOffset, float yOffset);
 
 // Camera Changes //
 
@@ -42,7 +42,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 int screenWidth_, screenHeight_;
-float FOV_;
+float FOV_ = 45.0f;
 
 // Camera Poisiton Values
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);

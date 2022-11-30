@@ -20,14 +20,33 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     }
 
 
-void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+void Graphics::mouse_callback()
 {
-	//cameraRef->RotateCamera(xPos, yPos);
+	xPos = windowWidth / 2;
+	yPos = windowHeight / 2;
+
+	lastXPos = xPos;
+	lastYPos = yPos;
+
+	glfwGetCursorPos(window, &xPos, &yPos);
+
+	if(lastXPos != xPos || lastYPos != yPos)
+		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+			cameraRef->RotateCamera(static_cast<float>(xPos), static_cast<float>(yPos));
 }
 
-void zoom_callback(GLFWwindow* window, double xOffset, double yOffset)
-{	
-	//cameraRef->ZoomCamera(xOffset, yOffset);
+void Graphics::zoom_callback()
+{		
+	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+	{
+		yOffset -= 0.25f;
+	}
+
+	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		yOffset += 0.25f;
+	}
+		cameraRef->ZoomCamera(xOffset, yOffset);
 }
 
 void Graphics::RenderingInit()
@@ -49,16 +68,8 @@ void Graphics::RenderingInit()
         glfwTerminate();
     }
 
-
-	auto mouse_call = [this](GLFWwindow* window, double x, double y)  {
-		this->cameraRef->RotateCamera(x, y);
-	};
-    	
-
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, &framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, static_cast<GLFWcursorposfun>(mouse_call));
-    glfwSetScrollCallback(window, &zoom_callback);
 
     //Need to initalize all glad features before opengl features
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -154,6 +165,10 @@ void Graphics::SimulationLoop()
 	// Check Buffers of Data
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+	//Had to Create my Own Callback to check cursor and scroll positions
+	mouse_callback();
+	zoom_callback();
     }
 }
 
