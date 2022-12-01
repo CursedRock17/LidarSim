@@ -133,13 +133,39 @@ void Graphics::SimulationSetup()
 	glEnable(GL_DEPTH_TEST);
 	const char* imgLoc = "./resources/test.jpg";
 
-	//Setting up this current object
-	gizmosRef->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	gizmosRef->CreateTextures(8, indices, vertices);
-	gizmosRef->RenderTextures(imgLoc);
+	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
+	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
+
+	//Setting up Each object with the variables it would need
+	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
+	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
+	//gizmosRef->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	//gizmosRef->CreateTextures(8, indices, vertices);
+	//gizmosRef->RenderTextures(imgLoc);
+
+	// Code for creating a cube //
+	cube->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	cube->CreateTextures(8, indices, vertices);
+	cube->RenderTextures(imgLoc);
+	cube->objectName = "Cube";
+	cube->ID = 0;
+
+	
+	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	light->CreateTextures(8, indices, vertices);
+	light->RenderTextures(imgLoc);
+	light->objectName = "Light";
+	light->ID = 1;
+
+	light->SetScale(0.2f, 0.2f, 0.2f);
+	light->SetTranslation(1.2f, 1.0f, 2.0f);
+
+	//Add each Gizmos Object to the vector
+	gizmosVec.emplace_back(cube);
+	gizmosVec.emplace_back(light);
 	
 	//Setting up the Camera
-	cameraRef->createView(windowWidth, windowHeight, 45.0f, gizmosRef->shaderProgram);
+	cameraRef->createView(windowWidth, windowHeight, 45.0f);
 }
 
 void Graphics::SimulationLoop()
@@ -155,8 +181,11 @@ void Graphics::SimulationLoop()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	//Each Objects Loop function
-	gizmosRef->GizmosLoop();
-	gizmosRef->RenderContainer();
+	for(auto &gizmosRef : gizmosVec)
+	{
+		gizmosRef->GizmosLoop(&cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
+		gizmosRef->RenderContainer();
+	}
 
 	cameraRef->CameraLoop();
 
@@ -187,11 +216,21 @@ void Graphics::AcceptInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
 
     // Deal with Camera Settings such as Zoom and Camera Position
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	cameraRef->MoveForward();
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		cameraRef->MoveUp();
+	else
+		cameraRef->MoveForward();
+    }
+	
 
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	cameraRef->MoveBackward();
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+	    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		    cameraRef->MoveDown();
+	    else 
+		    cameraRef->MoveBackward();
+
+    }
 
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	cameraRef->MoveLeft();

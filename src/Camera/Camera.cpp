@@ -18,66 +18,64 @@ void Camera::CameraLoop()
 	
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-
+	cameraSpeed = 2.5f * deltaTime;
+	
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-	//Have to use the &[0][0] for all Matrices
-	unsigned int viewLocation = glGetUniformLocation(shaderID ,"viewer");
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
-
-
-	float aspect = static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_);
-
-	//Can now set up the camera object in comparison to objects
-	perspective = glm::perspective(glm::radians(FOV_), aspect, 0.1f, 100.0f);
-
-	unsigned int perspectLocation = glGetUniformLocation(shaderID ,"perspective");
-	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
+	aspect = static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_);
 }
 
 void Camera::MoveForward()
 {
-	cameraSpeed = 2.5f * deltaTime;
 	cameraPos += cameraSpeed * cameraFront;
 }
 
 void Camera::MoveBackward()
 {
-	cameraSpeed = 2.5f * deltaTime;
 	cameraPos -= cameraSpeed * cameraFront;
 }
 
 void Camera::MoveLeft()
 {
-	cameraSpeed = 2.5f * deltaTime;
 	cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
 void Camera::MoveRight()
 {
-	cameraSpeed = 2.5f * deltaTime;
 	cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
+void Camera::MoveUp()
+{
+	cameraPos += cameraUp * cameraSpeed;
+}
+
+void Camera::MoveDown()
+{
+	cameraPos -= cameraUp * cameraSpeed;
 }
 
 void Camera::RotateCamera(float xPos, float yPos)
 {
-	float yaw = -90.0f;
-	float pitch = 0.0f;
-	
-	float lastX = static_cast<float>(screenWidth_) / 2.0f;
-	float lastY = static_cast<float>(screenHeight_) / 2.0f;
+	if(firstClick)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		firstClick = false;
+	}
 
 	float xCurrentOffset = xPos - lastX;
 	float yCurrentOffset = yPos - lastY;
+
+
 	lastX = xPos;
 	lastY = yPos;
 
-	const float sensitivity = 0.1f;
 	xCurrentOffset *= sensitivity;
 	yCurrentOffset *= sensitivity;
 
-	yaw = xCurrentOffset;
-	pitch = yCurrentOffset;
+	yaw += xCurrentOffset;
+	pitch += yCurrentOffset;
 
 	if(pitch > 89.0f)
 		pitch = 89.0f;
@@ -91,7 +89,8 @@ void Camera::RotateCamera(float xPos, float yPos)
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch)); //Roll
 
 	cameraFront = glm::normalize(direction);
-
+	//cameraUp = 
+	//camerPos = 
 }
 
 
@@ -104,21 +103,21 @@ void Camera::ZoomCamera(float xOffset, float yOffset)
 		FOV_ = 45.0f;
 }
 
+glm::mat4 CameraViewMatrix()
+{
+	return view;
+}
 
-void Camera::createView(int screenWidth, int screenHeight, float FOV, int shaderID_)
+void Camera::createView(int screenWidth, int screenHeight, float FOV)
 {
 
 screenWidth_ = screenWidth;
 screenHeight_ = screenHeight;
 FOV_ = FOV;
-shaderID = shaderID_;
 
-//Have to use the &[0][0] for all Matrices
-unsigned int viewLocation = glGetUniformLocation(shaderID ,"viewer");
-glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+lastX = static_cast<float>(screenWidth_) / 2.0f;
+lastY = static_cast<float>(screenHeight_) / 2.0f;
 
-unsigned int perspectLocation = glGetUniformLocation(shaderID ,"perspective");
-glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 }
 
 

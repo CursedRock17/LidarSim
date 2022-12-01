@@ -52,7 +52,8 @@ float yOffset = 45.0f;
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 
 //Should be able to have any number of Objects
-std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();
+//std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();
+std::vector<std::shared_ptr<Gizmos>> gizmosVec;
 
 };
 

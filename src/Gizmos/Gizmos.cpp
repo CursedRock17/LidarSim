@@ -15,7 +15,7 @@ Gizmos::~Gizmos()
 	GizmosCleanUp();
 }
 
-void Gizmos::GizmosLoop()
+void Gizmos::GizmosLoop(glm::mat4& viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
         glActiveTexture(GL_TEXTURE0);
@@ -25,6 +25,18 @@ void Gizmos::GizmosLoop()
 
 	SetRotation(1.0f, 0.3f, 0.5f);
 	SetTranslation(0.0f, 0.0f, 0.0f);
+
+	// Orientation of Gizmo
+	
+	//Have to use the &[0][0] for all Matrices
+	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, viewMatrix[0][0]);
+	
+	perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
+	unsigned int perspectLocation = glGetUniformLocation(shaderProgram ,"perspective");
+	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
+
+	// Orientation of Gizmo
 
 	BasicMove();
 }

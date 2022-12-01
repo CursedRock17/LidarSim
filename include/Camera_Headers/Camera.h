@@ -19,7 +19,7 @@ Camera();
 
 void CameraLoop();
 
-void createView(int screenWidth, int screenHeight, float POV, int shaderID);
+void createView(int screenWidth, int screenHeight, float POV);
 void start(std::vector<float> verts);
 
 
@@ -28,13 +28,19 @@ void MoveForward();
 void MoveBackward();
 void MoveLeft();
 void MoveRight();
+void MoveUp();
+void MoveDown();
 
 void RotateCamera(float xPos, float yPos);
 void ZoomCamera(float xOffset, float yOffset);
 
+glm::mat4 CameraViewMatrix();
+
 // Camera Changes //
 
 float cameraSpeed = 2.5f;
+float FOV_ = 45.0f;
+float aspect;
 
 private:
 
@@ -42,7 +48,15 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 int screenWidth_, screenHeight_;
-float FOV_ = 45.0f;
+
+//Rotation Values
+const float sensitivity = 0.1f;
+float lastX;
+float lastY;
+bool firstClick = true;
+
+float yaw = -90.0f;
+float pitch = 0.0f;
 
 // Camera Poisiton Values
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);

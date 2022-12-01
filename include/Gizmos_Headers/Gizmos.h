@@ -27,7 +27,7 @@ void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts);
 void RenderTextures(const char* imgLocation);
 
-void GizmosLoop();
+void GizmosLoop(glm::mat4& viewMatrix, float& screenAspect, float &FOV);
 void RenderContainer();
 
 unsigned int shaderProgram;
