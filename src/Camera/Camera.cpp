@@ -103,7 +103,7 @@ void Camera::ZoomCamera(float xOffset, float yOffset)
 		FOV_ = 45.0f;
 }
 
-glm::mat4 CameraViewMatrix()
+glm::mat4 Camera::CameraViewMatrix()
 {
 	return view;
 }

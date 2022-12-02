@@ -15,7 +15,23 @@ Gizmos::~Gizmos()
 	GizmosCleanUp();
 }
 
-void Gizmos::GizmosLoop(glm::mat4& viewMatrix, float& screenAspect, float &FOV)
+void Gizmos::GizmosInit()
+{
+	//Initialize the Position, Rotation, and Scale of Object
+	model = glm::translate(model, Translation);
+	model = glm::rotate(model, 0.0f, Rotation);
+	model = glm::scale(model, Scale);
+
+	//For the spinning use (float)glfwGetTime();
+        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	//After Initing the Object in 3D Space handle Color
+    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
+    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
+}
+
+void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
         glActiveTexture(GL_TEXTURE0);
@@ -23,24 +39,23 @@ void Gizmos::GizmosLoop(glm::mat4& viewMatrix, float& screenAspect, float &FOV)
     	
 	glUseProgram(shaderProgram);
 
-	SetRotation(1.0f, 0.3f, 0.5f);
-	SetTranslation(0.0f, 0.0f, 0.0f);
-
 	// Orientation of Gizmo
 	
 	//Have to use the &[0][0] for all Matrices
 	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, viewMatrix[0][0]);
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 	
-	perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
+	glm::mat4 perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
 	unsigned int perspectLocation = glGetUniformLocation(shaderProgram ,"perspective");
 	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 
 	// Orientation of Gizmo
 
-	BasicMove();
+	/* Enable BasicMove in the loop when the features need to change every Frame */
+	//BasicMove();
 }
 
+// Essential Setter Functions //
 glm::vec3 Gizmos::SetRotation(float xRotation, float yRotation, float zRotation)
 {
 	Rotation = glm::vec3(xRotation, yRotation, zRotation);
@@ -64,6 +79,34 @@ glm::vec3 Gizmos::SetColor(float red, float green, float blue)
 	objectColor = glm::vec3(red, green, blue);
 	return objectColor;
 }
+
+// Essential Setter Functions //
+
+//Override setFunction for equivelency across all axis
+glm::vec3 Gizmos::SetRotation(float totalRotation)
+{
+	Rotation = glm::vec3(totalRotation);	
+	return Rotation;
+}
+
+glm::vec3 Gizmos::SetTranslation(float totalTranslation)
+{
+	Translation = glm::vec3(totalTranslation);
+	return Translation;
+}
+
+glm::vec3 Gizmos::SetScale(float totalScale)
+{
+	Scale = glm::vec3(totalScale);
+	return Scale;
+}
+
+glm::vec3 Gizmos::SetColor(float totalColor)
+{
+	objectColor = glm::vec3(totalColor);
+	return objectColor;
+}
+
 
 void Gizmos::RenderContainer()
 {
@@ -232,23 +275,20 @@ void Gizmos::RenderTextures(const char* imgLocation)
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "texture0"), 0);
    
-    //Setting up the colors for the object
-    SetColor(1.0f, 0.5f, 0.31f);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 }
+
 
 
 void Gizmos::BasicMove()
 {
-        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 	model = glm::translate(model, Translation);
 	model = glm::rotate(model, 0.0f, Rotation);
 	model = glm::scale(model, Scale);
 
 	//For the spinning use (float)glfwGetTime();
-
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
+    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
+    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 }

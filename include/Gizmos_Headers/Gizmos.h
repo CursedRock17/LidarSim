@@ -27,7 +27,9 @@ void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts);
 void RenderTextures(const char* imgLocation);
 
-void GizmosLoop(glm::mat4& viewMatrix, float& screenAspect, float &FOV);
+void GizmosInit();
+
+void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
 void RenderContainer();
 
 unsigned int shaderProgram;
@@ -37,6 +39,12 @@ glm::vec3 SetRotation(float xRotation, float yRotation, float zRotation);
 glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslation);
 glm::vec3 SetScale(float xScale, float yScale, float zScale);
 glm::vec3 SetColor(float red, float green, float blue);
+
+//Override setFunction for equivelency across all axis
+glm::vec3 SetRotation(float totalRotation);
+glm::vec3 SetTranslation(float totalTranslation);
+glm::vec3 SetScale(float totalScale);
+glm::vec3 SetColor(float totalColor);
 
 int ID;
 std::string objectName;
@@ -56,7 +64,9 @@ glm::vec3 Scale = glm::vec3(1.0f);
 //Coloring for the object
 glm::vec3 lightShader = glm::vec3(1.0f);
 glm::vec3 objectColor = glm::vec3(1.0f);
+
 unsigned int texture0;
+glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 
 //Reading from other files
 std::ifstream vertexFile;

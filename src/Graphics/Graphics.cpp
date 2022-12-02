@@ -139,31 +139,35 @@ void Graphics::SimulationSetup()
 	//Setting up Each object with the variables it would need
 	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
 	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
-	//gizmosRef->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	//gizmosRef->CreateTextures(8, indices, vertices);
-	//gizmosRef->RenderTextures(imgLoc);
-
 	// Code for creating a cube //
 	cube->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	cube->CreateTextures(8, indices, vertices);
 	cube->RenderTextures(imgLoc);
 	cube->objectName = "Cube";
 	cube->ID = 0;
-
+	cube->SetColor(1.0f, 0.31f, 0.51f);
 	
 	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	light->CreateTextures(8, indices, vertices);
 	light->RenderTextures(imgLoc);
 	light->objectName = "Light";
 	light->ID = 1;
+	
 
-	light->SetScale(0.2f, 0.2f, 0.2f);
-	light->SetTranslation(1.2f, 1.0f, 2.0f);
+	light->SetColor(1.0f);
+	light->SetScale(0.2f);
+	light->SetTranslation(1.0f, 0.0f, 0.0f);
 
 	//Add each Gizmos Object to the vector
 	gizmosVec.emplace_back(cube);
 	gizmosVec.emplace_back(light);
-	
+
+	//Call Initialization of each Object
+	for(auto &gizmos : gizmosVec)
+	{
+		gizmos->GizmosInit();
+	}
+		
 	//Setting up the Camera
 	cameraRef->createView(windowWidth, windowHeight, 45.0f);
 }
@@ -179,12 +183,17 @@ void Graphics::SimulationLoop()
     //Rendering Actions
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	
 	//Each Objects Loop function
 	for(auto &gizmosRef : gizmosVec)
 	{
-		gizmosRef->GizmosLoop(&cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
+		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 		gizmosRef->RenderContainer();
+		
+		if(gizmosRef->objectName != "Light"){
+			gizmosRef->BasicMove();
+		}
 	}
 
 	cameraRef->CameraLoop();
