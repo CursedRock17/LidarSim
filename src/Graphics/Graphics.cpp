@@ -147,7 +147,7 @@ void Graphics::SimulationSetup()
 	cube->ID = 0;
 	cube->SetColor(1.0f, 0.31f, 0.51f);
 	
-	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(8, indices, vertices);
 	light->RenderTextures(imgLoc);
 	light->objectName = "Light";
