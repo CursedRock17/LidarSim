@@ -221,13 +221,18 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Set up color
+    //Set up the color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Set up the textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    //Set Up the Lighting
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(8 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
