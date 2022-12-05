@@ -108,6 +108,11 @@ glm::mat4 Camera::CameraViewMatrix()
 	return view;
 }
 
+glm::vec3 Camera::GetCameraPosition()
+{
+	return cameraPos;
+}
+
 void Camera::createView(int screenWidth, int screenHeight, float FOV)
 {
 

@@ -39,12 +39,19 @@ glm::vec3 SetRotation(float xRotation, float yRotation, float zRotation);
 glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslation);
 glm::vec3 SetScale(float xScale, float yScale, float zScale);
 glm::vec3 SetColor(float red, float green, float blue);
+glm::vec3 SetLightPosition(float xCoord, float yCoord, float zCoord);
+glm::vec3 SetViewPos(float xCoord, float yCoord, float zCoord);
+
 
 //Override setFunction for equivelency across all axis
 glm::vec3 SetRotation(float totalRotation);
 glm::vec3 SetTranslation(float totalTranslation);
 glm::vec3 SetScale(float totalScale);
 glm::vec3 SetColor(float totalColor);
+glm::vec3 SetLightPosition(float totalPosition);
+
+glm::vec3 SetViewPos(float totalPosition);
+glm::vec3 SetViewPos(glm::vec3 vectorPosition);
 
 int ID;
 std::string objectName;
@@ -64,9 +71,15 @@ glm::vec3 Scale = glm::vec3(1.0f);
 //Coloring for the object
 glm::vec3 lightShader = glm::vec3(1.0f);
 glm::vec3 objectColor = glm::vec3(1.0f);
+glm::vec3 lightPosition = glm::vec3(1.0f);
+glm::vec3 viewPosition = glm::vec3(1.0f);
 
 unsigned int texture0;
 glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+
+glm::vec3 ambientStrength = glm::vec3(0.1f);
+glm::vec3 specularStrength = glm::vec3(0.5f);
+float specularShiny = 32.0f;
 
 //Reading from other files
 std::ifstream vertexFile;

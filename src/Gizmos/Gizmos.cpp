@@ -29,6 +29,12 @@ void Gizmos::GizmosInit()
 	//After Initing the Object in 3D Space handle Color
     	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
+
+	//Setup Gizmo's Material Makeuo
+	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
+	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), 1, &specularShiny[0]);
 }
 
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
@@ -80,6 +86,18 @@ glm::vec3 Gizmos::SetColor(float red, float green, float blue)
 	return objectColor;
 }
 
+glm::vec3 Gizmos::SetLightPosition(float xCoord, float yCoord, float zCoord)
+{
+	lightPosition = glm::vec3(xCoord, yCoord, zCoord);
+	return lightPosition;
+}
+
+glm::vec3 Gizmos::SetViewPos(float xCoord, float yCoord, float zCoord)
+{
+	viewPosition = glm::vec3(xCoord, yCoord, zCoord);
+	return viewPosition;
+}
+
 // Essential Setter Functions //
 
 //Override setFunction for equivelency across all axis
@@ -107,6 +125,23 @@ glm::vec3 Gizmos::SetColor(float totalColor)
 	return objectColor;
 }
 
+glm::vec3 Gizmos::SetLightPosition(float totalPosition)
+{
+	lightPosition = glm::vec3(totalPosition);
+	return lightPosition;
+}
+
+glm::vec3 Gizmos::SetViewPos(float totalPosition)
+{
+	viewPosition = glm::vec3(totalPosition);
+	return viewPosition;
+}
+
+glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
+{
+	viewPosition = vectorPosition;
+	return viewPosition;
+}
 
 void Gizmos::RenderContainer()
 {
@@ -115,7 +150,6 @@ void Gizmos::RenderContainer()
         glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
 //	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
-
 
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
@@ -296,4 +330,5 @@ void Gizmos::BasicMove()
 
     	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 }

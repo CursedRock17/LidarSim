@@ -35,6 +35,7 @@ void RotateCamera(float xPos, float yPos);
 void ZoomCamera(float xOffset, float yOffset);
 
 glm::mat4 CameraViewMatrix();
+glm::vec3 GetCameraPosition();
 
 // Camera Changes //
 
