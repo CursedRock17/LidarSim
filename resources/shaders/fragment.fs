@@ -27,20 +27,22 @@ uniform vec3 specularStrength;
 uniform vec3 diffuseStrength;
 uniform float shiny;
 
+uniform MaterialMakeup material;
+
 void main()
 {
 	vec3 superNormal = normalize(Normal);
 	vec3 lightDiffuse = normalize(lightPos - FragPos);
 	float diffuseDiff = max(dot(superNormal, lightDiffuse), 0.0);
-	vec3 totalDiffuse =  diffuseStrength * diffuseDiff * texture(MaterialMakeup.diffuseMap, TexCoords).rgb;
+	vec3 totalDiffuse = diffuseStrength * diffuseDiff * vec3(texture(material.diffuseMap, TexCoord));
 
-	vec3 resultantAmbient = ambientStrength * texture(MaterialMakeup.diffuseMap, TexCoords).rgb;
-	
+	vec3 resultantAmbient = ambientStrength * vec3(texture(material.diffuseMap, TexCoord));
+
 	//** For the Specular lighing we can change everything the View Dimension to save resources **//
 	vec3 viewDir = normalize(viewPos - FragPos);
 	vec3 reflection = reflect(-lightDiffuse, superNormal);
 	float specularLighting = pow(max(dot(viewDir, reflection), 0.0), shiny);
-	vec3 resultantSpecular = specularStregnth * (specularLighting *  MaterialMakeup.specularMap);
+	vec3 resultantSpecular = specularStrength * specularLighting * vec3(texture(material.specularMap, TexCoord));
 
 	//Calculate the color with all the different types of lighting and reflection
 	FragColor = vec4((resultantAmbient + totalDiffuse + resultantSpecular), 1.0);

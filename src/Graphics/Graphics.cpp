@@ -131,7 +131,8 @@ void Graphics::SimulationSetup()
 
 
 	glEnable(GL_DEPTH_TEST);
-	const char* imgLoc = "./resources/test.jpg";
+	const char* imgLoc = "./resources/crate.png";
+	const char* imgSpecularMap = "./resources/crateSpecular.png";
 
 	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
 	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
@@ -142,7 +143,7 @@ void Graphics::SimulationSetup()
 	// Code for creating a cube //
 	cube->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	cube->CreateTextures(11, indices, vertices);
-	cube->RenderTextures(imgLoc);
+	cube->RenderTextures(imgLoc, imgSpecularMap);
 	cube->objectName = "Cube";
 	cube->ID = 0;
 	cube->SetColor(1.0f, 0.31f, 0.51f);
@@ -150,7 +151,8 @@ void Graphics::SimulationSetup()
 	
 	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(11, indices, vertices);
-	light->RenderTextures(imgLoc);
+	//Can pass nullptr if you don't have textures to apply
+	light->RenderTextures(nullptr, nullptr);
 	light->objectName = "Light";
 	light->ID = 1;
 	

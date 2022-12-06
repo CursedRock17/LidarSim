@@ -31,18 +31,16 @@ void Gizmos::GizmosInit()
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 
-	//Setup Gizmo's Material Makeuo
+	//Setup Gizmo's Material Makeup
 	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
-	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), 1, &specularShiny[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
+	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), specularShiny);
 }
 
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-        glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture0);
-    	
 	glUseProgram(shaderProgram);
 
 	// Orientation of Gizmo
@@ -145,6 +143,13 @@ glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
 
 void Gizmos::RenderContainer()
 {
+	// ** Must Render the Textures Before the Actual Object ** //
+        glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, imgMap);
+    	
+        glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
+
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
@@ -281,17 +286,15 @@ void Gizmos::GizmosCleanUp()
 }
 
 
-void Gizmos::RenderTextures(const char* imgLocation)
+void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
 {
+    	
     //Create and bind the texture
-    glGenTextures(1, &texture0);
-    glBindTexture(GL_TEXTURE_2D, texture0);
+    glActiveTexture(GL_TEXTURE0);
+    glGenTextures(1, &imgMap);
+    glBindTexture(GL_TEXTURE_2D, imgMap);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
 
     //Doing Loading from images, may have to be processed for more modularity
     int imgW, imgH, numImgColChannels;
@@ -301,19 +304,53 @@ void Gizmos::RenderTextures(const char* imgLocation)
     //glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
     if(imgData){
     	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgW, imgH, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+   	stbi_image_free(imgData); 
+    }
+    else
+    {
+	if(imgLocation)
+	    std::cout << "Failed to Load Texture" << std::endl;	
+    }
+
+    glActiveTexture(GL_TEXTURE1);
+    glGenTextures(1, &imgSpecularMap);
+    glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    imgData = stbi_load(imgSpecularLocation, &imgW, &imgH, &numImgColChannels, 0);
+
+    //Generate the image as a form of respect to perspective
+    //glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
+    if(imgData){
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgW, imgH, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
     	glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
     {
+	if(imgSpecularLocation)
 	std::cout << "Failed to Load Texture" << std::endl;	
     }
 
     stbi_image_free(imgData);
-
+    //Finsihed Freeing Images
+    
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
-    glUniform1i(glGetUniformLocation(shaderProgram, "texture0"), 0);
-   
+    //Set up Maps
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuseMap" ), 0); 
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specularMap" ), 1); 
 }
 
 
@@ -328,7 +365,7 @@ void Gizmos::BasicMove()
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 }

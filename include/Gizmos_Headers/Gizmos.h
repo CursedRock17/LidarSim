@@ -25,7 +25,7 @@ void BasicMove();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts);
-void RenderTextures(const char* imgLocation);
+void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 
 void GizmosInit();
 
@@ -74,11 +74,12 @@ glm::vec3 objectColor = glm::vec3(1.0f);
 glm::vec3 lightPosition = glm::vec3(1.0f);
 glm::vec3 viewPosition = glm::vec3(1.0f);
 
-unsigned int texture0;
+unsigned int imgMap, imgSpecularMap;
 glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 
-glm::vec3 ambientStrength = glm::vec3(0.1f);
-glm::vec3 specularStrength = glm::vec3(0.5f);
+glm::vec3 ambientStrength = glm::vec3(0.2f);
+glm::vec3 specularStrength = glm::vec3(1.0f);
+glm::vec3 diffuseStrength = glm::vec3(0.5f);
 float specularShiny = 32.0f;
 
 //Reading from other files
