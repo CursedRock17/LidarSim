@@ -28,9 +28,9 @@ void Gizmos::GizmosInit()
 
 	//After Initing the Object in 3D Space handle Color
     	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
-
+	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
+	
 	//Setup Gizmo's Material Makeup
 	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
@@ -38,13 +38,21 @@ void Gizmos::GizmosInit()
 	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), specularShiny);
 }
 
-void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
+void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, bool hasTexture)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
 	glUseProgram(shaderProgram);
 
+	//After Initing the Object in 3D Space handle Color
+    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	// Orientation of Gizmo
 	
+	if(hasTexture)
+		TexturesLoop();
+
+
 	//Have to use the &[0][0] for all Matrices
 	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
@@ -58,6 +66,29 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	/* Enable BasicMove in the loop when the features need to change every Frame */
 	//BasicMove();
 }
+
+void Gizmos::TexturesLoop()
+{
+	ambientStrength = glm::vec3(0.2f);
+	specularStrength = glm::vec3(1.0f);
+	diffuseStrength = glm::vec3(0.5f);
+	specularShiny = 64.0f;
+	
+	//Setup Gizmo's Material Makeup 
+	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
+	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
+	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), specularShiny);
+
+	// ** Must Render the Textures Before the Actual Object ** //
+        glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, imgMap);
+    	
+        glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
+
+}
+
 
 // Essential Setter Functions //
 glm::vec3 Gizmos::SetRotation(float xRotation, float yRotation, float zRotation)
@@ -143,13 +174,6 @@ glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
 
 void Gizmos::RenderContainer()
 {
-	// ** Must Render the Textures Before the Actual Object ** //
-        glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, imgMap);
-    	
-        glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
-
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
@@ -274,7 +298,11 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
 
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 }
+
 
 void Gizmos::GizmosCleanUp()
 {
@@ -288,64 +316,58 @@ void Gizmos::GizmosCleanUp()
 
 void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
 {
+	
+    // Created a lamdba function that will need to be called for each image path needed
+    auto bindImage = [this](const char* path) -> unsigned int
+    {
+
+	unsigned int tempTexture;
+	glGenTextures(1, &tempTexture);
+    
+    	//Doing Loading from images, may have to be processed for more modularity
+    	int imgW, imgH, numImgColChannels;
+    	unsigned char *imgData = stbi_load(path, &imgW, &imgH, &numImgColChannels, 0);
+
+    	//Generate the image as a form of respect to perspective
+	//glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
+    	if(imgData)
+	{
+		//Check for the way image was made
+		GLenum format;
+		if(numImgColChannels == 1)
+			format = GL_RED;
+
+		if(numImgColChannels == 3)
+			format = GL_RGB;
+		
+		if(numImgColChannels == 4)
+			format = GL_RGBA;
+	    	
+		glBindTexture(GL_TEXTURE_2D, tempTexture);
+    		glTexImage2D(GL_TEXTURE_2D, 0, format, imgW, imgH, 0, format, GL_UNSIGNED_BYTE, imgData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
+    		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
+    		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+   		stbi_image_free(imgData);
+    	}
+    	else
+    	{
+		if(path)
+	    		std::cout << "Failed to Load Texture" << std::endl;	
+    	}
+	
+	return tempTexture;
+
+    }; //End of bindImage
     	
-    //Create and bind the texture
-    glActiveTexture(GL_TEXTURE0);
-    glGenTextures(1, &imgMap);
-    glBindTexture(GL_TEXTURE_2D, imgMap);
+    //Find the textures for each image created
+    imgMap = bindImage(imgLocation);
+    imgSpecularMap = bindImage(imgSpecularLocation);
 
-    
-
-    //Doing Loading from images, may have to be processed for more modularity
-    int imgW, imgH, numImgColChannels;
-    unsigned char *imgData = stbi_load(imgLocation, &imgW, &imgH, &numImgColChannels, 0);
-
-    //Generate the image as a form of respect to perspective
-    //glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
-    if(imgData){
-    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgW, imgH, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-   	stbi_image_free(imgData); 
-    }
-    else
-    {
-	if(imgLocation)
-	    std::cout << "Failed to Load Texture" << std::endl;	
-    }
-
-    glActiveTexture(GL_TEXTURE1);
-    glGenTextures(1, &imgSpecularMap);
-    glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); //X coords
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); //Y coords
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-    imgData = stbi_load(imgSpecularLocation, &imgW, &imgH, &numImgColChannels, 0);
-
-    //Generate the image as a form of respect to perspective
-    //glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
-    if(imgData){
-    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgW, imgH, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
-    	glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-	if(imgSpecularLocation)
-	std::cout << "Failed to Load Texture" << std::endl;	
-    }
-
-    stbi_image_free(imgData);
-    //Finsihed Freeing Images
-    
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
     //Set up Maps
@@ -357,6 +379,7 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
 
 void Gizmos::BasicMove()
 {
+	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
 	model = glm::rotate(model, 0.0f, Rotation);
 	model = glm::scale(model, Scale);
@@ -365,7 +388,5 @@ void Gizmos::BasicMove()
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
+	
 }

@@ -46,7 +46,7 @@ void Graphics::zoom_callback()
 	{
 		yOffset += 0.25f;
 	}
-		cameraRef->ZoomCamera(xOffset, yOffset);
+	cameraRef->ZoomCamera(xOffset, yOffset);
 }
 
 void Graphics::RenderingInit()
@@ -149,14 +149,12 @@ void Graphics::SimulationSetup()
 	cube->SetColor(1.0f, 0.31f, 0.51f);
 	cube->SetLightPosition(1.0f, 0.0f, 0.0f);
 	
-	light->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/lightFrag.fs");
+	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(11, indices, vertices);
 	//Can pass nullptr if you don't have textures to apply
 	light->RenderTextures(nullptr, nullptr);
 	light->objectName = "Light";
 	light->ID = 1;
-	
-
 	light->SetColor(1.0f);
 	light->SetScale(0.2f);
 	light->SetTranslation(1.0f, 0.0f, 0.0f);
@@ -191,13 +189,19 @@ void Graphics::SimulationLoop()
 	//Each Objects Loop function
 	for(auto &gizmosRef : gizmosVec)
 	{
-		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
-		gizmosRef->RenderContainer();
+		if(gizmosRef->objectName != "Light")
+		{
+			gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_, true);
+		}
+		else 
+			gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_, false);
 		
 		if(gizmosRef->objectName != "Light"){
-			gizmosRef->BasicMove();
 			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
+			gizmosRef->BasicMove();
 		}
+		
+		gizmosRef->RenderContainer();
 	}
 
 	cameraRef->CameraLoop();

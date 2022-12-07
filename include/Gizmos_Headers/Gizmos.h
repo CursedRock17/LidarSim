@@ -29,7 +29,7 @@ void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 
 void GizmosInit();
 
-void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, bool hasTexture);
 void RenderContainer();
 
 unsigned int shaderProgram;
@@ -80,7 +80,9 @@ glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity
 glm::vec3 ambientStrength = glm::vec3(0.2f);
 glm::vec3 specularStrength = glm::vec3(1.0f);
 glm::vec3 diffuseStrength = glm::vec3(0.5f);
-float specularShiny = 32.0f;
+float specularShiny = 64.0f;
+
+void TexturesLoop();
 
 //Reading from other files
 std::ifstream vertexFile;

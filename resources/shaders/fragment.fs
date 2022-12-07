@@ -1,15 +1,10 @@
 #version 330 core
 
-out vec4 FragTexture;
 out vec4 FragColor;
 
-in vec2 TexCoord;
-
-in vec3 Normal;
 in vec3 FragPos;
-
-// texture samplers
-uniform sampler2D texture0;
+in vec3 Normal;
+in vec2 TexCoord;
 
 uniform vec3 lightPos;
 uniform vec3 objectColor;
@@ -34,7 +29,7 @@ void main()
 	vec3 superNormal = normalize(Normal);
 	vec3 lightDiffuse = normalize(lightPos - FragPos);
 	float diffuseDiff = max(dot(superNormal, lightDiffuse), 0.0);
-	vec3 totalDiffuse = diffuseStrength * diffuseDiff * vec3(texture(material.diffuseMap, TexCoord));
+	vec3 totalDiffuse = diffuseStrength * diffuseDiff * vec3(texture(material.diffuseMap, TexCoord).rgb);
 
 	vec3 resultantAmbient = ambientStrength * vec3(texture(material.diffuseMap, TexCoord));
 
@@ -46,8 +41,5 @@ void main()
 
 	//Calculate the color with all the different types of lighting and reflection
 	FragColor = vec4((resultantAmbient + totalDiffuse + resultantSpecular), 1.0);
-	
-	FragTexture = texture(texture0, TexCoord);
-	
 }
 
