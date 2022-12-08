@@ -31,11 +31,11 @@ void Gizmos::GizmosInit()
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
-	//Setup Gizmo's Material Makeup
+	//Setup Gizmo's Material Makeup 
 	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
-	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), specularShiny);
+	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
 }
 
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, bool hasTexture)
@@ -49,9 +49,9 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, b
 	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	// Orientation of Gizmo
 	
-	if(hasTexture)
+	if(hasTexture){
 		TexturesLoop();
-
+	}
 
 	//Have to use the &[0][0] for all Matrices
 	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
@@ -78,7 +78,7 @@ void Gizmos::TexturesLoop()
 	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
-	glUniform1f(glGetUniformLocation(shaderProgram, "specularShiny"), specularShiny);
+	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
 
 	// ** Must Render the Textures Before the Actual Object ** //
         glActiveTexture(GL_TEXTURE0);
@@ -296,11 +296,7 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(3);
 
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 }
 
 

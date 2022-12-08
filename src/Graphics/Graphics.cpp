@@ -30,9 +30,13 @@ void Graphics::mouse_callback()
 
 	glfwGetCursorPos(window, &xPos, &yPos);
 
-	if(lastXPos != xPos || lastYPos != yPos)
-		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if(lastXPos != xPos || lastYPos != yPos){
+		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
 			cameraRef->RotateCamera(static_cast<float>(xPos), static_cast<float>(yPos));
+		} else {
+			cameraRef->firstClick = true;
+		}
+	}
 }
 
 void Graphics::zoom_callback()
@@ -130,7 +134,10 @@ void Graphics::SimulationSetup()
 	}; 
 
 
+	//These functions allow 3D rendering to be resolved nicely
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	const char* imgLoc = "./resources/crate.png";
 	const char* imgSpecularMap = "./resources/crateSpecular.png";
 
@@ -147,7 +154,7 @@ void Graphics::SimulationSetup()
 	cube->objectName = "Cube";
 	cube->ID = 0;
 	cube->SetColor(1.0f, 0.31f, 0.51f);
-	cube->SetLightPosition(1.0f, 0.0f, 0.0f);
+	cube->SetLightPosition(0.5f, 1.75f, -1.0f);
 	
 	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(11, indices, vertices);
@@ -157,7 +164,7 @@ void Graphics::SimulationSetup()
 	light->ID = 1;
 	light->SetColor(1.0f);
 	light->SetScale(0.2f);
-	light->SetTranslation(1.0f, 0.0f, 0.0f);
+	light->SetTranslation(0.5f, 1.75f, -1.0f);
 
 	//Add each Gizmos Object to the vector
 	gizmosVec.emplace_back(cube);

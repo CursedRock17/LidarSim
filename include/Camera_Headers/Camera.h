@@ -42,6 +42,7 @@ glm::vec3 GetCameraPosition();
 float cameraSpeed = 2.5f;
 float FOV_ = 45.0f;
 float aspect;
+bool firstClick = true;
 
 private:
 
@@ -54,7 +55,6 @@ int screenWidth_, screenHeight_;
 const float sensitivity = 0.1f;
 float lastX;
 float lastY;
-bool firstClick = true;
 
 float yaw = -90.0f;
 float pitch = 0.0f;

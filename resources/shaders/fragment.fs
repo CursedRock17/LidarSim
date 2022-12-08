@@ -26,12 +26,14 @@ uniform MaterialMakeup material;
 
 void main()
 {
+	//Ambient
+	vec3 resultantAmbient = ambientStrength * vec3(texture(material.diffuseMap, TexCoord));
+	
+	//Diffuse
 	vec3 superNormal = normalize(Normal);
 	vec3 lightDiffuse = normalize(lightPos - FragPos);
 	float diffuseDiff = max(dot(superNormal, lightDiffuse), 0.0);
-	vec3 totalDiffuse = diffuseStrength * diffuseDiff * vec3(texture(material.diffuseMap, TexCoord).rgb);
-
-	vec3 resultantAmbient = ambientStrength * vec3(texture(material.diffuseMap, TexCoord));
+	vec3 totalDiffuse = diffuseStrength * diffuseDiff * vec3(texture(material.diffuseMap, TexCoord));
 
 	//** For the Specular lighing we can change everything the View Dimension to save resources **//
 	vec3 viewDir = normalize(viewPos - FragPos);
