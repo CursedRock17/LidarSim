@@ -312,7 +312,6 @@ void Gizmos::GizmosCleanUp()
 
 void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
 {
-	
     // Created a lamdba function that will need to be called for each image path needed
     auto bindImage = [this](const char* path) -> unsigned int
     {
@@ -368,7 +367,7 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
     glUseProgram(shaderProgram);
     //Set up Maps
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuseMap" ), 0); 
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.specularMap" ), 1); 
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specularMap" ), 1);
 }
 
 

@@ -134,10 +134,15 @@ void Graphics::SimulationSetup()
 	}; 
 
 
+	// -- All the GL Functions -- //
+
 	//These functions allow 3D rendering to be resolved nicely
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	glEnable(GL_STENCIL_TEST);
+	// -- All the GL Functions -- //
+	
 	const char* imgLoc = "./resources/crate.png";
 	const char* imgSpecularMap = "./resources/crateSpecular.png";
 
@@ -156,6 +161,18 @@ void Graphics::SimulationSetup()
 	cube->SetColor(1.0f, 0.31f, 0.51f);
 	cube->SetLightPosition(0.5f, 1.75f, -1.0f);
 	
+
+	std::shared_ptr<Gizmos> bob = std::make_shared<Gizmos>();
+	bob->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	bob->CreateTextures(11, indices, vertices);
+	bob->RenderTextures(imgLoc, imgSpecularMap);
+	bob->objectName = "Bob";
+	bob->ID = 2;
+	bob->SetColor(1.0f, 1.0f, 1.0f);
+	bob->SetLightPosition(0.5f, 1.75f, -1.0f);
+
+
+	// ***** Have to Render the Lights after all the object ********* //
 	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(11, indices, vertices);
 	//Can pass nullptr if you don't have textures to apply
@@ -166,8 +183,11 @@ void Graphics::SimulationSetup()
 	light->SetScale(0.2f);
 	light->SetTranslation(0.5f, 1.75f, -1.0f);
 
+
+
 	//Add each Gizmos Object to the vector
 	gizmosVec.emplace_back(cube);
+	gizmosVec.emplace_back(bob);
 	gizmosVec.emplace_back(light);
 
 	//Call Initialization of each Object
@@ -190,7 +210,7 @@ void Graphics::SimulationLoop()
     
     //Rendering Actions
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	
 	//Each Objects Loop function
@@ -207,6 +227,9 @@ void Graphics::SimulationLoop()
 			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 			gizmosRef->BasicMove();
 		}
+
+		if(gizmosRef->objectName == "Bob")
+			gizmosRef->SetTranslation(0.01f, 0.0f, 0.0f);
 		
 		gizmosRef->RenderContainer();
 	}
