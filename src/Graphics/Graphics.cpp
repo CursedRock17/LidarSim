@@ -83,11 +83,6 @@ void Graphics::RenderingInit()
 
 void Graphics::SimulationSetup()
 {
-	std::vector<unsigned int> indices = {
-        	0, 1, 3, //First Triangle in this case
-        	1, 2, 3  //Second Triangle
-    	};
-
 	std::vector<float> vertices = {
         //Location              Colors        Textures        Normals      
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
@@ -133,7 +128,6 @@ void Graphics::SimulationSetup()
     -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
 	}; 
 
-
 	// -- All the GL Functions -- //
 
 	//These functions allow 3D rendering to be resolved nicely
@@ -141,6 +135,10 @@ void Graphics::SimulationSetup()
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_STENCIL_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+	//Face Culling Will save resources as we don't ahve to look at some vertices
 	// -- All the GL Functions -- //
 	
 	const char* imgLoc = "./resources/crate.png";
@@ -154,17 +152,17 @@ void Graphics::SimulationSetup()
 	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
 	// Code for creating a cube //
 	cube->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	cube->CreateTextures(11, indices, vertices);
+	cube->CreateTextures(11, vertices);
 	cube->RenderTextures(imgLoc, imgSpecularMap);
 	cube->objectName = "Cube";
 	cube->ID = 0;
 	cube->SetColor(1.0f, 0.31f, 0.51f);
-	cube->SetLightPosition(0.5f, 1.75f, -1.0f);
+	cube->SetLightPosition(0.0f, 1.0f, 0.0f);
 	
 
 	std::shared_ptr<Gizmos> bob = std::make_shared<Gizmos>();
 	bob->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	bob->CreateTextures(11, indices, vertices);
+	bob->CreateTextures(11, vertices);
 	bob->RenderTextures(imgLoc, imgSpecularMap);
 	bob->objectName = "Bob";
 	bob->ID = 2;
@@ -174,7 +172,7 @@ void Graphics::SimulationSetup()
 
 	// ***** Have to Render the Lights after all the object ********* //
 	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
-	light->CreateTextures(11, indices, vertices);
+	light->CreateTextures(11, vertices);
 	//Can pass nullptr if you don't have textures to apply
 	light->RenderTextures(nullptr, nullptr);
 	light->objectName = "Light";
@@ -212,7 +210,6 @@ void Graphics::SimulationLoop()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	
 	//Each Objects Loop function
 	for(auto &gizmosRef : gizmosVec)
 	{

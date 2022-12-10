@@ -35,8 +35,8 @@ void AcceptInput(GLFWwindow* window);
 
 // Variables for OpenGL
 GLFWwindow* window;
-int windowWidth = 800;
-int windowHeight = 600;
+static constexpr int windowWidth{800};
+static constexpr int windowHeight{600};
 
 
 //Control for the Rotation
@@ -45,8 +45,8 @@ double yPos = windowHeight / 2;
 double lastXPos, lastYPos;
 
 //Control for the Zoom
-float xOffset = 45.0f;
-float yOffset = 45.0f;
+float xOffset{45.0f};
+float yOffset{45.0f};
 
 //There should only be one camera object
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();

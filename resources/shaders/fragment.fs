@@ -41,7 +41,12 @@ void main()
 	float specularLighting = pow(max(dot(viewDir, reflection), 0.0), shiny);
 	vec3 resultantSpecular = specularStrength * specularLighting * vec3(texture(material.specularMap, TexCoord));
 
+	//Calculate Alpha Values if any;
+	vec4 textureAlpha = texture(material.diffuseMap, TexCoord);
+	if(textureAlpha.a < 0.1)
+		discard;
+
 	//Calculate the color with all the different types of lighting and reflection
-	FragColor = vec4((resultantAmbient + totalDiffuse + resultantSpecular), 1.0);
+	FragColor = vec4((resultantAmbient + totalDiffuse + resultantSpecular), textureAlpha.a);
 }
 

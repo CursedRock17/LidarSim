@@ -39,25 +39,25 @@ glm::vec3 GetCameraPosition();
 
 // Camera Changes //
 
-float cameraSpeed = 2.5f;
-float FOV_ = 45.0f;
+float cameraSpeed{2.5f};
+float FOV_{45.0f};
 float aspect;
-bool firstClick = true;
+bool firstClick{true};
 
 private:
 
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
+float deltaTime{0.0f};
+float lastFrame{0.0f};
 
 int screenWidth_, screenHeight_;
 
 //Rotation Values
-const float sensitivity = 0.1f;
+const float sensitivity{0.1f};
 float lastX;
 float lastY;
 
-float yaw = -90.0f;
-float pitch = 0.0f;
+float yaw{-90.0f};
+float pitch{0.0f};
 
 // Camera Poisiton Values
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);

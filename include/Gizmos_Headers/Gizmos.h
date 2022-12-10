@@ -24,7 +24,7 @@ Gizmos();
 void BasicMove();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
-void CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts);
+void CreateTextures(int totPoint, std::vector<float> verts);
 void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 
 void GizmosInit();
@@ -57,7 +57,7 @@ int ID;
 std::string objectName;
 
 private:
-unsigned int VBO, VAO, EBO;
+unsigned int VBO, VAO;
 
 //Describing the Object to Create
 int totalVerticeArgs;

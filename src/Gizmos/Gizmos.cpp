@@ -176,8 +176,7 @@ void Gizmos::RenderContainer()
 {
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
-//	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
 }
 
 
@@ -255,7 +254,7 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
     //- - - - - - End of Shader Code - - - - - -//
 }
 
-void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std::vector<float> verts) {	
+void Gizmos::CreateTextures(int totPoints, std::vector<float> verts) {	
     //Initialize Variables needed for this gizmo
     totalVerticeShaderArgs = totPoints;
     totalVerticeArgs = verts.size() / totPoints;
@@ -263,8 +262,6 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
     //Creating the Vertex Array Object then Vertex Buffer Object, then the Element Buffer Object
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    //glGenBuffers(1, &EBO);
-
     float vertices[verts.size()];
     for(int i = 0; i < verts.size(); i++)
     {
@@ -275,10 +272,6 @@ void Gizmos::CreateTextures(int totPoints, std::vector<unsigned int> indies, std
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    //Create all the bindings for the EBO similar to VBO
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indies.data()), indies.data(), GL_STATIC_DRAW);
 
     //Set up the triangle
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)0);
@@ -305,7 +298,6 @@ void Gizmos::GizmosCleanUp()
     //When finished with the program we can delete everything
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    //glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 }
 
