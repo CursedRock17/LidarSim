@@ -56,6 +56,13 @@ glm::vec3 SetViewPos(glm::vec3 vectorPosition);
 int ID;
 std::string objectName;
 
+// Simple Example Creations
+
+void CreateCube();
+void CreatePyramid();
+
+// Simple Example Creations
+
 private:
 unsigned int VBO, VAO;
 

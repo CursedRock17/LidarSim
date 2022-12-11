@@ -83,6 +83,36 @@ void Graphics::RenderingInit()
 
 void Graphics::SimulationSetup()
 {
+
+	// -- All the GL Functions -- //
+
+	//These functions allow 3D rendering to be resolved nicely
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glEnable(GL_STENCIL_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+	
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
+
+	//Face Culling Will save resources as we don't ahve to look at some vertices
+	// -- All the GL Functions -- //
+	
+	const char* imgLoc = "./resources/crate.png";
+	const char* imgSpecularMap = "./resources/crateSpecular.png";
+
+	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
+
+	//Setting up Each object with the variables it would need
+	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
+	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
+
+	//CreateCube();
+	CreatePyramid();
+
 	std::vector<float> vertices = {
         //Location              Colors        Textures        Normals      
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
@@ -128,46 +158,18 @@ void Graphics::SimulationSetup()
     -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
 	}; 
 
-	// -- All the GL Functions -- //
 
-	//These functions allow 3D rendering to be resolved nicely
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	for(int i = 0; i < 5; i++){
+	std::shared_ptr<Gizmos> temp = std::make_shared<Gizmos>();
+	temp->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	temp->CreateTextures(11, vertices);
+	temp->RenderTextures(imgLoc, imgSpecularMap);
+	temp->objectName = "Bobbie";
+	temp->ID = i + 2;
+	temp->SetTranslation(0.2f, 1.0f, 0.0f);
+//	gizmosVec.emplace_back(temp);
+	}
 
-	glEnable(GL_STENCIL_TEST);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-	//Face Culling Will save resources as we don't ahve to look at some vertices
-	// -- All the GL Functions -- //
-	
-	const char* imgLoc = "./resources/crate.png";
-	const char* imgSpecularMap = "./resources/crateSpecular.png";
-
-	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
-	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
-
-	//Setting up Each object with the variables it would need
-	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
-	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
-	// Code for creating a cube //
-	cube->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	cube->CreateTextures(11, vertices);
-	cube->RenderTextures(imgLoc, imgSpecularMap);
-	cube->objectName = "Cube";
-	cube->ID = 0;
-	cube->SetColor(1.0f, 0.31f, 0.51f);
-	cube->SetLightPosition(0.0f, 1.0f, 0.0f);
-	
-
-	std::shared_ptr<Gizmos> bob = std::make_shared<Gizmos>();
-	bob->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	bob->CreateTextures(11, vertices);
-	bob->RenderTextures(imgLoc, imgSpecularMap);
-	bob->objectName = "Bob";
-	bob->ID = 2;
-	bob->SetColor(1.0f, 1.0f, 1.0f);
-	bob->SetLightPosition(0.5f, 1.75f, -1.0f);
 
 
 	// ***** Have to Render the Lights after all the object ********* //
@@ -184,8 +186,6 @@ void Graphics::SimulationSetup()
 
 
 	//Add each Gizmos Object to the vector
-	gizmosVec.emplace_back(cube);
-	gizmosVec.emplace_back(bob);
 	gizmosVec.emplace_back(light);
 
 	//Call Initialization of each Object
@@ -209,6 +209,7 @@ void Graphics::SimulationLoop()
     //Rendering Actions
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 
 	//Each Objects Loop function
 	for(auto &gizmosRef : gizmosVec)
@@ -282,5 +283,26 @@ void Graphics::AcceptInput(GLFWwindow* window)
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	cameraRef->MoveRight();
 }
+
+//Simple Object Creation Functions
+void Graphics::CreateCube()
+{
+	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
+	cube->CreateCube();
+
+	gizmosVec.emplace_back(cube);
+}
+
+
+void Graphics::CreatePyramid()
+{
+	//Same Logic to the Cube
+	std::shared_ptr<Gizmos> pyramid = std::make_shared<Gizmos>();
+	pyramid->CreatePyramid();
+
+	gizmosVec.emplace_back(pyramid);
+}
+
+//Simple Object Creation Functions
 
 /* Additional OpenGL funcitons */

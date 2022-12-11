@@ -25,6 +25,13 @@ void SimulationLoop();
 void mouse_callback();
 void zoom_callback();
 
+// Simple Object Creation Functions
+
+void CreateCube();
+void CreatePyramid();
+
+// Simple Object Creation Functions
+
 private:
 void RenderingInit();
 void RenderingEnd();
@@ -54,6 +61,9 @@ std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 //Should be able to have any number of Objects
 //std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();
 std::vector<std::shared_ptr<Gizmos>> gizmosVec;
+
+
+
 
 };
 
