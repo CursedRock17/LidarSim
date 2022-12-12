@@ -13,6 +13,7 @@
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"
 #include "../Camera_Headers/Camera.h"
+#include "../Graphics_Headers/UI.h"
 
 class Graphics {
 public:
@@ -57,6 +58,7 @@ float yOffset{45.0f};
 
 //There should only be one camera object
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
+std::shared_ptr<UI> uiRef; 
 
 //Should be able to have any number of Objects
 //std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();

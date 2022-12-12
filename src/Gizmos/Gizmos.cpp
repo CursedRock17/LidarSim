@@ -313,6 +313,10 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
     
     	//Doing Loading from images, may have to be processed for more modularity
     	int imgW, imgH, numImgColChannels;
+
+	//Make Sure Image Runs Top Down
+	stbi_set_flip_vertically_on_load(true);
+
     	unsigned char *imgData = stbi_load(path, &imgW, &imgH, &numImgColChannels, 0);
 
     	//Generate the image as a form of respect to perspective
@@ -371,7 +375,7 @@ void Gizmos::BasicMove()
 	model = glm::rotate(model, 0.0f, Rotation);
 	model = glm::scale(model, Scale);
 
-	//For the spinning use (float)glfwGetTime();
+	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -469,13 +473,10 @@ void Gizmos::CreatePyramid()
      0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
 	};
 
-	const char* imgLoc = "./resources/crate.png";
-	const char* imgSpecularMap = "./resources/crateSpecular.png";
-
 	// Just a Basic Pyramid Doesn't Need Extra Shaders Right Now
 	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(11, pyramidVertices);
-	RenderTextures(imgLoc, imgSpecularMap);
+	RenderTextures(nullptr, nullptr);
 	objectName = "Pyramid";
 	ID = 0;
 	SetColor(1.0f, 0.31f, 0.51f);

@@ -1,4 +1,5 @@
 #include "../../include/Graphics_Headers/Graphics.h"
+
 //Outer Libraries //
 #include <filesystem>
 #include <vector>
@@ -79,6 +80,10 @@ void Graphics::RenderingInit()
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "Couldn't Init Glad" << std::endl;
     }
+
+    //After the Window is Created we need to allow access to our UI Menu
+    uiRef = std::make_shared<UI>(window, windowHeight, windowWidth);
+    uiRef->SetupMenu();
 }
 
 void Graphics::SimulationSetup()
@@ -210,6 +215,8 @@ void Graphics::SimulationLoop()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    //Update the Menu Layer
+    uiRef->MenuLoop();
 
 	//Each Objects Loop function
 	for(auto &gizmosRef : gizmosVec)
@@ -226,9 +233,6 @@ void Graphics::SimulationLoop()
 			gizmosRef->BasicMove();
 		}
 
-		if(gizmosRef->objectName == "Bob")
-			gizmosRef->SetTranslation(0.01f, 0.0f, 0.0f);
-		
 		gizmosRef->RenderContainer();
 	}
 

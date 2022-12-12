@@ -1,5 +1,5 @@
 {
     "name" : "lidarsim",
-    "dependencies" : [ "glad", "opengl", "glfw3", "glm"],
+    "dependencies" : [ "glad", "opengl", "glfw3", "glm", "imgui" ],
     "version" : "1.0" 
 }
