@@ -11,6 +11,37 @@ UI::~UI()
 	DestroyMenu();
 }
 
+
+void UI::mouse_callback()
+{
+	xPos = _windowWidth / 2;
+	yPos = _windowHeight / 2;
+
+	lastXPos = xPos;
+	lastYPos = yPos;
+
+	glfwGetCursorPos(_window, &xPos, &yPos);
+
+	if(lastXPos != xPos || lastYPos != yPos){
+		if(glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+		}
+	}
+}
+
+void UI::zoom_callback()
+{		
+	if(glfwGetKey(_window, GLFW_KEY_I) == GLFW_PRESS)
+	{
+		yOffset -= 0.25f;
+	}
+
+	if(glfwGetKey(_window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		yOffset += 0.25f;
+	}
+}
+
+
 void UI::SetupMenu()
 {
 	//Create Some Settings with the Menu and Setup the Context
@@ -28,8 +59,8 @@ void UI::SetupMenu()
 
 	// Flag Settings that User Can Set
     // NonUserSet settings:
-        io->BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
-        io->BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
+        io->ConfigFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
+        io->ConfigFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
 
     // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
         io->KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
@@ -55,7 +86,6 @@ void UI::SetupMenu()
         io->KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
         io->KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
-
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -63,7 +93,6 @@ void UI::MenuLoop()
 {
 
 	io = &ImGui::GetIO();
-	io->DisplaySize = ImVec2((float)_windowWidth, (float)_windowHeight);
 	
 	//Find a Difference in Time
 	float time = (float)glfwGetTime();
@@ -71,13 +100,45 @@ void UI::MenuLoop()
 	lastTime = time;
 	
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui::NewFrame();
 	
-	static bool show = true;
-	ImGui::ShowDemoWindow(&show);
+	int tempW, tempH;
+	int displayW, displayH;
+	//Get Information About the Window to set up the menu correctly
+	glfwGetWindowSize(_window, &tempW, &tempH);
+	glfwGetFramebufferSize(_window, &displayW, &displayH);
+	io->DisplaySize = ImVec2((float)tempW, (float)tempH);
+	
+	if(tempW > 0 && tempH > 0)
+		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
+	
+	ImGui::NewFrame();
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//Set the position for the bottom bar in relation to screen size
+	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - 50.0f));
+	
+	static bool show{true};
+	//Creation of our own window always starts with Begin()
+	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
+
+	ImGui::Text("Hello World!");
+	ImGui::Text("Going to Need Space for all our objects and stuff");
+
+	ImGui::End();
+	//Creation of our own window always ends with End()
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	mouse_callback();
+	zoom_callback();
+
+}
+
+
+
+void UI::MenuEventHandler()
+{
+
 }
 
 void UI::DestroyMenu()

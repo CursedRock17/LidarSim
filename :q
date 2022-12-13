@@ -211,9 +211,10 @@ void Graphics::SimulationLoop()
 
     while(!glfwWindowShouldClose(window))
     {
+    // Input
+    AcceptInput(window);
     
     //Rendering Actions
-    glfwPollEvents();
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -237,6 +238,7 @@ void Graphics::SimulationLoop()
 	}
 
 	cameraRef->CameraLoop();
+
 	//Each Objects Loop function
         
     	//Update the Menu Layer
@@ -244,10 +246,8 @@ void Graphics::SimulationLoop()
 	
 	// Check Buffers of Data
         glfwSwapBuffers(window);
+        glfwPollEvents();
 
-    	// Input
-    	AcceptInput(window);
-	
 	//Had to Create my Own Callback to check cursor and scroll positions
 	mouse_callback();
 	zoom_callback();

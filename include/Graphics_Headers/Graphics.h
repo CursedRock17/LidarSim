@@ -46,7 +46,6 @@ GLFWwindow* window;
 static constexpr int windowWidth{800};
 static constexpr int windowHeight{600};
 
-
 //Control for the Rotation
 double xPos = windowWidth / 2;
 double yPos = windowHeight / 2;
@@ -61,10 +60,7 @@ std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 std::shared_ptr<UI> uiRef; 
 
 //Should be able to have any number of Objects
-//std::shared_ptr<Gizmos> gizmosRef = std::make_shared<Gizmos>();
 std::vector<std::shared_ptr<Gizmos>> gizmosVec;
-
-
 
 
 };
