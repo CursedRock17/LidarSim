@@ -1,17 +1,22 @@
 #ifndef UI_H
 #define UI_H
 
+#include <iostream>
+#include <vector>
+#include <memory>
+
 #include "imgui.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
+#include "../../include/Gizmos_Headers/Gizmos.h"
 
 class UI 
 {
 public:
-UI(GLFWwindow* window, int windowHeight, int windowWidth);
+UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
 void SetupMenu();
@@ -42,6 +47,8 @@ float yOffset{45.0f};
 
 // Our Main Context for the Menu
 ImGuiIO *io;
+std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
+
 
 //Extra Flags
 bool darkMode{true};

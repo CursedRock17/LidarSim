@@ -26,6 +26,8 @@ Camera_Headers
 Gizmos
 Gizmos_Headers
 
+Application_Headers
+Application
 
 glad::glad
 glfw

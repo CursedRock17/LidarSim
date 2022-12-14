@@ -1,8 +1,7 @@
 #include "../../include/Graphics_Headers/UI.h"
-#include <iostream>
 
-UI::UI(GLFWwindow* window, int windowHeight, int windowWidth) : _window(window), _windowHeight(windowHeight), _windowWidth(windowWidth)
-{
+UI::UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowHeight(windowHeight), _windowWidth(windowWidth), _gizmosVec(gizmosVec)
+{ 
 
 }
 

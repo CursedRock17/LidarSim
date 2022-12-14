@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <vector>
 
-Graphics::Graphics()
+Graphics::Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowWidth(windowWidth), _windowHeight(windowHeight), _gizmosVec(gizmosVec)
 {
     RenderingInit();
 }
@@ -14,25 +14,19 @@ Graphics::~Graphics()
     RenderingEnd();
 }
 
-//Allow resizing of window on every frame
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-    { 
-        glViewport(0, 0, width, height);
-    }
-
 
 void Graphics::mouse_callback()
 {
-	xPos = windowWidth / 2;
-	yPos = windowHeight / 2;
+	xPos = _windowWidth / 2;
+	yPos = _windowHeight / 2;
 
 	lastXPos = xPos;
 	lastYPos = yPos;
 
-	glfwGetCursorPos(window, &xPos, &yPos);
+	glfwGetCursorPos(_window, &xPos, &yPos);
 
 	if(lastXPos != xPos || lastYPos != yPos){
-		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+		if(glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
 			cameraRef->RotateCamera(static_cast<float>(xPos), static_cast<float>(yPos));
 		} else {
 			cameraRef->firstClick = true;
@@ -42,12 +36,12 @@ void Graphics::mouse_callback()
 
 void Graphics::zoom_callback()
 {		
-	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+	if(glfwGetKey(_window, GLFW_KEY_I) == GLFW_PRESS)
 	{
 		yOffset -= 0.25f;
 	}
 
-	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	if(glfwGetKey(_window, GLFW_KEY_O) == GLFW_PRESS)
 	{
 		yOffset += 0.25f;
 	}
@@ -56,34 +50,10 @@ void Graphics::zoom_callback()
 
 void Graphics::RenderingInit()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+}
 
-    #ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-
-    //Create the window with all the preattached settings
-    window = glfwCreateWindow(windowWidth, windowHeight, "LidarSim" , nullptr, nullptr);
-    if(!window)
-    {
-        std::cout << "Failed to Create a Window" << std::endl;
-        glfwTerminate();
-    }
-
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, &framebuffer_size_callback);
-
-    //Need to initalize all glad features before opengl features
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        std::cout << "Couldn't Init Glad" << std::endl;
-    }
-
-    //After the Window is Created we need to allow access to our UI Menu
-    uiRef = std::make_shared<UI>(window, windowHeight, windowWidth);
-    uiRef->SetupMenu();
+void Graphics::RenderingEnd()
+{
 }
 
 void Graphics::SimulationSetup()
@@ -172,7 +142,7 @@ void Graphics::SimulationSetup()
 	temp->objectName = "Bobbie";
 	temp->ID = i + 2;
 	temp->SetTranslation(0.2f, 1.0f, 0.0f);
-	//gizmosVec.emplace_back(temp);
+	//_gizmosVec.emplace_back(temp);
 	}
 
 
@@ -191,35 +161,29 @@ void Graphics::SimulationSetup()
 
 
 	//Add each Gizmos Object to the vector
-	gizmosVec.emplace_back(light);
+	_gizmosVec.emplace_back(light);
 
 	//Call Initialization of each Object
-	for(auto &gizmos : gizmosVec)
+	for(auto &gizmos : _gizmosVec)
 	{
 		gizmos->GizmosInit();
 	}
 		
 	//Setting up the Camera
-	cameraRef->createView(windowWidth, windowHeight, 45.0f);
+	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 }
 
 void Graphics::SimulationLoop()
 {
-    //Create the infinite Loop that will run the window
+    //Create the infinite Loop that will run the _window
   
     // In this loop rendering order is extremely important going to need to add Layers in application
-
-    while(!glfwWindowShouldClose(window))
-    {
-    
     //Rendering Actions
-    glfwPollEvents();
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
 	//Each Objects Loop function
-	for(auto &gizmosRef : gizmosVec)
+	for(auto &gizmosRef : _gizmosVec)
 	{
 		if(gizmosRef->objectName != "Light")
 		{
@@ -239,56 +203,48 @@ void Graphics::SimulationLoop()
 	cameraRef->CameraLoop();
 	//Each Objects Loop function
         
-    	//Update the Menu Layer
-    	uiRef->MenuLoop();
-	
 	// Check Buffers of Data
-        glfwSwapBuffers(window);
+        //glfwSwapBuffers(_window);
 
     	// Input
-    	AcceptInput(window);
+    	AcceptInput();
 	
 	//Had to Create my Own Callback to check cursor and scroll positions
 	mouse_callback();
 	zoom_callback();
-    }
 }
 
-void Graphics::RenderingEnd()
-{
-    glfwTerminate();
-}
 
 /* Additional OpenGL funcitons */
 //Getting input from the user, this is how we can interact with the screen
-void Graphics::AcceptInput(GLFWwindow* window)
+void Graphics::AcceptInput()
 {
 	
     // --- Follow this format anytime a key action needs to be recorded --- //
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(_window, true);
 
     // Deal with Camera Settings such as Zoom and Camera Position
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if(glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS){
+	if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		cameraRef->MoveUp();
 	else
 		cameraRef->MoveForward();
     }
 	
 
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-	    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if(glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS){
+	    if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		    cameraRef->MoveDown();
 	    else 
 		    cameraRef->MoveBackward();
 
     }
 
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    if(glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	cameraRef->MoveLeft();
 
-    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if(glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	cameraRef->MoveRight();
 }
 
@@ -298,7 +254,7 @@ void Graphics::CreateCube()
 	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
 	cube->CreateCube();
 
-	gizmosVec.emplace_back(cube);
+	_gizmosVec.emplace_back(cube);
 }
 
 
@@ -308,7 +264,7 @@ void Graphics::CreatePyramid()
 	std::shared_ptr<Gizmos> pyramid = std::make_shared<Gizmos>();
 	pyramid->CreatePyramid();
 
-	gizmosVec.emplace_back(pyramid);
+	_gizmosVec.emplace_back(pyramid);
 }
 
 //Simple Object Creation Functions

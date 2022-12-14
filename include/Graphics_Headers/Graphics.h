@@ -4,20 +4,20 @@
 // Rendering Libraries //
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+// Rendering Libraries //
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <memory>
-// Rendering Libraries //
 
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"
 #include "../Camera_Headers/Camera.h"
-#include "../Graphics_Headers/UI.h"
 
 class Graphics {
 public:
-Graphics();
+Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~Graphics();
 
 void SimulationSetup();
@@ -38,17 +38,17 @@ void RenderingInit();
 void RenderingEnd();
 
 /* Additional OpenGL funcitons */
-void AcceptInput(GLFWwindow* window);
+void AcceptInput();
 /* Additional OpenGL funcitons */
 
 // Variables for OpenGL
-GLFWwindow* window;
-static constexpr int windowWidth{800};
-static constexpr int windowHeight{600};
+GLFWwindow* _window;
+int _windowWidth{800};
+int _windowHeight{600};
 
 //Control for the Rotation
-double xPos = windowWidth / 2;
-double yPos = windowHeight / 2;
+double xPos = _windowWidth / 2;
+double yPos = _windowHeight / 2;
 double lastXPos, lastYPos;
 
 //Control for the Zoom
@@ -57,11 +57,9 @@ float yOffset{45.0f};
 
 //There should only be one camera object
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
-std::shared_ptr<UI> uiRef; 
 
 //Should be able to have any number of Objects
-std::vector<std::shared_ptr<Gizmos>> gizmosVec;
-
+std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 
 };
 

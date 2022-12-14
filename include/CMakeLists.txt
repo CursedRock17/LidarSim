@@ -1,3 +1,4 @@
 add_subdirectory(Graphics_Headers)
 add_subdirectory(Camera_Headers)
+add_subdirectory(Application_Headers)
 add_subdirectory(Gizmos_Headers)
