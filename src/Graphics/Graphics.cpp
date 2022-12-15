@@ -1,8 +1,5 @@
 #include "../../include/Graphics_Headers/Graphics.h"
 
-//Outer Libraries //
-#include <filesystem>
-#include <vector>
 
 Graphics::Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowWidth(windowWidth), _windowHeight(windowHeight), _gizmosVec(gizmosVec)
 {

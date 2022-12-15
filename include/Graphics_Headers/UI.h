@@ -12,6 +12,7 @@
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
+#include "./ImGuiInput.h"
 
 class UI 
 {
@@ -52,7 +53,6 @@ std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 
 //Extra Flags
 bool darkMode{true};
-
 
 void DestroyMenu();
 };

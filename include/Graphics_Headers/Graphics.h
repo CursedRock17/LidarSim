@@ -6,10 +6,14 @@
 #include <GLFW/glfw3.h>
 // Rendering Libraries //
 
+//Outer Libraries //
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <filesystem>
+#include <vector>
+
 
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"

@@ -1,4 +1,4 @@
-add_library(Graphics_Headers INTERFACE Graphics.h UI.h Imgui_OpenGL3_Impl.h)
+add_library(Graphics_Headers INTERFACE Graphics.h UI.h Imgui_OpenGL3_Impl.h ImGuiInput.h)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

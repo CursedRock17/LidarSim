@@ -80,8 +80,8 @@ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     //Each Objects Loop function
     
     //Update the Menu Layer
-    UiRef->MenuLoop();
     GraphicsRef->SimulationLoop();
+    UiRef->MenuLoop();
     
     // Check Buffers of Data
     glfwSwapBuffers(window);
