@@ -30,12 +30,17 @@ void UI::zoom_callback()
 }
 
 
-void UI::SetupMenu()
+void UI::SetupMenu(std::shared_ptr<Graphics> GraphicsRef)
 {
 	//Create Some Settings with the Menu and Setup the Context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	
+
+	io = &ImGui::GetIO();
+	//io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	//io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 	ImGui_Input_Setup(_window);
 
 	// Flag Settings that User Can Set
@@ -45,11 +50,12 @@ void UI::SetupMenu()
 		ImGui::StyleColorsLight();
 
 	// Flag Settings that User Can Set
+//	GraphicsRef->SimulationSetup();
 
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void UI::MenuLoop()
+void UI::MenuLoop(std::shared_ptr<Graphics> GraphicsRef)
 {
 
 	io = &ImGui::GetIO();
@@ -77,21 +83,43 @@ void UI::MenuLoop()
 	ImGui::NewFrame();
 
 	//Set the position and size for the bottom bar in relation to screen size
-	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 4)));
-	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW/2), (float)(tempH / 2)));
-	
-	//Creation of our own window always starts with Begin()
+	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 8)));
+	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 8)), (float)(tempH / 2.0f)));
+
+	//Set the position and size for the sidebar
+	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 8)), 0.0f));
+	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 2.0f, (float)tempH));
+
+
+	//Create the Scene window at the origin and take up the rest of the space
+	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
+	ImGui::SetWindowSize("Main scene", ImVec2(float(tempW - (tempW / 8)), (float)tempH - (tempH / 8)));
+
 	static bool show{true};
+
+//	GraphicsRef->SimulationLoop();
+
+	//Creation of our own window always starts with Begin()
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
 	//With the bottom dockable bar we want access to things such as the Gizmos and Imports
-	int val;
 
 	ImGui::Text("Hello World!");
 	ImGui::Text("Going to Need Space for all our objects and stuff");
-	ImGui::InputInt("Bob",&val );
 
 	ImGui::End();
 	//Creation of our own window always ends with End()
+
+	//Creation of Sidebar
+	ImGui::Begin("Side bar", &show, io->ConfigFlags);
+
+	ImGui::End();
+	//End of Sidebar
+	
+	//Get the remaining space of the screen and fill it with the scene
+	ImGui::Begin("Main scene", &show, io->ConfigFlags);
+
+	ImGui::End();
+
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

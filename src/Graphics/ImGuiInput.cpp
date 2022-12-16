@@ -1,6 +1,7 @@
 #include "../../include/Graphics_Headers/ImGuiInput.h"
 #include <iostream>
 
+
 //Creation of Callback Identifiers
 GLFWmousebuttonfun mouse_button_fun = nullptr;
 GLFWcharfun char_fun = nullptr;
@@ -10,7 +11,8 @@ GLFWcursorposfun cursor_pos_fun = nullptr;
 
 //Have to create this context in order to utilize imgui
 ImGuiIO* io;
-
+double cursorX{400.0f};
+double cursorY{300.0f};
 
 //Callback Functions
 void ImGui_Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -33,19 +35,53 @@ void ImGui_Key_Callback(GLFWwindow* window, int key, int scancode, int action, i
 
 void ImGui_Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 {
-	
+	io = &ImGui::GetIO();
+
+	if(action == GLFW_PRESS){
+		io->MouseDown[button] = true;
+	}
+	if(action == GLFW_RELEASE){
+		io->MouseDown[button] = false;
+	}
 }
 
 
 void ImGui_Cursor_Pos_Callback(GLFWwindow* window, double xpos, double ypos)
 {
-
+	cursorX = xpos;
+	cursorY = ypos;
 }
 
 void ImGui_Char_Callback(GLFWwindow* window, unsigned int codepoint)
 {
 	io = &ImGui::GetIO();
 	io->AddInputCharacter(codepoint);
+}
+
+//Update Functions
+void Update_Mouse_Details(GLFWwindow* window)
+{
+	io = &ImGui::GetIO();
+	//Update Position and Buttons
+	io->MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	const bool focused = glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0;
+
+	if(focused)
+	{
+		double mouse_x, mouse_y;
+		glfwGetCursorPos(window, &mouse_x, &mouse_y);
+		io->MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+
+	}
+
+}
+
+void Update_Mouse_Cursor(GLFWwindow* window)
+{
+	io = &ImGui::GetIO();
+
+	ImGuiMouseCursor mouse_cursor = ImGui::GetMouseCursor();
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 //Creation Functions
@@ -95,5 +131,8 @@ void ImGui_Input_Setup(GLFWwindow* window)
 void ImGui_Input_Loop(GLFWwindow* window)
 {
 	io = &ImGui::GetIO();
+
+	Update_Mouse_Details(window);
+	Update_Mouse_Cursor(window);
 
 }

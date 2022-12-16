@@ -11,6 +11,7 @@
 #include <GLFW/glfw3.h>
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
+#include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
 #include "./ImGuiInput.h"
 
@@ -20,8 +21,8 @@ public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
-void SetupMenu();
-void MenuLoop();
+void SetupMenu(std::shared_ptr<Graphics> GraphicsRef);
+void MenuLoop(std::shared_ptr<Graphics> GraphicsRef);
 
 void MenuEventHandler();
 
@@ -49,7 +50,6 @@ float yOffset{45.0f};
 // Our Main Context for the Menu
 ImGuiIO *io;
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
-
 
 //Extra Flags
 bool darkMode{true};

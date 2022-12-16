@@ -200,9 +200,6 @@ void Graphics::SimulationLoop()
 	cameraRef->CameraLoop();
 	//Each Objects Loop function
         
-	// Check Buffers of Data
-        //glfwSwapBuffers(_window);
-
     	// Input
     	AcceptInput();
 	

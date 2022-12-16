@@ -8,6 +8,10 @@ void ImGui_Mouse_Button_Callback(GLFWwindow* window, int button, int action, int
 void ImGui_Cursor_Pos_Callback(GLFWwindow* window, double xpos, double ypos);
 void ImGui_Char_Callback(GLFWwindow* window, unsigned int codepoint);
 
+//Update Functions
+void Update_Mouse_Details(GLFWwindow* window);
+void Update_Mouse_Cursor(GLFWwindow* window);
+
 //Creation Functions
 void ImGui_Input_Setup(GLFWwindow* window);
 void ImGui_Input_Loop(GLFWwindow* window);
