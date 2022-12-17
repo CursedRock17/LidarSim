@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
-#include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
 #include "./ImGuiInput.h"
 
@@ -21,8 +20,8 @@ public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
-void SetupMenu(std::shared_ptr<Graphics> GraphicsRef);
-void MenuLoop(std::shared_ptr<Graphics> GraphicsRef);
+void SetupMenu();
+void MenuLoop();
 
 void MenuEventHandler();
 

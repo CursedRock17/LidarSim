@@ -30,7 +30,7 @@ void UI::zoom_callback()
 }
 
 
-void UI::SetupMenu(std::shared_ptr<Graphics> GraphicsRef)
+void UI::SetupMenu()
 {
 	//Create Some Settings with the Menu and Setup the Context
 	IMGUI_CHECKVERSION();
@@ -50,12 +50,11 @@ void UI::SetupMenu(std::shared_ptr<Graphics> GraphicsRef)
 		ImGui::StyleColorsLight();
 
 	// Flag Settings that User Can Set
-//	GraphicsRef->SimulationSetup();
 
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void UI::MenuLoop(std::shared_ptr<Graphics> GraphicsRef)
+void UI::MenuLoop()
 {
 
 	io = &ImGui::GetIO();
@@ -97,8 +96,6 @@ void UI::MenuLoop(std::shared_ptr<Graphics> GraphicsRef)
 
 	static bool show{true};
 
-//	GraphicsRef->SimulationLoop();
-
 	//Creation of our own window always starts with Begin()
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
 	//With the bottom dockable bar we want access to things such as the Gizmos and Imports
@@ -118,7 +115,12 @@ void UI::MenuLoop(std::shared_ptr<Graphics> GraphicsRef)
 	//Get the remaining space of the screen and fill it with the scene
 	ImGui::Begin("Main scene", &show, io->ConfigFlags);
 
+
 	ImGui::End();
+
+	ImGui::BeginChild("Bob", ImVec2(800.0f, 600.0f));
+
+	ImGui::EndChild();
 
 
         ImGui::Render();

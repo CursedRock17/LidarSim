@@ -50,8 +50,8 @@ void Application::ApplicationLoad()
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos);
 	UiRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
 
-	//GraphicsRef->SimulationSetup();
-	UiRef->SetupMenu(GraphicsRef);	
+	GraphicsRef->SimulationSetup();
+	UiRef->SetupMenu();	
 
     // SETUP OTHER OBJECTS
 
@@ -80,8 +80,8 @@ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     //Each Objects Loop function
     
     //Update the Menu Layer
-    //GraphicsRef->SimulationLoop();
-    UiRef->MenuLoop(GraphicsRef);
+    GraphicsRef->SimulationLoop();
+    UiRef->MenuLoop();
     
     // Check Buffers of Data
     glfwSwapBuffers(window);

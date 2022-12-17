@@ -9,11 +9,12 @@
 // Rendering Libraries //
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+// Rendering Libraries //
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
-// Rendering Libraries //
 
 class Gizmos
 {	
@@ -64,7 +65,7 @@ void CreatePyramid();
 // Simple Example Creations
 
 private:
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, FBO;
 
 //Describing the Object to Create
 int totalVerticeArgs;
