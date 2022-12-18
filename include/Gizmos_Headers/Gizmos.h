@@ -26,7 +26,7 @@ void BasicMove();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
-void RenderTextures(const char* imgLocation, const char* specularMapLocation);
+void RenderTextures(const char* imgLocation, const char* specularMapLocation, bool TransformTexture = false);
 
 void GizmosInit();
 
@@ -65,7 +65,11 @@ void CreatePyramid();
 // Simple Example Creations
 
 private:
-unsigned int VBO, VAO, FBO;
+unsigned int VBO, VAO;
+
+//If we need to transform a texture into an image use this stuff
+void TransformToTexture(int imageH, int imageW, unsigned int renderedTexture);
+unsigned int FBO, DBO, RTO;
 
 //Describing the Object to Create
 int totalVerticeArgs;

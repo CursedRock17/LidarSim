@@ -118,10 +118,6 @@ void UI::MenuLoop()
 
 	ImGui::End();
 
-	ImGui::BeginChild("Bob", ImVec2(800.0f, 600.0f));
-
-	ImGui::EndChild();
-
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

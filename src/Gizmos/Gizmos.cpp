@@ -302,10 +302,10 @@ void Gizmos::GizmosCleanUp()
 }
 
 
-void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
+void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation, bool TransformTexture)
 {
     // Created a lamdba function that will need to be called for each image path needed
-    auto bindImage = [this](const char* path) -> unsigned int
+    auto bindImage = [this](const char* path, bool transformTexture) -> unsigned int
     {
 
 	unsigned int tempTexture;
@@ -350,14 +350,20 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
 		if(path)
 	    		std::cout << "Failed to Load Texture" << std::endl;	
     	}
-	
+
+	//If we are working with the ImGui scene specifically, then we need to transform this object into a texture
+//	if(transformTexture)
+	//	TransformToTexture(imgH, imgW, tempTexture);
+
 	return tempTexture;
 
     }; //End of bindImage
     	
     //Find the textures for each image created
-    imgMap = bindImage(imgLocation);
-    imgSpecularMap = bindImage(imgSpecularLocation);
+    imgMap = bindImage(imgLocation, TransformTexture);
+    imgSpecularMap = bindImage(imgSpecularLocation, TransformTexture);
+
+    //TransformToTexture(768, 1024, false);
 
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
@@ -381,6 +387,56 @@ void Gizmos::BasicMove()
 
 	
 }
+
+void Gizmos::BindFramebuffer()
+{
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+}
+
+
+void Gizmos::UnbindFramebuffer()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Gizmos:FramebufferTexture(int imageH, int imageW)
+{
+	// This function will allow use to take our gizmos and convert it to a texture through the framebuffef
+
+
+	//Create a New Texture to Showcase
+	glGenTextures(1, &RTO);
+	glBindTexture(GL_TEXTURE_2D, RTO);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	//Set up the actual temperary texture in the RenderTextures Function
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
+
+	//Create Depth Testing within the texture
+	glGenRenderbuffers(1, &DBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, imageW, imageH);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, DBO);
+	
+
+	//Set the list of draw buffers
+	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(RTO, drawBuffers);
+
+	//Error Check - See if the framebuffer works
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
+	
+
+}
+
 
 // Simple Example Functions
 
@@ -476,7 +532,7 @@ void Gizmos::CreatePyramid()
 	// Just a Basic Pyramid Doesn't Need Extra Shaders Right Now
 	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(11, pyramidVertices);
-	RenderTextures(nullptr, nullptr);
+	RenderTextures("./resources/crate.png", "./resources/crateSpecular.png", true);
 	objectName = "Pyramid";
 	ID = 0;
 	SetColor(1.0f, 0.31f, 0.51f);
