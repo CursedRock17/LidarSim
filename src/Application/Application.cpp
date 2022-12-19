@@ -46,7 +46,7 @@ void Application::ApplicationLoad()
     }
 
     // SETUP OTHER OBJECTS
-    // This may change to layers depending on how this goes, but we can pass the window as part of their constructors
+    // Must give each object access to the window and all of the gizmos that will be applied within each scene
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos);
 	UiRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
 
@@ -71,24 +71,35 @@ void Application::ApplicationLoop()
 
 while(!glfwWindowShouldClose(window))
 {
+	//Rendering Actions
+	glfwPollEvents();
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-//Rendering Actions
-glfwPollEvents();
-glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	//At the start of each iteration of the loop we need to make sure the Application's Gizmos are at their maximum update and each object updates 
+	//To have their Gizmos at max update, because we used vectors which have allocators, we can't pass them as pointers so we have to update
+	//Application Gizmos with the only thing that can change them
+	
+	ApplicationGizmos = GraphicsRef->GetApplicationGizmos();
+
+	GraphicsRef->SetApplicationGizmos(ApplicationGizmos);
+	UiRef->SetApplicationGizmos(ApplicationGizmos);
 
     //Each Objects Loop function
     
+
     //Update the Menu Layer
     GraphicsRef->SimulationLoop();
     UiRef->MenuLoop();
-    
+
+	std::cout << ApplicationGizmos.size() << std::endl;
+
     // Check Buffers of Data
     glfwSwapBuffers(window);
 
     // Input
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+	glfwSetWindowShouldClose(window, true);
 
 } // End of While Loop
 

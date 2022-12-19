@@ -16,6 +16,29 @@
 #include <sstream>
 #include <vector>
 
+// Start of Framebuffer Class
+
+class Framebuffer {
+public:
+
+Framebuffer();
+~Framebuffer();
+
+void FramebufferTexture(int imageH, int imageW);
+void BindFramebuffer();
+void UnbindFramebuffer();
+
+unsigned int GetFramebufferTexture();
+
+private:
+//If we need to transform a texture into an image use this stuff
+unsigned int RTO, FBO, DBO;
+
+};
+
+// End of Framebuffer Class
+
+
 class Gizmos
 {	
 public:
@@ -64,12 +87,11 @@ void CreatePyramid();
 
 // Simple Example Creations
 
+std::unique_ptr<Framebuffer> _framebuffer = std::make_unique<Framebuffer>();
+
 private:
 unsigned int VBO, VAO;
 
-//If we need to transform a texture into an image use this stuff
-void TransformToTexture(int imageH, int imageW, unsigned int renderedTexture);
-unsigned int FBO, DBO, RTO;
 
 //Describing the Object to Create
 int totalVerticeArgs;
@@ -104,5 +126,11 @@ std::string fragmentBuffer;
 
 void GizmosCleanUp();
 };
+
+// End of Gizmo Class
+//
+
+
+
 
 #endif

@@ -1,6 +1,5 @@
 #include "../../include/Graphics_Headers/Graphics.h"
 
-
 Graphics::Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowWidth(windowWidth), _windowHeight(windowHeight), _gizmosVec(gizmosVec)
 {
     RenderingInit();
@@ -178,7 +177,6 @@ void Graphics::SimulationLoop()
     //Rendering Actions
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-
 	//Each Objects Loop function
 	for(auto &gizmosRef : _gizmosVec)
 	{
@@ -195,6 +193,12 @@ void Graphics::SimulationLoop()
 		}
 
 		gizmosRef->RenderContainer();
+	
+		//Deal with Each Gizmo's Framebuffer
+		gizmosRef->_framebuffer->BindFramebuffer();
+    		gizmosRef->_framebuffer->FramebufferTexture(384, 512);
+    		gizmosRef->_framebuffer->UnbindFramebuffer();
+
 	}
 
 	cameraRef->CameraLoop();

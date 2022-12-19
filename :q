@@ -120,8 +120,8 @@ void UI::MenuLoop()
 	for(auto const gizmo : _gizmosVec)  
 	{	
 		//For each gizmos we need to turn it into a texture thats rendered by the image
-		//std::cout << gizmo->_framebuffer->GetFramebufferTexture() << std::endl;
-		unsigned int currentTexture = 0;//gizmo->_framebuffer->GetFramebufferTexture();
+		std::cout << gizmo->_framebuffer->GetFramebufferTexture() << std::endl;
+		unsigned int currentTexture = gizmo->GetFramebufferTexture();
 		ImGui::Image((void*)currentTexture, ImVec2(50.0f, 50.0f));
 	}
 

@@ -37,6 +37,11 @@ void CreatePyramid();
 
 // Simple Object Creation Functions
 
+//Need a public list of Gizmos Because we only change them here and the Application needs access to all of them
+std::vector<std::shared_ptr<Gizmos>> SetApplicationGizmos();
+void GetApplicationGizmos(std::vector<std::shared_ptr<Gizmos>> _gizmosVec);
+
+
 private:
 void RenderingInit();
 void RenderingEnd();
@@ -62,9 +67,9 @@ float yOffset{45.0f};
 //There should only be one camera object
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 
-//Should be able to have any number of Objects
+//List of all the Gizmos we are able to change
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
-
 };
+
 
 #endif

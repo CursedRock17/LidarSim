@@ -388,55 +388,6 @@ void Gizmos::BasicMove()
 	
 }
 
-void Gizmos::BindFramebuffer()
-{
-	glGenFramebuffers(1, &FBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-}
-
-
-void Gizmos::UnbindFramebuffer()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Gizmos:FramebufferTexture(int imageH, int imageW)
-{
-	// This function will allow use to take our gizmos and convert it to a texture through the framebuffef
-
-
-	//Create a New Texture to Showcase
-	glGenTextures(1, &RTO);
-	glBindTexture(GL_TEXTURE_2D, RTO);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	//Set up the actual temperary texture in the RenderTextures Function
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
-
-	//Create Depth Testing within the texture
-	glGenRenderbuffers(1, &DBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, imageW, imageH);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, DBO);
-	
-
-	//Set the list of draw buffers
-	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-	glDrawBuffers(RTO, drawBuffers);
-
-	//Error Check - See if the framebuffer works
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
-	
-
-}
-
 
 // Simple Example Functions
 
@@ -541,3 +492,61 @@ void Gizmos::CreatePyramid()
 
 
 // Simple Example Functions
+
+// Framebuffer Class
+Framebuffer::Framebuffer(){}
+Framebuffer::~Framebuffer(){}
+
+
+void Framebuffer::BindFramebuffer()
+{
+	//Set up the Framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+}
+
+
+void Framebuffer::UnbindFramebuffer()
+{
+	//Can Remove Everything From inside Framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::FramebufferTexture(int imageH, int imageW)
+{
+	// This function will allow use to take our gizmos and convert it to a texture through the framebuffef
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	//Create a New Texture to Showcase
+	glGenTextures(1, &RTO);
+	glBindTexture(GL_TEXTURE_2D, RTO);
+
+	//Turn our Rendered Object into our Rendered Texture (RTO)
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	//Set up the actual temperary texture in the RenderTextures Function
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
+
+	//Create Depth Testing within the texture
+	glGenRenderbuffers(1, &DBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, imageW, imageH);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, DBO);
+	
+	//Set the list of draw buffers
+	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(RTO, drawBuffers);
+
+	//Error Check - See if the framebuffer works
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
+	
+
+}
+
+// End of Framebuffer Class
