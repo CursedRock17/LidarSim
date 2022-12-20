@@ -53,8 +53,9 @@ void Application::ApplicationLoad()
 	GraphicsRef->SimulationSetup();
 	UiRef->SetupMenu();	
 
-    // SETUP OTHER OBJECTS
+	mFrame.FramebufferTexture(768, 1024);
 
+    // SETUP OTHER OBJECTS
 }
 
 void Application::ApplicationClose()
@@ -71,8 +72,9 @@ void Application::ApplicationLoop()
 
 while(!glfwWindowShouldClose(window))
 {
+	mFrame.BindFramebuffer();
+
 	//Rendering Actions
-	glfwPollEvents();
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -80,26 +82,37 @@ while(!glfwWindowShouldClose(window))
 	//To have their Gizmos at max update, because we used vectors which have allocators, we can't pass them as pointers so we have to update
 	//Application Gizmos with the only thing that can change them
 	
-	ApplicationGizmos = GraphicsRef->GetApplicationGizmos();
+	ApplicationGizmos = GraphicsRef->GetGizmosVec();
 
-	GraphicsRef->SetApplicationGizmos(ApplicationGizmos);
-	UiRef->SetApplicationGizmos(ApplicationGizmos);
+	GraphicsRef->SetGizmosVec(ApplicationGizmos);
+	UiRef->SetGizmosVec(ApplicationGizmos);
 
-    //Each Objects Loop function
+    	//Each Objects Loop function
     
 
-    //Update the Menu Layer
-    GraphicsRef->SimulationLoop();
-    UiRef->MenuLoop();
+    	//Update the Menu Layer
+    	GraphicsRef->SimulationLoop();
+	UiRef->MenuLoop();
 
-	std::cout << ApplicationGizmos.size() << std::endl;
+	//Once we have access to the scene we can remove the Framebuffer
+    	mFrame.UnbindFramebuffer();
 
-    // Check Buffers of Data
-    glfwSwapBuffers(window);
+	//After we have unbound the framebuffer to hold onto the objects we ccan render them
+	GraphicsRef->RefreshGizmos();
 
-    // Input
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	glfwSetWindowShouldClose(window, true);
+	UiRef->SetRenderedTexture(mFrame.GetFramebufferTexture());
+
+	//Once we have updated the framebuffer we can reset the screen
+	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    	// Check Buffers of Data
+    	glfwSwapBuffers(window);
+	glfwPollEvents();
+    	
+	// Input
+    	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 
 } // End of While Loop
 

@@ -89,10 +89,13 @@ void UI::MenuLoop()
 	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 8)), 0.0f));
 	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 2.0f, (float)tempH));
 
-
 	//Create the Scene window at the origin and take up the rest of the space
+	
+	float sceneWidth = float(tempW - (tempW / 8));
+	float sceneHeight = float(tempH - (tempH / 8));
+	
 	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
-	ImGui::SetWindowSize("Main scene", ImVec2(float(tempW - (tempW / 8)), (float)tempH - (tempH / 8)));
+	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
 
 	static bool show{true};
 
@@ -115,15 +118,7 @@ void UI::MenuLoop()
 	//Get the remaining space of the screen and fill it with the scene
 	ImGui::Begin("Main scene", &show, io->ConfigFlags);
 
-	std::cout << _gizmosVec.size() << std::endl;
-
-	for(auto const gizmo : _gizmosVec)  
-	{	
-		//For each gizmos we need to turn it into a texture thats rendered by the image
-		//std::cout << gizmo->_framebuffer->GetFramebufferTexture() << std::endl;
-		unsigned int currentTexture = 0;//gizmo->_framebuffer->GetFramebufferTexture();
-		ImGui::Image((void*)currentTexture, ImVec2(50.0f, 50.0f));
-	}
+	ImGui::Image((void*)RTO , ImVec2(sceneWidth - 10.0f, sceneHeight - 10.0f));
 
 	ImGui::End();
 
@@ -147,3 +142,16 @@ void UI::DestroyMenu()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
 }
+
+
+void UI::SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec)
+{
+	//Use this function to update the _gizmosVec every single frame
+	_gizmosVec = gizmosVec;
+}
+
+void UI::SetRenderedTexture(unsigned int _RTO)
+{
+	RTO = _RTO;
+}
+

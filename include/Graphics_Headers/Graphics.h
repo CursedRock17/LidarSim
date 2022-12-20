@@ -37,9 +37,11 @@ void CreatePyramid();
 
 // Simple Object Creation Functions
 
+void RefreshGizmos();
+
 //Need a public list of Gizmos Because we only change them here and the Application needs access to all of them
-std::vector<std::shared_ptr<Gizmos>> SetApplicationGizmos();
-void GetApplicationGizmos(std::vector<std::shared_ptr<Gizmos>> _gizmosVec);
+std::vector<std::shared_ptr<Gizmos>> GetGizmosVec();
+void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 
 
 private:

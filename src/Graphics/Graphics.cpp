@@ -175,8 +175,7 @@ void Graphics::SimulationLoop()
   
     // In this loop rendering order is extremely important going to need to add Layers in application
     //Rendering Actions
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+    
 	//Each Objects Loop function
 	for(auto &gizmosRef : _gizmosVec)
 	{
@@ -191,14 +190,6 @@ void Graphics::SimulationLoop()
 			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 			gizmosRef->BasicMove();
 		}
-
-		gizmosRef->RenderContainer();
-	
-		//Deal with Each Gizmo's Framebuffer
-		gizmosRef->_framebuffer->BindFramebuffer();
-    		gizmosRef->_framebuffer->FramebufferTexture(384, 512);
-    		gizmosRef->_framebuffer->UnbindFramebuffer();
-
 	}
 
 	cameraRef->CameraLoop();
@@ -212,6 +203,17 @@ void Graphics::SimulationLoop()
 	zoom_callback();
 }
 
+void Graphics::RefreshGizmos()
+{
+	//Use This as a loop in order to render all of the vertices of each object 
+
+	for(auto &gizmosRef : _gizmosVec)
+	{
+		gizmosRef->RenderContainer();
+	}
+
+
+}
 
 /* Additional OpenGL funcitons */
 //Getting input from the user, this is how we can interact with the screen
@@ -266,5 +268,17 @@ void Graphics::CreatePyramid()
 }
 
 //Simple Object Creation Functions
+
+std::vector<std::shared_ptr<Gizmos>> Graphics::GetGizmosVec()
+{
+	//Simple Getter Function to refresh every frame for the main application
+	return _gizmosVec;
+}
+
+void Graphics::SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec)
+{
+	//Simple Setter Function
+	_gizmosVec = gizmosVec;
+}
 
 /* Additional OpenGL funcitons */

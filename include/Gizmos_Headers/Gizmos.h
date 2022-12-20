@@ -49,7 +49,7 @@ void BasicMove();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
-void RenderTextures(const char* imgLocation, const char* specularMapLocation, bool TransformTexture = false);
+void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 
 void GizmosInit();
 
@@ -86,9 +86,6 @@ void CreateCube();
 void CreatePyramid();
 
 // Simple Example Creations
-
-std::unique_ptr<Framebuffer> _framebuffer = std::make_unique<Framebuffer>();
-
 private:
 unsigned int VBO, VAO;
 

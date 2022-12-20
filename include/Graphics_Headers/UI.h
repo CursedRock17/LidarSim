@@ -25,6 +25,9 @@ void MenuLoop();
 
 void MenuEventHandler();
 
+void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
+void SetRenderedTexture(unsigned int _RTO);
+
 private:
 
 void mouse_callback();
@@ -49,6 +52,8 @@ float yOffset{45.0f};
 // Our Main Context for the Menu
 ImGuiIO *io;
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
+unsigned int RTO;
+
 
 //Extra Flags
 bool darkMode{true};

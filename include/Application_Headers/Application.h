@@ -33,6 +33,8 @@ private:
 
 	std::shared_ptr<Graphics> GraphicsRef;
 	std::shared_ptr<UI> UiRef;
+	
+	Framebuffer mFrame;
 };
 
 #endif
