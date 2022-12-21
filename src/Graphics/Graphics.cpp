@@ -152,7 +152,7 @@ void Graphics::SimulationSetup()
 	light->ID = 1;
 	light->SetColor(1.0f);
 	light->SetScale(0.2f);
-	light->SetTranslation(0.5f, 1.75f, -1.0f);
+	light->SetTranslation(0.0f, 0.0f, -1.0f);
 
 
 
@@ -194,7 +194,7 @@ void Graphics::SimulationLoop()
 
 	cameraRef->CameraLoop();
 	//Each Objects Loop function
-        
+
     	// Input
     	AcceptInput();
 	

@@ -380,8 +380,6 @@ void Gizmos::BasicMove()
 	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	
 }
 
 
@@ -484,6 +482,7 @@ void Gizmos::CreatePyramid()
 	ID = 0;
 	SetColor(1.0f, 0.31f, 0.51f);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
+	SetTranslation(1.0f, 1.0f, 1.0f);
 }
 
 
@@ -521,9 +520,6 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	//Set up the actual temperary texture in the RenderTextures Function
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D ,RTO, 0);
@@ -546,11 +542,11 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	//Set up the actual temperary texture in the RenderTextures Function
 	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,RTO, 0);
 	
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
+	//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
 	
 	//Set the list of draw buffers
-	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-	glDrawBuffers(RTO, drawBuffers);
+	//GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+	//glDrawBuffers(RTO, drawBuffers);
 
 	//Error Check - See if the framebuffer works
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -559,6 +555,9 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
 	
 	UnbindFramebuffer();
+
+	// Draw as a wireframe
+	// glPolygonmode
 
 }
 
