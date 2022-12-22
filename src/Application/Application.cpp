@@ -54,7 +54,7 @@ void Application::ApplicationLoad()
 	UiRef->SetupMenu();	
 
 	mFrame.FramebufferTexture(768, 1024);
-
+	mFrame.UnbindFramebuffer();
     // SETUP OTHER OBJECTS
 }
 
@@ -72,39 +72,35 @@ void Application::ApplicationLoop()
 
 while(!glfwWindowShouldClose(window))
 {
-
+	auto clearScreen = [](){
+		//Rendering Actions
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	};
+		
 	//At the start of each iteration of the loop we need to make sure the Application's Gizmos are at their maximum update and each object updates 
 	//To have their Gizmos at max update, because we used vectors which have allocators, we can't pass them as pointers so we have to update
 	//Application Gizmos with the only thing that can change them
-	
 	ApplicationGizmos = GraphicsRef->GetGizmosVec();
-
-	GraphicsRef->SetGizmosVec(ApplicationGizmos);
 	UiRef->SetGizmosVec(ApplicationGizmos);
     
 	//After We update the application gizmos we can begin the rendering process
 
-	//glEnable(GL_DEPTH_TEST);
-
-	//Rendering Actions
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    	
-	mFrame.BindFramebuffer();
+	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well
+	mFrame.BindFramebuffer(UiRef->sceneWidth, UiRef->sceneHeight);
+    	clearScreen();
 
 	//Update the Engine Layer
     	GraphicsRef->SimulationLoop();
-
-	//Once we have access to the scene we can remove the Framebuffer
-	
-	
-	//Once we have updated the framebuffer we can reset the screen
-	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//After we have unbound the framebuffer to hold onto the objects we ccan render them
 	GraphicsRef->RefreshGizmos();
+	
+	//Once we have access to the scene we can remove the Framebuffer
+	mFrame.UnbindFramebuffer();
+	glDisable(GL_DEPTH_TEST);
+	//Once we have updated the framebuffer we can reset the screen
+	clearScreen();
 
-    	mFrame.UnbindFramebuffer();
+	//After we have unbound the framebuffer to hold onto the objects we ccan render them
 	
 	//Set Up the Menu with all the necessary info and begin it's loop
 	UiRef->SetRenderedTexture(mFrame.GetFramebufferTexture());

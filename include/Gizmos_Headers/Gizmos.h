@@ -25,7 +25,7 @@ Framebuffer();
 ~Framebuffer();
 
 void FramebufferTexture(int imageH, int imageW);
-void BindFramebuffer();
+void BindFramebuffer(int windowWidth, int windowHeight);
 void UnbindFramebuffer();
 
 unsigned int GetFramebufferTexture();

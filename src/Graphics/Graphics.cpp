@@ -81,9 +81,6 @@ void Graphics::SimulationSetup()
 	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
 	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
 
-	//CreateCube();
-	CreatePyramid();
-
 	std::vector<float> vertices = {
         //Location              Colors        Textures        Normals      
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
@@ -130,19 +127,6 @@ void Graphics::SimulationSetup()
 	}; 
 
 
-	for(int i = 0; i < 5; i++){
-	std::shared_ptr<Gizmos> temp = std::make_shared<Gizmos>();
-	temp->CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	temp->CreateTextures(11, vertices);
-	temp->RenderTextures(imgLoc, imgSpecularMap);
-	temp->objectName = "Bobbie";
-	temp->ID = i + 2;
-	temp->SetTranslation(0.2f, 1.0f, 0.0f);
-	//_gizmosVec.emplace_back(temp);
-	}
-
-
-
 	// ***** Have to Render the Lights after all the object ********* //
 	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	light->CreateTextures(11, vertices);
@@ -152,12 +136,11 @@ void Graphics::SimulationSetup()
 	light->ID = 1;
 	light->SetColor(1.0f);
 	light->SetScale(0.2f);
-	light->SetTranslation(0.0f, 0.0f, -1.0f);
-
-
+	light->SetTranslation(1.0f, 1.0f, -1.0f);
 
 	//Add each Gizmos Object to the vector
 	_gizmosVec.emplace_back(light);
+	CreateCube();
 
 	//Call Initialization of each Object
 	for(auto &gizmos : _gizmosVec)
@@ -174,8 +157,6 @@ void Graphics::SimulationLoop()
     //Create the infinite Loop that will run the _window
   
     // In this loop rendering order is extremely important going to need to add Layers in application
-    //Rendering Actions
-    
 	//Each Objects Loop function
 	for(auto &gizmosRef : _gizmosVec)
 	{

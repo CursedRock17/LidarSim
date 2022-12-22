@@ -89,6 +89,13 @@ void Gizmos::TexturesLoop()
 
 }
 
+void Gizmos::RenderContainer()
+{
+	//Finish rendering the entire shape
+        glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
+}
+
 
 // Essential Setter Functions //
 glm::vec3 Gizmos::SetRotation(float xRotation, float yRotation, float zRotation)
@@ -172,13 +179,6 @@ glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
 	return viewPosition;
 }
 
-void Gizmos::RenderContainer()
-{
-	//Finish rendering the entire shape
-        glBindVertexArray(VAO);
-	//glBindTexture(GL_TEXTURE_2D);
-	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
-}
 
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
@@ -474,15 +474,13 @@ void Gizmos::CreatePyramid()
      0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
 	};
 
-	// Just a Basic Pyramid Doesn't Need Extra Shaders Right Now
 	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(11, pyramidVertices);
-	RenderTextures("./resources/crate.png", "./resources/crateSpecular.png");
+	RenderTextures(nullptr, nullptr);
 	objectName = "Pyramid";
 	ID = 0;
 	SetColor(1.0f, 0.31f, 0.51f);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
-	SetTranslation(1.0f, 1.0f, 1.0f);
 }
 
 
@@ -490,13 +488,18 @@ void Gizmos::CreatePyramid()
 
 // Framebuffer Class
 Framebuffer::Framebuffer(){}
-Framebuffer::~Framebuffer(){}
+Framebuffer::~Framebuffer()
+{
+	glDeleteFramebuffers(1, &FBO);
+}
 
 
-void Framebuffer::BindFramebuffer()
+void Framebuffer::BindFramebuffer(int windowWidth, int windowHeight)
 {
 	//Set up the Framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	//Need to Recall GLViewport because screen size changed
+	glViewport(0, 0, 1000, 768);
 }
 
 
@@ -520,40 +523,21 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//Set up the actual temperary texture in the RenderTextures Function
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D ,RTO, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTO, 0);
 
 	//Create Depth Testing within the texture
 	glGenRenderbuffers(1, &DBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, imageW, imageH);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, DBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageW, imageH);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DBO);
 	
-	//glCreateTextures(GL_TEXTURE_2D, 1, &DBO);
-	//glBindTexture(GL_TEXTURE_2D, DBO);
-	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, imageW, imageH);
-    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	//Set up the actual temperary texture in the RenderTextures Function
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,RTO, 0);
-	
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
-	
-	//Set the list of draw buffers
-	//GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-	//glDrawBuffers(RTO, drawBuffers);
-
 	//Error Check - See if the framebuffer works
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
 
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, RTO, 0);
-	
 	UnbindFramebuffer();
 
 	// Draw as a wireframe

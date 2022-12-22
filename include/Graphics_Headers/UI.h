@@ -28,6 +28,9 @@ void MenuEventHandler();
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 void SetRenderedTexture(unsigned int _RTO);
 
+float sceneWidth;
+float sceneHeight;
+
 private:
 
 void mouse_callback();

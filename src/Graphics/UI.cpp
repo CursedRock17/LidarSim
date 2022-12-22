@@ -37,9 +37,6 @@ void UI::SetupMenu()
 	ImGui::CreateContext();
 
 	io = &ImGui::GetIO();
-	//io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	//io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui_Input_Setup(_window);
 
@@ -91,8 +88,9 @@ void UI::MenuLoop()
 
 	//Create the Scene window at the origin and take up the rest of the space
 	
-	float sceneWidth = float(tempW - (tempW / 8));
-	float sceneHeight = float(tempH - (tempH / 8));
+	sceneWidth = float(tempW - (tempW / 8));
+	sceneHeight = float(tempH - (tempH / 8));
+
 	
 	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
 	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
@@ -118,7 +116,7 @@ void UI::MenuLoop()
 	//Get the remaining space of the screen and fill it with the scene
 	ImGui::Begin("Main scene", &show, io->ConfigFlags);
 
-	ImGui::Image((void*)RTO , ImVec2(sceneWidth - 10.0f, sceneHeight - 10.0f));
+	ImGui::Image((void*)RTO , ImVec2(sceneWidth - 10.0f, sceneHeight - 35.0f));
 
 	ImGui::End();
 
