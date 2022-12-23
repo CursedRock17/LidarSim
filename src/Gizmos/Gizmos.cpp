@@ -91,9 +91,16 @@ void Gizmos::TexturesLoop()
 
 void Gizmos::RenderContainer()
 {
+        //Make sure to actually render the model in this 3D space
+	unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
+
+
+
 }
 
 
@@ -442,7 +449,6 @@ void Gizmos::CreateCube()
 	ID = 0;
 	SetColor(1.0f, 0.31f, 0.51f);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
-	
 }
 
 void Gizmos::CreatePyramid()

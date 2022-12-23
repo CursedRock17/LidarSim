@@ -171,6 +171,7 @@ void Graphics::SimulationLoop()
 			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 			gizmosRef->BasicMove();
 		}
+		gizmosRef->RenderContainer();
 	}
 
 	cameraRef->CameraLoop();

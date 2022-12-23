@@ -79,17 +79,17 @@ void UI::MenuLoop()
 	ImGui::NewFrame();
 
 	//Set the position and size for the bottom bar in relation to screen size
-	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 8)));
-	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 8)), (float)(tempH / 2.0f)));
+	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 6)));
+	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 6)), (float)(tempH / 2.0f)));
 
 	//Set the position and size for the sidebar
-	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 8)), 0.0f));
+	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 6)), 0.0f));
 	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 2.0f, (float)tempH));
 
 	//Create the Scene window at the origin and take up the rest of the space
 	
-	sceneWidth = float(tempW - (tempW / 8));
-	sceneHeight = float(tempH - (tempH / 8));
+	sceneWidth = float(tempW - (tempW / 6));
+	sceneHeight = float(tempH - (tempH / 6));
 
 	
 	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
