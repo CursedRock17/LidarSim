@@ -500,12 +500,12 @@ Framebuffer::~Framebuffer()
 }
 
 
-void Framebuffer::BindFramebuffer(int windowWidth, int windowHeight)
+void Framebuffer::BindFramebuffer()
 {
 	//Set up the Framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-	//Need to Recall GLViewport because screen size changed
-	glViewport(0, 0, 1000, 768);
+	//Need to Recall GLvewport because screen size changed
+	glViewport(0, 0, 1024, 800);
 }
 
 

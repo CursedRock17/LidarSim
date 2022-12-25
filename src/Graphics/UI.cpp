@@ -11,22 +11,15 @@ UI::~UI()
 }
 
 
-void UI::mouse_callback()
+void UI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-
+	if(ImGui::IsKeyPressed(ImGuiKey_A) == true){
+		std::cout << "Key: " << std::endl;
+	}
 }
 
-void UI::zoom_callback()
+void UI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {		
-	if(glfwGetKey(_window, GLFW_KEY_I) == GLFW_PRESS)
-	{
-		yOffset -= 0.25f;
-	}
-
-	if(glfwGetKey(_window, GLFW_KEY_O) == GLFW_PRESS)
-	{
-		yOffset += 0.25f;
-	}
 }
 
 
@@ -37,7 +30,9 @@ void UI::SetupMenu()
 	ImGui::CreateContext();
 
 	io = &ImGui::GetIO();
-
+	//Setup Flags so that we can more easily customize our imgui menu
+	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
+	
 	ImGui_Input_Setup(_window);
 
 	// Flag Settings that User Can Set
@@ -51,13 +46,13 @@ void UI::SetupMenu()
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void UI::MenuLoop()
+void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 {
-
+	// ^^ Passing GraphicsRef because we need a reference to the Graphics in order to deal with input but we have to change features within that object instead of being able to create a copy
 	io = &ImGui::GetIO();
 	
 	//Find a Difference in Time
-	float time = (float)glfwGetTime();
+	time = (float)glfwGetTime();
 	io->DeltaTime = time - lastTime;
 	lastTime = time;
 
@@ -66,8 +61,6 @@ void UI::MenuLoop()
 	//Handle the Input for ImGui which runs loops of callbacks
 	ImGui_Input_Loop(_window);
 
-	int tempW, tempH;
-	int displayW, displayH;
 	//Get Information About the Window to set up the menu correctly
 	glfwGetWindowSize(_window, &tempW, &tempH);
 	glfwGetFramebufferSize(_window, &displayW, &displayH);
@@ -91,10 +84,6 @@ void UI::MenuLoop()
 	sceneWidth = float(tempW - (tempW / 6));
 	sceneHeight = float(tempH - (tempH / 6));
 
-	
-	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
-	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
-
 	static bool show{true};
 
 	//Creation of our own window always starts with Begin()
@@ -110,22 +99,20 @@ void UI::MenuLoop()
 	//Creation of Sidebar
 	ImGui::Begin("Side bar", &show, io->ConfigFlags);
 
+
+	char buffer;
+
+	ImGui::InputText("Texty", &buffer, 256);
+
 	ImGui::End();
 	//End of Sidebar
-
-	//Get the remaining space of the screen and fill it with the scene
-	ImGui::Begin("Main scene", &show, io->ConfigFlags);
-
-	ImGui::Image((void*)RTO , ImVec2(sceneWidth - 10.0f, sceneHeight - 35.0f));
-
-	ImGui::End();
-
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	mouse_callback();
-	zoom_callback();
+
+	mouse_callback(_GraphicsRef);
+	zoom_callback(_GraphicsRef);
 
 }
 
@@ -152,4 +139,118 @@ void UI::SetRenderedTexture(unsigned int _RTO)
 {
 	RTO = _RTO;
 }
+
+
+
+
+// ******** Polymorphed Class : SceneUI ********** //
+
+SceneUI::SceneUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : UI(window, windowHeight, windowWidth, gizmosVec)
+{ 
+}
+
+SceneUI::~SceneUI()
+{
+	DestroyMenu();
+}
+
+void SceneUI::SetupMenu()
+{
+	//Create Some Settings with the Menu and Setup the Context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	io = &ImGui::GetIO();
+	//Setup Flags so that we can more easily customize our imgui menu
+	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
+	
+	ImGui_Input_Setup(_window);
+
+	// Flag Settings that User Can Set
+	if(darkMode)
+		ImGui::StyleColorsDark();
+	else
+		ImGui::StyleColorsLight();
+
+	// Flag Settings that User Can Set
+
+	ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+void SceneUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
+{
+	//This Code Will Mimic the basics of the Regular UI then transform our scene
+	io = &ImGui::GetIO();
+	
+	//Find a Difference in Time
+	time = (float)glfwGetTime();
+	io->DeltaTime = time - lastTime;
+	lastTime = time;
+
+	ImGui_ImplOpenGL3_NewFrame();
+
+	//Handle the Input for ImGui which runs loops of callbacks
+	ImGui_Input_Loop(_window);
+
+	//Get Information About the Window to set up the menu correctly
+	glfwGetWindowSize(_window, &tempW, &tempH);
+	glfwGetFramebufferSize(_window, &displayW, &displayH);
+	io->DisplaySize = ImVec2((float)tempW, (float)tempH);
+	
+	if(tempW > 0 && tempH > 0)
+		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
+	
+	ImGui::NewFrame();
+
+
+	//Setup scene sizing
+	sceneWidth = float(tempW - (tempW / 6));
+	sceneHeight = float(tempH - (tempH / 6));
+	
+	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
+	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
+
+	//Has to be included in here
+	static bool show{true};
+
+	//Creation of our own window always starts with Begin()
+
+	//Get the remaining space of the screen and fill it with the scene
+	ImGui::Begin("Main scene", &show, io->ConfigFlags);
+
+	ImGui::Image((void*)RTO, ImVec2(sceneWidth - 10.0f, sceneHeight - 35.0f));
+
+	ImGui::End();
+	//Creation of our own window always ends with End()
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	mouse_callback(_GraphicsRef);
+	zoom_callback(_GraphicsRef);
+
+}
+
+void SceneUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
+{
+	ImVec2 mouse_pos = ImGui::GetCursorScreenPos();
+	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse
+	_GraphicsRef->RotateCam(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y), true);
+
+
+}
+
+void SceneUI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)
+{
+//	if(io->WantCaptureKeyboard){
+		if(ImGui::IsKeyPressed(ImGuiKey_I)){
+			_GraphicsRef->ZoomCam(true);	
+		}
+		else if(ImGui::IsKeyPressed(ImGuiKey_O)){
+			_GraphicsRef->ZoomCam(false);
+		}
+//	}	
+}
+// ******** Polymorphed Class : SceneUI ********** //
+
 

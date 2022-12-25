@@ -11,6 +11,7 @@
 #include <GLFW/glfw3.h>
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
+#include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
 #include "./ImGuiInput.h"
 
@@ -20,8 +21,8 @@ public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
-void SetupMenu();
-void MenuLoop();
+virtual void SetupMenu();
+virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
 
 void MenuEventHandler();
 
@@ -31,16 +32,16 @@ void SetRenderedTexture(unsigned int _RTO);
 float sceneWidth;
 float sceneHeight;
 
-private:
 
-void mouse_callback();
-void zoom_callback();
+virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
+virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
 
 // GLFW Window Settings
 GLFWwindow* _window;
 int _windowHeight;
 int _windowWidth;
 
+float time{0.0f};
 float lastTime{0.0f};
 
 //Control for the Rotation
@@ -52,16 +53,33 @@ double lastXPos, lastYPos;
 float xOffset{45.0f};
 float yOffset{45.0f};
 
+//Display Details
+int tempW, tempH;
+int displayW, displayH;
+
+//Extra Flags
+bool darkMode{true};
+
 // Our Main Context for the Menu
 ImGuiIO *io;
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 unsigned int RTO;
 
-
-//Extra Flags
-bool darkMode{true};
-
 void DestroyMenu();
+};
+
+class SceneUI : public UI
+{
+	public:
+	SceneUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
+	~SceneUI();
+
+	virtual void SetupMenu();
+	virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
+
+	private:
+	virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
+	virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
 };
 
 #endif

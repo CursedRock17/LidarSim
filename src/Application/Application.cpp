@@ -46,12 +46,21 @@ void Application::ApplicationLoad()
     }
 
     // SETUP OTHER OBJECTS
+
     // Must give each object access to the window and all of the gizmos that will be applied within each scene
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos);
-	UiRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
+	std::shared_ptr<UI>ControlRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
+	std::shared_ptr<SceneUI>SceneRef = std::make_shared<SceneUI>(window, windowHeight, windowWidth, ApplicationGizmos); 
+
+	ApplicationUI.emplace_back(ControlRef);
+	ApplicationUI.emplace_back(SceneRef);
 
 	GraphicsRef->SimulationSetup();
-	UiRef->SetupMenu();	
+	
+	for(auto& ui : ApplicationUI)
+	{
+		ui->SetupMenu();
+	}
 
 	mFrame.FramebufferTexture(768, 1024);
 	mFrame.UnbindFramebuffer();
@@ -82,12 +91,16 @@ while(!glfwWindowShouldClose(window))
 	//To have their Gizmos at max update, because we used vectors which have allocators, we can't pass them as pointers so we have to update
 	//Application Gizmos with the only thing that can change them
 	ApplicationGizmos = GraphicsRef->GetGizmosVec();
-	UiRef->SetGizmosVec(ApplicationGizmos);
+
+	for(auto& ui : ApplicationUI)
+	{
+	 	ui->SetGizmosVec(ApplicationGizmos);
+	}
     
 	//After We update the application gizmos we can begin the rendering process
 
 	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well
-	mFrame.BindFramebuffer(UiRef->sceneWidth, UiRef->sceneHeight);
+	mFrame.BindFramebuffer();
     	clearScreen();
 
 	//Update the Engine Layer
@@ -103,8 +116,11 @@ while(!glfwWindowShouldClose(window))
 	//After we have unbound the framebuffer to hold onto the objects we ccan render them
 	
 	//Set Up the Menu with all the necessary info and begin it's loop
-	UiRef->SetRenderedTexture(mFrame.GetFramebufferTexture());
-	UiRef->MenuLoop();
+	for(auto& ui : ApplicationUI)
+	{
+		ui->SetRenderedTexture(mFrame.GetFramebufferTexture());
+		ui->MenuLoop(GraphicsRef);
+	}
 
     	// Check Buffers of Data
     	glfwSwapBuffers(window);

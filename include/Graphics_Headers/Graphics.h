@@ -30,6 +30,8 @@ void SimulationLoop();
 void mouse_callback();
 void zoom_callback();
 
+void RotateCam(float xPosition, float yPosition, bool newClick);
+void ZoomCam(bool zoomingIn);
 // Simple Object Creation Functions
 
 void CreateCube();

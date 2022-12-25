@@ -10,6 +10,35 @@ Graphics::~Graphics()
     RenderingEnd();
 }
 
+void Graphics::RotateCam(float xPosition, float yPosition, bool newClick)
+{
+	if(newClick) {
+		cameraRef->RotateCamera(xPosition, yPosition);
+	} else {
+		cameraRef->firstClick = true;
+	}
+}
+
+void Graphics::ZoomCam(bool zoomingIn)
+{
+	if(zoomingIn)
+	{
+		yOffset -= 0.25f;
+	}
+	if(!zoomingIn)
+	{
+		yOffset += 0.25f;
+	}
+	//Simple control options to push our perspective closer or further back
+	//Now Add some restraints to how it can move
+
+	if(yOffset < 0.0f)
+		yOffset = 0.0f;
+	else if(yOffset > 45.0f)
+		yOffset = 45.0f;
+
+	cameraRef->ZoomCamera(xOffset, yOffset);
+}
 
 void Graphics::mouse_callback()
 {
@@ -28,20 +57,6 @@ void Graphics::mouse_callback()
 			cameraRef->firstClick = true;
 		}
 	}
-}
-
-void Graphics::zoom_callback()
-{		
-	if(glfwGetKey(_window, GLFW_KEY_I) == GLFW_PRESS)
-	{
-		yOffset -= 0.25f;
-	}
-
-	if(glfwGetKey(_window, GLFW_KEY_O) == GLFW_PRESS)
-	{
-		yOffset += 0.25f;
-	}
-	cameraRef->ZoomCamera(xOffset, yOffset);
 }
 
 void Graphics::RenderingInit()
@@ -178,11 +193,10 @@ void Graphics::SimulationLoop()
 	//Each Objects Loop function
 
     	// Input
-    	AcceptInput();
+    	//AcceptInput();
 	
 	//Had to Create my Own Callback to check cursor and scroll positions
-	mouse_callback();
-	zoom_callback();
+	//mouse_callback();
 }
 
 void Graphics::RefreshGizmos()
