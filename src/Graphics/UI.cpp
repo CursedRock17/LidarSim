@@ -22,6 +22,9 @@ void UI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {		
 }
 
+void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
+{
+}
 
 void UI::SetupMenu()
 {
@@ -233,11 +236,52 @@ void SceneUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 
 void SceneUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-	ImVec2 mouse_pos = ImGui::GetCursorScreenPos();
 	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse
-	_GraphicsRef->RotateCam(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y), true);
+	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
+		_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
+	} else {
+		_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
+	}
 
+}
 
+void SceneUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
+{
+    // --- Follow this format anytime a key action needs to be recorded --- //
+    // Deal with Camera Settings such as Zoom and Camera Position
+   /*
+	if(glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS){
+
+	if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		cameraRef->MoveUp();
+	else
+		cameraRef->MoveForward();
+    }
+	
+
+    if(glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS){
+	    if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		    cameraRef->MoveDown();
+	    else 
+		    cameraRef->MoveBackward();
+
+    }
+
+    if(glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	cameraRef->MoveLeft();
+
+    if(glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	cameraRef->MoveRight();
+*/
+}
+
+//Simple Object Creation Functions
+void Graphics::CreateCube()
+{
+	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
+	cube->CreateCube();
+
+	_gizmosVec.emplace_back(cube);
 }
 
 void SceneUI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)

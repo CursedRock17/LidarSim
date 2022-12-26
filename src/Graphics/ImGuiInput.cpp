@@ -1,7 +1,6 @@
 #include "../../include/Graphics_Headers/ImGuiInput.h"
 #include <iostream>
 
-
 //Creation of Callback Identifiers
 GLFWmousebuttonfun mouse_button_fun = nullptr;
 GLFWcharfun char_fun = nullptr;
@@ -37,13 +36,8 @@ void ImGui_Key_Callback(GLFWwindow* window, int key, int scancode, int action, i
 void ImGui_Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 {
 	io = &ImGui::GetIO();
-
-	if(action == GLFW_PRESS){
-		io->AddMouseButtonEvent(button, true);
-	}
-	if(action == GLFW_RELEASE){
-		io->AddMouseButtonEvent(button, false);
-	}
+	if (button >= 0 && button < ImGuiMouseButton_COUNT)
+        	io->AddMouseButtonEvent(button, action == GLFW_PRESS);
 }
 
 
@@ -64,7 +58,7 @@ void Update_Mouse_Details(GLFWwindow* window)
 {
 	io = &ImGui::GetIO();
 	//Update Position and Buttons
-	//io->MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	io->AddMousePosEvent(-FLT_MAX, -FLT_MAX);
 	const bool focused = glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0;
 
 	if(focused)

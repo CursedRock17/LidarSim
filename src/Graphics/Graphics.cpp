@@ -13,6 +13,7 @@ Graphics::~Graphics()
 void Graphics::RotateCam(float xPosition, float yPosition, bool newClick)
 {
 	if(newClick) {
+		std::cout << xPosition << " " << yPosition << std::endl;
 		cameraRef->RotateCamera(xPosition, yPosition);
 	} else {
 		cameraRef->firstClick = true;

@@ -35,6 +35,7 @@ float sceneHeight;
 
 virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
 virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
+virtual void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
 
 // GLFW Window Settings
 GLFWwindow* _window;
@@ -80,6 +81,7 @@ class SceneUI : public UI
 	private:
 	virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
 	virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
+	virtual void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
 };
 
 #endif
