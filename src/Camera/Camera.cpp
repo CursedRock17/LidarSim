@@ -18,7 +18,7 @@ void Camera::CameraLoop()
 	
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	cameraSpeed = 2.5f * deltaTime;
+	cameraSpeed = 4.0f * deltaTime;
 	
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
@@ -47,12 +47,12 @@ void Camera::MoveRight()
 
 void Camera::MoveUp()
 {
-	cameraPos += cameraUp * cameraSpeed;
+	cameraPos -= cameraUp * cameraSpeed;
 }
 
 void Camera::MoveDown()
 {
-	cameraPos -= cameraUp * cameraSpeed;
+	cameraPos += cameraUp * cameraSpeed;
 }
 
 void Camera::RotateCamera(float xPos, float yPos)

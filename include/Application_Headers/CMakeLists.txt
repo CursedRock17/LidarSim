@@ -1,4 +1,4 @@
-add_library(Application_Headers INTERFACE Application.h Layer.h)
+add_library(Application_Headers INTERFACE Application.h Layer.h Universal_Consts.h)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

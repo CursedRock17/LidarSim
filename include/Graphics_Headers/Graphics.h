@@ -14,10 +14,13 @@
 #include <filesystem>
 #include <vector>
 
+#include "../../include/Application_Headers/Universal_Consts.h"
 
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"
 #include "../Camera_Headers/Camera.h"
+
+
 
 class Graphics {
 public:
@@ -32,6 +35,7 @@ void zoom_callback();
 
 void RotateCam(float xPosition, float yPosition, bool newClick);
 void ZoomCam(bool zoomingIn);
+void MoveCamDirection(Directions dir);
 // Simple Object Creation Functions
 
 void CreateCube();

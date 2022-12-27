@@ -13,13 +13,10 @@ UI::~UI()
 
 void UI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-	if(ImGui::IsKeyPressed(ImGuiKey_A) == true){
-		std::cout << "Key: " << std::endl;
-	}
 }
 
 void UI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)
-{		
+{	
 }
 
 void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
@@ -35,7 +32,7 @@ void UI::SetupMenu()
 	io = &ImGui::GetIO();
 	//Setup Flags so that we can more easily customize our imgui menu
 	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
-	
+
 	ImGui_Input_Setup(_window);
 
 	// Flag Settings that User Can Set
@@ -102,7 +99,6 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	//Creation of Sidebar
 	ImGui::Begin("Side bar", &show, io->ConfigFlags);
 
-
 	char buffer;
 
 	ImGui::InputText("Texty", &buffer, 256);
@@ -116,7 +112,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 
 	mouse_callback(_GraphicsRef);
 	zoom_callback(_GraphicsRef);
-
+	
 }
 
 
@@ -154,7 +150,7 @@ SceneUI::SceneUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vec
 
 SceneUI::~SceneUI()
 {
-	DestroyMenu();
+	//Default Constructor Here because we already make a copy of a UI which deletes itself
 }
 
 void SceneUI::SetupMenu()
@@ -165,7 +161,7 @@ void SceneUI::SetupMenu()
 
 	io = &ImGui::GetIO();
 	//Setup Flags so that we can more easily customize our imgui menu
-	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
+	//io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
 	
 	ImGui_Input_Setup(_window);
 
@@ -202,19 +198,20 @@ void SceneUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	
 	if(tempW > 0 && tempH > 0)
 		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
+
 	
-	ImGui::NewFrame();
-
-
 	//Setup scene sizing
 	sceneWidth = float(tempW - (tempW / 6));
 	sceneHeight = float(tempH - (tempH / 6));
 	
-	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
-	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
-
 	//Has to be included in here
 	static bool show{true};
+
+	//Begin the Creation of a window which encases frame in NewFrame and Render
+	ImGui::NewFrame();
+
+	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
+	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
 
 	//Creation of our own window always starts with Begin()
 
@@ -227,73 +224,83 @@ void SceneUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	//Creation of our own window always ends with End()
 
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+	accept_input(_GraphicsRef);
 	mouse_callback(_GraphicsRef);
 	zoom_callback(_GraphicsRef);
-
 }
 
 void SceneUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse
-	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
-		_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
-	} else {
-		_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
-	}
-
+	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse -- we also check if the mouse is our window
+	if(io->WantCaptureMouse){
+		if(ImGui::IsMouseDown(ImGuiMouseButton_Left)){
+			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
+		}
+	    } 
+	else {
+			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
+	}	
 }
 
 void SceneUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 {
-    // --- Follow this format anytime a key action needs to be recorded --- //
-    // Deal with Camera Settings such as Zoom and Camera Position
-   /*
-	if(glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS){
-
-	if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		cameraRef->MoveUp();
-	else
-		cameraRef->MoveForward();
-    }
+	//As usual wrap everything in our capture to see if we're on the window
 	
+	if(io->WantCaptureKeyboard){
+	//Directions Input
+	// Utilize the Directions enum to provide specific detail of where to move then use the Graphics Ref to manipulate the camera
+	
+	// Move Forward
+	if(ImGui::IsKeyPressed(ImGuiKey_W) || ImGui::IsKeyPressed(ImGuiKey_UpArrow)){
+		//Limited Keys so use shift to control y axis
+		if(ImGui::IsKeyPressed(ImGuiKey_LeftShift)){
+			Directions dir = y_pos;
+			_GraphicsRef->MoveCamDirection(dir);
+		} else {
+			Directions dir = z_pos;
+			_GraphicsRef->MoveCamDirection(dir);
+		}
+	}
 
-    if(glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS){
-	    if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		    cameraRef->MoveDown();
-	    else 
-		    cameraRef->MoveBackward();
+	//Move Backward
+	if(ImGui::IsKeyPressed(ImGuiKey_S) || ImGui::IsKeyPressed(ImGuiKey_DownArrow)){
+		//Limited Keys so use shift to control y axis
+		if(ImGui::IsKeyPressed(ImGuiKey_LeftShift)){
+			Directions dir = y_neg;
+			_GraphicsRef->MoveCamDirection(dir);
+		} else {
+			Directions dir = z_neg;
+			_GraphicsRef->MoveCamDirection(dir);
+		}
+	}
 
-    }
-
-    if(glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	cameraRef->MoveLeft();
-
-    if(glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	cameraRef->MoveRight();
-*/
-}
-
-//Simple Object Creation Functions
-void Graphics::CreateCube()
-{
-	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
-	cube->CreateCube();
-
-	_gizmosVec.emplace_back(cube);
+	//Move Right
+	if(ImGui::IsKeyPressed(ImGuiKey_D) || ImGui::IsKeyPressed(ImGuiKey_RightArrow)){
+		Directions dir = x_pos;
+		_GraphicsRef->MoveCamDirection(dir);
+	}
+	
+	//Move Left
+	if(ImGui::IsKeyPressed(ImGuiKey_A) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow)){
+		Directions dir = x_neg;
+		_GraphicsRef->MoveCamDirection(dir);
+	}
+	//Directions Input
+   }
 }
 
 void SceneUI::zoom_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-//	if(io->WantCaptureKeyboard){
+	if(io->WantCaptureKeyboard){
 		if(ImGui::IsKeyPressed(ImGuiKey_I)){
 			_GraphicsRef->ZoomCam(true);	
 		}
 		else if(ImGui::IsKeyPressed(ImGuiKey_O)){
 			_GraphicsRef->ZoomCam(false);
 		}
-//	}	
+	}	
 }
 // ******** Polymorphed Class : SceneUI ********** //
 

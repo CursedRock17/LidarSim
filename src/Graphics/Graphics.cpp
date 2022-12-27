@@ -13,7 +13,6 @@ Graphics::~Graphics()
 void Graphics::RotateCam(float xPosition, float yPosition, bool newClick)
 {
 	if(newClick) {
-		std::cout << xPosition << " " << yPosition << std::endl;
 		cameraRef->RotateCamera(xPosition, yPosition);
 	} else {
 		cameraRef->firstClick = true;
@@ -41,23 +40,34 @@ void Graphics::ZoomCam(bool zoomingIn)
 	cameraRef->ZoomCamera(xOffset, yOffset);
 }
 
-void Graphics::mouse_callback()
+void Graphics::MoveCamDirection(Directions dirs)
 {
-	xPos = _windowWidth / 2;
-	yPos = _windowHeight / 2;
-
-	lastXPos = xPos;
-	lastYPos = yPos;
-
-	glfwGetCursorPos(_window, &xPos, &yPos);
-
-	if(lastXPos != xPos || lastYPos != yPos){
-		if(glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-			cameraRef->RotateCamera(static_cast<float>(xPos), static_cast<float>(yPos));
-		} else {
-			cameraRef->firstClick = true;
-		}
+	//Utilize the Directions enum to have an understanding of where we need to move the camera, this is just a basic control panel for the scene
+	//These directions are labelled so the camera just moves in that direction
+	if(dirs == x_pos){
+		cameraRef->MoveRight();
 	}
+
+	else if(dirs == x_neg){
+		cameraRef->MoveLeft();
+	}
+	
+	else if(dirs == y_pos){
+		cameraRef->MoveUp();
+	}
+
+	else if(dirs == y_neg){
+		cameraRef->MoveDown();
+	}
+
+	else if(dirs == z_pos){
+		cameraRef->MoveForward();
+	}
+
+	else if(dirs == z_neg){
+		cameraRef->MoveBackward();
+	}
+
 }
 
 void Graphics::RenderingInit()
@@ -192,12 +202,6 @@ void Graphics::SimulationLoop()
 
 	cameraRef->CameraLoop();
 	//Each Objects Loop function
-
-    	// Input
-    	//AcceptInput();
-	
-	//Had to Create my Own Callback to check cursor and scroll positions
-	//mouse_callback();
 }
 
 void Graphics::RefreshGizmos()
@@ -213,37 +217,6 @@ void Graphics::RefreshGizmos()
 }
 
 /* Additional OpenGL funcitons */
-//Getting input from the user, this is how we can interact with the screen
-void Graphics::AcceptInput()
-{
-	
-    // --- Follow this format anytime a key action needs to be recorded --- //
-    if(glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(_window, true);
-
-    // Deal with Camera Settings such as Zoom and Camera Position
-    if(glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS){
-	if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		cameraRef->MoveUp();
-	else
-		cameraRef->MoveForward();
-    }
-	
-
-    if(glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS){
-	    if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		    cameraRef->MoveDown();
-	    else 
-		    cameraRef->MoveBackward();
-
-    }
-
-    if(glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	cameraRef->MoveLeft();
-
-    if(glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	cameraRef->MoveRight();
-}
 
 //Simple Object Creation Functions
 void Graphics::CreateCube()

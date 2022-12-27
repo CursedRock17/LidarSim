@@ -13,6 +13,8 @@
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
 #include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
+
+#include "../../include/Application_Headers/Universal_Consts.h"
 #include "./ImGuiInput.h"
 
 class UI 

@@ -18,8 +18,7 @@ void ImGui_Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	io = &ImGui::GetIO();
 	//Move the screen based on the scroll value
-	io->MouseWheel += (float)yoffset;
-	io->MouseWheelH += (float)xoffset;
+	io->AddMouseWheelEvent(static_cast<float>(xoffset), static_cast<float>(yoffset));
 }
 
 void ImGui_Key_Callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -36,8 +35,9 @@ void ImGui_Key_Callback(GLFWwindow* window, int key, int scancode, int action, i
 void ImGui_Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 {
 	io = &ImGui::GetIO();
-	if (button >= 0 && button < ImGuiMouseButton_COUNT)
-        	io->AddMouseButtonEvent(button, action == GLFW_PRESS);
+	if (button >= 0 && button < ImGuiMouseButton_COUNT){
+        	io->AddMouseButtonEvent(button, action);
+	}
 }
 
 

@@ -54,7 +54,7 @@ void Application::ApplicationLoad()
 
 	ApplicationUI.emplace_back(ControlRef);
 	ApplicationUI.emplace_back(SceneRef);
-
+	
 	GraphicsRef->SimulationSetup();
 	
 	for(auto& ui : ApplicationUI)
