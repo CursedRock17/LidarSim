@@ -43,4 +43,5 @@ PUBLIC
 "${PROJECT_SOURCE_DIR}/src"
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
 

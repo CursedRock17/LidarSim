@@ -50,10 +50,7 @@ void Application::ApplicationLoad()
     // Must give each object access to the window and all of the gizmos that will be applied within each scene
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos);
 	std::shared_ptr<UI>ControlRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
-	std::shared_ptr<SceneUI>SceneRef = std::make_shared<SceneUI>(window, windowHeight, windowWidth, ApplicationGizmos); 
-
 	ApplicationUI.emplace_back(ControlRef);
-	ApplicationUI.emplace_back(SceneRef);
 	
 	GraphicsRef->SimulationSetup();
 	

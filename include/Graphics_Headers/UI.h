@@ -26,18 +26,18 @@ UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::share
 virtual void SetupMenu();
 virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
 
-void MenuEventHandler();
-
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 void SetRenderedTexture(unsigned int _RTO);
 
 float sceneWidth;
 float sceneHeight;
 
-
 virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
-virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
+//virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
 virtual void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
+
+//private:
+void ImGuiContextLoop();
 
 // GLFW Window Settings
 GLFWwindow* _window;
@@ -62,6 +62,9 @@ int displayW, displayH;
 
 //Extra Flags
 bool darkMode{true};
+bool sceneFocused{false};
+bool show{true};
+
 
 // Our Main Context for the Menu
 ImGuiIO *io;

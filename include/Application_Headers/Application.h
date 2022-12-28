@@ -5,7 +5,6 @@
 #include "../../include/Gizmos_Headers/Gizmos.h"
 #include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Graphics_Headers/UI.h"
-//#include "./Application_Headers/Layer.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -27,7 +26,6 @@ private:
 	static constexpr int windowHeight{600};
 
 	std::vector<std::shared_ptr<Gizmos>> ApplicationGizmos;
-//	std::vector<std::unique_ptr<Layer>> ApplicationLayers;
 	std::vector<std::shared_ptr<UI>> ApplicationUI;
 
 	std::string mode{"Debug"};

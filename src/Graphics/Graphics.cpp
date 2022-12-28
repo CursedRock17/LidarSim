@@ -47,7 +47,6 @@ void Graphics::MoveCamDirection(Directions dirs)
 	if(dirs == x_pos){
 		cameraRef->MoveRight();
 	}
-
 	else if(dirs == x_neg){
 		cameraRef->MoveLeft();
 	}
