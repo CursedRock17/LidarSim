@@ -47,6 +47,6 @@ void main()
 		discard;
 
 	//Calculate the color with all the different types of lighting and reflection
-	FragColor = vec4((resultantAmbient + totalDiffuse + resultantSpecular), textureAlpha.a);
+	FragColor = vec4((objectColor + resultantAmbient + totalDiffuse + resultantSpecular), textureAlpha.a);
 }
 

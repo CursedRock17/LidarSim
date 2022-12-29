@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "imgui.h"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -23,8 +22,8 @@ public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
-virtual void SetupMenu();
-virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
+void SetupMenu();
+void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
 
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 void SetRenderedTexture(unsigned int _RTO);
@@ -32,11 +31,11 @@ void SetRenderedTexture(unsigned int _RTO);
 float sceneWidth;
 float sceneHeight;
 
-virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
-//virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
-virtual void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
+// ** If ever want polymorphic class make these virtual
+void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
+void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
 
-//private:
+private:
 void ImGuiContextLoop();
 
 // GLFW Window Settings
@@ -74,19 +73,5 @@ unsigned int RTO;
 void DestroyMenu();
 };
 
-class SceneUI : public UI
-{
-	public:
-	SceneUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
-	~SceneUI();
-
-	virtual void SetupMenu();
-	virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
-
-	private:
-	virtual void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
-	virtual void zoom_callback(std::shared_ptr<Graphics> _GraphicsRef);
-	virtual void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
-};
-
 #endif
+

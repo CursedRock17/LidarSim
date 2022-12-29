@@ -36,11 +36,10 @@ void zoom_callback();
 void RotateCam(float xPosition, float yPosition, bool newClick);
 void ZoomCam(bool zoomingIn);
 void MoveCamDirection(Directions dir);
-// Simple Object Creation Functions
 
+// Simple Object Creation Functions
 void CreateCube();
 void CreatePyramid();
-
 // Simple Object Creation Functions
 
 void RefreshGizmos();

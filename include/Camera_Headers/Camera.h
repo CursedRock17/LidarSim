@@ -52,7 +52,7 @@ float lastFrame{0.0f};
 int screenWidth_, screenHeight_;
 
 //Rotation Values
-const float sensitivity{0.1f};
+const float sensitivity{0.25f};
 float lastX;
 float lastY;
 

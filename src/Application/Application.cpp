@@ -93,7 +93,7 @@ while(!glfwWindowShouldClose(window))
 	{
 	 	ui->SetGizmosVec(ApplicationGizmos);
 	}
-    
+
 	//After We update the application gizmos we can begin the rendering process
 
 	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well

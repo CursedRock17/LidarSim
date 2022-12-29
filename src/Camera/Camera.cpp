@@ -18,7 +18,7 @@ void Camera::CameraLoop()
 	
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	cameraSpeed = 4.0f * deltaTime;
+	cameraSpeed = 5.0f * deltaTime;
 	
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
