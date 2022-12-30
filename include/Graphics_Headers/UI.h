@@ -69,6 +69,8 @@ bool show{true};
 ImGuiIO *io;
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 unsigned int RTO;
+std::shared_ptr<Gizmos> activeGizmo = nullptr;
+
 
 void DestroyMenu();
 };

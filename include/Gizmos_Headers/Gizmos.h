@@ -73,9 +73,14 @@ glm::vec3 SetTranslation(float totalTranslation);
 glm::vec3 SetScale(float totalScale);
 glm::vec3 SetColor(float totalColor);
 glm::vec3 SetLightPosition(float totalPosition);
-
 glm::vec3 SetViewPos(float totalPosition);
 glm::vec3 SetViewPos(glm::vec3 vectorPosition);
+
+//All the Getter functions
+glm::vec3 GetRotation();
+glm::vec3 GetTranslation();
+glm::vec3 GetScale();
+glm::vec3 GetColor();
 
 int ID;
 std::string objectName;

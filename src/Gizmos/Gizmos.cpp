@@ -15,6 +15,7 @@ Gizmos::~Gizmos()
 	GizmosCleanUp();
 }
 
+
 void Gizmos::GizmosInit()
 {
 	//Initialize the Position, Rotation, and Scale of Object
@@ -186,7 +187,26 @@ glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
 	return viewPosition;
 }
 
+//List of Getter Functions
+glm::vec3 Gizmos::GetRotation()
+{
+	return Rotation;
+}
 
+glm::vec3 Gizmos::GetTranslation()
+{
+	return Translation;
+}
+
+glm::vec3 Gizmos::GetScale()
+{
+	return Scale;
+}
+
+glm::vec3 Gizmos::GetColor()
+{
+	return objectColor;
+}
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
 {
