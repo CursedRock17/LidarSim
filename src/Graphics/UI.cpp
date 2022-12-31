@@ -140,20 +140,20 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	accept_input(_GraphicsRef);
 
 	//Set the position and size for the bottom bar in relation to screen size
-	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 4)));
-	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 6)), (float)(tempH / 2.0f)));
+	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 4.0f)));
+	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 4.0f)), (float)(tempH / 2.0f)));
 
 	//Set the position and size for the Gizmos List
-	ImGui::SetWindowPos("Gizmos list", ImVec2((float)(tempW - (tempW / 3)), 0.0f));
-	ImGui::SetWindowSize("Gizmos list", ImVec2((float)tempW / 6.0f, (float)tempH - (tempH / 4.0f)));
+	ImGui::SetWindowPos("Gizmos list", ImVec2((float)(tempW - (tempW / 2.5f)), 0.0f));
+	ImGui::SetWindowSize("Gizmos list", ImVec2((float)tempW / 6.75f, (float)tempH - (tempH / 4.0f)));
 
 	//Set the position and size for the sidebar
-	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 6)), 0.0f));
-	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 2.0f, (float)tempH));
+	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 4.0f)), 0.0f));
+	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 4.0f, (float)tempH));
 
 	//Create the Scene window at the origin and take up the rest of the space
-	sceneWidth = float(tempW - (tempW / 3));
-	sceneHeight = float(tempH - (tempH / 4));
+	sceneWidth = float(tempW - (tempW / 2.5f));
+	sceneHeight = float(tempH - (tempH / 4.0f));
 
 	//Creation of our own window always starts with Begin()
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
@@ -198,9 +198,9 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 		float* z_rotate = &CurrentGizmosRef->GetRotation()[2];
 
 		ImGui::Text("Rotation");
-		ImGui::InputFloat("X_Rotation: ", x_rotate);
-		ImGui::InputFloat("Y_Rotation: ", y_rotate);
-		ImGui::InputFloat("Z_Rotation: ", z_rotate);
+		ImGui::InputFloat("X_Rot:", x_rotate);
+		ImGui::InputFloat("Y_Rot:", y_rotate);
+		ImGui::InputFloat("Z_Rot: ", z_rotate);
 
 		CurrentGizmosRef->SetRotation(*x_rotate, *y_rotate, *z_rotate);
 		//Translation Setter
@@ -209,9 +209,9 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 		float* z_translate = &CurrentGizmosRef->GetTranslation()[2];
 		
 		ImGui::Text("Translation");
-		ImGui::InputFloat("X_Translation: ", x_translate);
-		ImGui::InputFloat("Y_Translation: ", y_translate);
-		ImGui::InputFloat("Z_Translation: ", z_translate);
+		ImGui::InputFloat("X_Trans: ", x_translate);
+		ImGui::InputFloat("Y_Trans: ", y_translate);
+		ImGui::InputFloat("Z_Trans: ", z_translate);
 
 		CurrentGizmosRef->SetTranslation(*x_translate, *y_translate, *z_translate);
 		//Scale Setter
@@ -226,16 +226,15 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 
 		CurrentGizmosRef->SetScale(*x_scale, *y_scale, *z_scale);
 		//Color Setter
-		float* red_col = &CurrentGizmosRef->GetColor()[0];
-		float* green_col = &CurrentGizmosRef->GetColor()[1];
-		float* blue_col = &CurrentGizmosRef->GetColor()[2];
-
+		float red_col = CurrentGizmosRef->GetColor()[0];
+		float green_col = CurrentGizmosRef->GetColor()[1];
+		float blue_col = CurrentGizmosRef->GetColor()[2];
+		float color[3] = { red_col, green_col, blue_col };
+		
 		ImGui::Text("Color");
-		ImGui::InputFloat("Red_col: ", red_col);
-		ImGui::InputFloat("Green_col: ", green_col);
-		ImGui::InputFloat("Blue_col: ", blue_col);
+		ImGui::ColorEdit3("Color: ", color );
 
-		CurrentGizmosRef->SetColor(*red_col, *green_col, *blue_col);
+		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
 
 
 	};
@@ -250,10 +249,12 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	
 	for(const auto& GizmoUI : _gizmosVec)
 	{
+		ImGui::PushID(GizmoUI->ID);
 		//Loop and Render Each Gizmo as an interacble level
-		if(ImGui::Selectable(GizmoUI->objectName.c_str())){
+		if(ImGui::Selectable(GizmoUI->objectName.c_str()) ){
 			activeGizmo = GizmoUI;
 		}
+		ImGui::PopID();
 	}
 	ImGui::End();
 

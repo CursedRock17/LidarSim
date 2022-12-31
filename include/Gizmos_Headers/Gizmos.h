@@ -100,7 +100,7 @@ int totalVerticeArgs;
 int totalVerticeShaderArgs;
 
 //Where the Object is in Space: These methods are handled with setter functions
-glm::vec3 Rotation = glm::vec3(1.0f, 0.3f, 0.5f);
+glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 Scale = glm::vec3(1.0f);
 

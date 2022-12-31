@@ -20,8 +20,12 @@ void Gizmos::GizmosInit()
 {
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
-	model = glm::rotate(model, 0.0f, Rotation);
+	//model = glm::rotate(model, glm::radians(0.0f) , Rotation);
 	model = glm::scale(model, Scale);
+	
+	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//For the spinning use (float)glfwGetTime();
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
@@ -397,7 +401,10 @@ void Gizmos::BasicMove()
 {
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
-	model = glm::rotate(model, 0.0f, Rotation);
+	//model = glm::rotate(model, 0.0f, Rotation);
+	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 	model = glm::scale(model, Scale);
 
 	//For the spinning use (float)glfwGetTime() in the second slot of rotation;

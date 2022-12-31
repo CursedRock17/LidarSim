@@ -168,9 +168,12 @@ void Graphics::SimulationSetup()
 	_gizmosVec.emplace_back(light);
 
 	//Call Initialization of each Object
+	int idTicker = 0;
 	for(auto &gizmos : _gizmosVec)
 	{
 		gizmos->GizmosInit();
+		gizmos->ID = idTicker;
+		idTicker++;
 	}
 		
 	//Setting up the Camera
@@ -222,6 +225,7 @@ void Graphics::CreateCube()
 {
 	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
 	cube->CreateCube();
+	cube->ID = _gizmosVec.size();
 
 	_gizmosVec.emplace_back(cube);
 }
@@ -232,6 +236,7 @@ void Graphics::CreatePyramid()
 	//Same Logic to the Cube
 	std::shared_ptr<Gizmos> pyramid = std::make_shared<Gizmos>();
 	pyramid->CreatePyramid();
+	pyramid->ID = _gizmosVec.size();
 
 	_gizmosVec.emplace_back(pyramid);
 }
