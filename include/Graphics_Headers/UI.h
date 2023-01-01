@@ -23,7 +23,7 @@ UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::share
 ~UI();
 
 void SetupMenu();
-void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef);
+void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
 
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 void SetRenderedTexture(unsigned int _RTO);

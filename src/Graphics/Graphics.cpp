@@ -1,6 +1,6 @@
 #include "../../include/Graphics_Headers/Graphics.h"
 
-Graphics::Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowWidth(windowWidth), _windowHeight(windowHeight), _gizmosVec(gizmosVec)
+Graphics::Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec, std::string mode) : _window(window), _windowWidth(windowWidth), _windowHeight(windowHeight), _gizmosVec(gizmosVec), _mode(mode)
 {
     RenderingInit();
 }
@@ -98,84 +98,6 @@ void Graphics::SimulationSetup()
 	//Face Culling Will save resources as we don't ahve to look at some vertices
 	// -- All the GL Functions -- //
 	
-	const char* imgLoc = "./resources/crate.png";
-	const char* imgSpecularMap = "./resources/crateSpecular.png";
-
-	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
-
-	//Setting up Each object with the variables it would need
-	// This set up currently involves creating a Gizmos Object in the code then adding it to the vector so that all objects will be revealed
-	// In order to combat this we may need to add a coroutine where we're in creation mode so that we can toggle the loop
-
-	std::vector<float> vertices = {
-        //Location        Textures        Normals      
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
- 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f, 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
-	}; 
-
-
-	// ***** Have to Render the Lights after all the object ********* //
-	light->CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
-	light->CreateTextures(8, vertices);
-	//Can pass nullptr if you don't have textures to apply
-	light->RenderTextures(nullptr, nullptr);
-	light->objectName = "Light";
-	light->ID = 1;
-	light->SetColor(1.0f);
-	light->SetScale(0.2f);
-	light->SetTranslation(1.0f, 1.0f, -1.0f);
-
-	//Add each Gizmos Object to the vector
-	_gizmosVec.emplace_back(light);
-
-	//Call Initialization of each Object
-	int idTicker = 0;
-	for(auto &gizmos : _gizmosVec)
-	{
-		gizmos->GizmosInit();
-		gizmos->ID = idTicker;
-		idTicker++;
-	}
-		
 	//Setting up the Camera
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 }
@@ -186,7 +108,7 @@ void Graphics::SimulationLoop()
   
     // In this loop rendering order is extremely important going to need to add Layers in application
 	//Each Objects Loop function
-	for(auto &gizmosRef : _gizmosVec)
+	for(const auto &gizmosRef : _gizmosVec)
 	{
 		if(gizmosRef->objectName != "Light")
 		{
@@ -197,7 +119,12 @@ void Graphics::SimulationLoop()
 		
 		if(gizmosRef->objectName != "Light"){
 			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
-			gizmosRef->BasicMove();
+			if(_mode == "Simulate")
+			{
+				gizmosRef->UpdateGizmoSpace();
+			}
+			//If we're in the creation mode we can just set everything back to the default to make it only make one change during the frame, equvilent to a one time move
+
 		}
 		gizmosRef->RenderContainer();
 	}
@@ -209,13 +136,10 @@ void Graphics::SimulationLoop()
 void Graphics::RefreshGizmos()
 {
 	//Use This as a loop in order to render all of the vertices of each object 
-
 	for(auto &gizmosRef : _gizmosVec)
 	{
 		gizmosRef->RenderContainer();
 	}
-
-
 }
 
 /* Additional OpenGL funcitons */
@@ -239,6 +163,15 @@ void Graphics::CreatePyramid()
 	pyramid->ID = _gizmosVec.size();
 
 	_gizmosVec.emplace_back(pyramid);
+}
+
+void Graphics::CreateLight()
+{
+	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
+	light->CreateLight();
+	light->ID = _gizmosVec.size();
+
+	_gizmosVec.emplace_back(light);
 }
 
 //Simple Object Creation Functions

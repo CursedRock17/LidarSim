@@ -20,9 +20,9 @@ void Gizmos::GizmosInit()
 {
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
-	//model = glm::rotate(model, glm::radians(0.0f) , Rotation);
 	model = glm::scale(model, Scale);
-	
+
+	//Control Rotation based on the 3 Right Axis Local Vectors
 	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
@@ -70,8 +70,8 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, b
 
 	// Orientation of Gizmo
 
-	/* Enable BasicMove in the loop when the features need to change every Frame */
-	//BasicMove();
+	/* Enable UpdateGizmoSpace in the loop when the features need to change every Frame */
+	//UpdateGizmoSpace();
 }
 
 void Gizmos::TexturesLoop()
@@ -211,6 +211,34 @@ glm::vec3 Gizmos::GetColor()
 {
 	return objectColor;
 }
+
+void Gizmos::ResetGizmoSpace()
+{
+	//The default world space values are jsut those for the rotation, translation, and scale in the header file
+	SetRotation(0.0f);
+	SetTranslation(0.0f);
+	SetScale(1.0f);
+
+	UpdateGizmoSpace();	
+
+}
+
+void Gizmos::UpdateGizmoSpace()
+{
+	//Initialize the Position, Rotation, and Scale of Object
+	model = glm::translate(model, Translation);
+	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, Scale);
+
+	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
+        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+}
+
+//Updater Functions to Create Changes before the total loop
+
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
 {
@@ -397,20 +425,6 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
 
 
 
-void Gizmos::BasicMove()
-{
-	//Initialize the Position, Rotation, and Scale of Object
-	model = glm::translate(model, Translation);
-	//model = glm::rotate(model, 0.0f, Rotation);
-	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::scale(model, Scale);
-
-	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
-        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-}
 
 
 // Simple Example Functions
@@ -469,9 +483,8 @@ void Gizmos::CreateCube()
 	CreateTextures(8, cubeVertices);
 	RenderTextures(nullptr, nullptr);
 	objectName = "Cube";
-	ID = 0;
-	SetColor(1.0f, 0.31f, 0.51f);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
+	GizmosInit();
 }
 
 void Gizmos::CreatePyramid()
@@ -507,11 +520,68 @@ void Gizmos::CreatePyramid()
 	CreateTextures(8, pyramidVertices);
 	RenderTextures(nullptr, nullptr);
 	objectName = "Pyramid";
-	ID = 0;
-	SetColor(1.0f, 0.31f, 0.51f);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
+	GizmosInit();
 }
 
+void Gizmos::CreateLight()
+{
+	std::vector<float> lightVertices = {
+        //Location        Textures        Normals      
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
+ 
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f, 
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
+	}; 
+
+
+	// ***** Have to Render the Lights after all the object ********* //
+	CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
+	CreateTextures(8, lightVertices);
+	//Can pass nullptr if you don't have textures to apply
+	RenderTextures(nullptr, nullptr);
+	objectName = "Light";
+	SetScale(0.2f);
+	SetTranslation(1.0f, 1.0f, -1.0f);
+	GizmosInit();
+}
 
 // Simple Example Functions
 

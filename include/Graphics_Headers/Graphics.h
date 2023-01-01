@@ -24,7 +24,7 @@
 
 class Graphics {
 public:
-Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
+Graphics(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<std::shared_ptr<Gizmos>> gizmosVec, std::string mode);
 ~Graphics();
 
 void SimulationSetup();
@@ -40,6 +40,7 @@ void MoveCamDirection(Directions dir);
 // Simple Object Creation Functions
 void CreateCube();
 void CreatePyramid();
+void CreateLight();
 // Simple Object Creation Functions
 
 void RefreshGizmos();
@@ -61,6 +62,7 @@ void AcceptInput();
 GLFWwindow* _window;
 int _windowWidth{800};
 int _windowHeight{600};
+std::string _mode;
 
 //Control for the Rotation
 double xPos = _windowWidth / 2;

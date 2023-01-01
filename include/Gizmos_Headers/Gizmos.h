@@ -45,7 +45,6 @@ public:
 Gizmos();
 ~Gizmos();
 
-void BasicMove();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
@@ -82,6 +81,9 @@ glm::vec3 GetTranslation();
 glm::vec3 GetScale();
 glm::vec3 GetColor();
 
+void ResetGizmoSpace(); // Set all the world space values to the default
+void UpdateGizmoSpace(); // Set the values of the gizmo for the world space
+
 int ID;
 std::string objectName;
 
@@ -89,6 +91,7 @@ std::string objectName;
 
 void CreateCube();
 void CreatePyramid();
+void CreateLight();
 
 // Simple Example Creations
 private:
@@ -100,8 +103,8 @@ int totalVerticeArgs;
 int totalVerticeShaderArgs;
 
 //Where the Object is in Space: These methods are handled with setter functions
-glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 Rotation = glm::vec3(0.0f);
+glm::vec3 Translation = glm::vec3(0.0f);
 glm::vec3 Scale = glm::vec3(1.0f);
 
 //Coloring for the object

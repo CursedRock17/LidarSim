@@ -48,7 +48,7 @@ void Application::ApplicationLoad()
     // SETUP OTHER OBJECTS
 
     // Must give each object access to the window and all of the gizmos that will be applied within each scene
-	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos);
+	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos, mode);
 	std::shared_ptr<UI>ControlRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
 	ApplicationUI.emplace_back(ControlRef);
 	
@@ -116,7 +116,7 @@ while(!glfwWindowShouldClose(window))
 	for(auto& ui : ApplicationUI)
 	{
 		ui->SetRenderedTexture(mFrame.GetFramebufferTexture());
-		ui->MenuLoop(GraphicsRef);
+		ui->MenuLoop(GraphicsRef, &mode);
 	}
 
     	// Check Buffers of Data

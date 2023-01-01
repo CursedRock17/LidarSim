@@ -128,7 +128,7 @@ void UI::SetupMenu()
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
+void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode)
 {
 	// ^^ Passing GraphicsRef because we need a reference to the Graphics in order to deal with input but we have to change features within that object instead of being able to create a copy
 	ImGuiContextLoop();
@@ -138,21 +138,25 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	
 	mouse_callback(_GraphicsRef);
 	accept_input(_GraphicsRef);
+	
+	//Set the position and size for the Top bar in relation to screen size
+	ImGui::SetWindowPos("Top bar", ImVec2(0.0f, 0.0f));
+	ImGui::SetWindowSize("Top bar", ImVec2((float)(tempW - (tempW / 3.0f)), 25.0f));
 
 	//Set the position and size for the bottom bar in relation to screen size
-	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 4.0f)));
-	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 4.0f)), (float)(tempH / 2.0f)));
+	ImGui::SetWindowPos("Bottom bar", ImVec2(0.0f, (float)tempH - float(tempH / 4.6f)));
+	ImGui::SetWindowSize("Bottom bar", ImVec2((float)(tempW - (tempW / 4.0f)), (float)(tempH / 4.0f)));
 
 	//Set the position and size for the Gizmos List
-	ImGui::SetWindowPos("Gizmos list", ImVec2((float)(tempW - (tempW / 2.5f)), 0.0f));
-	ImGui::SetWindowSize("Gizmos list", ImVec2((float)tempW / 6.75f, (float)tempH - (tempH / 4.0f)));
+	ImGui::SetWindowPos("Gizmos list", ImVec2((float)(tempW - (tempW / 3.0f)), 0.0f));
+	ImGui::SetWindowSize("Gizmos list", ImVec2((float)tempW / 12.0f, (float)tempH - (tempH / 4.6f)));
 
 	//Set the position and size for the sidebar
 	ImGui::SetWindowPos("Side bar", ImVec2((float)(tempW - (tempW / 4.0f)), 0.0f));
 	ImGui::SetWindowSize("Side bar", ImVec2((float)tempW / 4.0f, (float)tempH));
 
 	//Create the Scene window at the origin and take up the rest of the space
-	sceneWidth = float(tempW - (tempW / 2.5f));
+	sceneWidth = float(tempW - (tempW / 3.0f));
 	sceneHeight = float(tempH - (tempH / 4.0f));
 
 	//Creation of our own window always starts with Begin()
@@ -167,9 +171,18 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 		_GraphicsRef->CreateCube();
 	}
 	
+	ImGui::SameLine();
+
 	if(ImGui::Button("Create\nPyramid", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
 	{
 		_GraphicsRef->CreatePyramid();
+	}
+	
+	ImGui::SameLine();
+
+	if(ImGui::Button("Create\nLight", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
+	{
+		_GraphicsRef->CreateLight();
 	}
 
 
@@ -192,51 +205,81 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 		//Because we're using std::string we need to create a resizing callback ^^
 		//ImGui::InputText("Name: ", CurrentGizmosRef->objectName.begin(), io->ConfigFlags, StringResizeCallback);
 
+
+		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
+		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
+
 		//Rotation Setter
-		float* x_rotate = &CurrentGizmosRef->GetRotation()[0];
-		float* y_rotate = &CurrentGizmosRef->GetRotation()[1];
-		float* z_rotate = &CurrentGizmosRef->GetRotation()[2];
+		float rotations[3] = { CurrentGizmosRef->GetRotation()[0], CurrentGizmosRef->GetRotation()[1], CurrentGizmosRef->GetRotation()[2]};
 
-		ImGui::Text("Rotation");
-		ImGui::InputFloat("X_Rot:", x_rotate);
-		ImGui::InputFloat("Y_Rot:", y_rotate);
-		ImGui::InputFloat("Z_Rot: ", z_rotate);
+		ImGui::InputFloat3("Rotations X Y Z: ", rotations);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
+			//We have to create a updated Rotation because otherwise we woould just continous apply the new value instead of update to get that desired value
+			float updatedRotationX = rotations[0] - CurrentGizmosRef->GetRotation()[0];
+			float updatedRotationY = rotations[1] - CurrentGizmosRef->GetRotation()[1];
+			float updatedRotationZ = rotations[2] - CurrentGizmosRef->GetRotation()[2];
+				
 
-		CurrentGizmosRef->SetRotation(*x_rotate, *y_rotate, *z_rotate);
+			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
+			//the rotation visuals to represent the new rotation of the object
+			CurrentGizmosRef->SetRotation(updatedRotationX, updatedRotationY, updatedRotationZ);
+			CurrentGizmosRef->UpdateGizmoSpace();
+
+			CurrentGizmosRef->SetRotation(rotations[0], rotations[1], rotations[2]);
+
+
+		}
 		//Translation Setter
-		float* x_translate = &CurrentGizmosRef->GetTranslation()[0];
-		float* y_translate = &CurrentGizmosRef->GetTranslation()[1];
-		float* z_translate = &CurrentGizmosRef->GetTranslation()[2];
-		
-		ImGui::Text("Translation");
-		ImGui::InputFloat("X_Trans: ", x_translate);
-		ImGui::InputFloat("Y_Trans: ", y_translate);
-		ImGui::InputFloat("Z_Trans: ", z_translate);
+		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] }; 
 
-		CurrentGizmosRef->SetTranslation(*x_translate, *y_translate, *z_translate);
+		ImGui::InputFloat3("Translations X Y Z: ", translations);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
+			//We have to create a updated Translation because otherwise we woould just continous apply the new value instead of update to get that desired value
+			float updatedTranslationX = translations[0] - CurrentGizmosRef->GetTranslation()[0];
+			float updatedTranslationY = translations[1] - CurrentGizmosRef->GetTranslation()[1];
+			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
+			
+			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
+			//the translation visuals to represent the new location of the object
+			CurrentGizmosRef->SetTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
+			CurrentGizmosRef->UpdateGizmoSpace();
+			
+			CurrentGizmosRef->SetTranslation(translations[0], translations[1], translations[2]);
+		}
+
 		//Scale Setter
-		float* x_scale = &CurrentGizmosRef->GetScale()[0];
-		float* y_scale = &CurrentGizmosRef->GetScale()[1];
-		float* z_scale = &CurrentGizmosRef->GetScale()[2];
+		float scale[3] = { CurrentGizmosRef->GetScale()[0], CurrentGizmosRef->GetScale()[1], CurrentGizmosRef->GetScale()[2] };
 
-		ImGui::Text("Scale");
-		ImGui::InputFloat("X_Scale: ", x_scale);
-		ImGui::InputFloat("Y_Scale: ", y_scale);
-		ImGui::InputFloat("Z_Scale: ", z_scale);
-
-		CurrentGizmosRef->SetScale(*x_scale, *y_scale, *z_scale);
-		//Color Setter
-		float red_col = CurrentGizmosRef->GetColor()[0];
-		float green_col = CurrentGizmosRef->GetColor()[1];
-		float blue_col = CurrentGizmosRef->GetColor()[2];
-		float color[3] = { red_col, green_col, blue_col };
+		ImGui::InputFloat3("Scale X Y Z: ", scale);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
 		
-		ImGui::Text("Color");
+			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix 
+			if(scale[0] == 0.0f)
+				scale[0] = 0.00000001f;
+			if(scale[1] == 0.0f)
+				scale[1] = 0.00000001f;
+			if(scale[2] == 0.0f)
+				scale[2] = 0.00000001f;
+			
+			float updatedScaleX = scale[0] / CurrentGizmosRef->GetScale()[0];
+			float updatedScaleY = scale[1] / CurrentGizmosRef->GetScale()[1];
+			float updatedScaleZ = scale[2] / CurrentGizmosRef->GetScale()[2];
+			
+			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
+			//the scale visuals to represent the new scale of the object
+
+			CurrentGizmosRef->SetScale(updatedScaleX, updatedScaleY, updatedScaleZ);
+			CurrentGizmosRef->UpdateGizmoSpace();
+			
+			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
+		}
+
+		//Color Setter
+		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
+		
 		ImGui::ColorEdit3("Color: ", color );
 
 		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
-
-
 	};
 
 
@@ -258,6 +301,26 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	}
 	ImGui::End();
 
+	//Creation of top Bar - Contains many controls over the scene like play and pause
+	ImGui::Begin("Top bar", &show, io->ConfigFlags);
+	
+	if(ImGui::Button("Create"))
+	{
+		std::string temp = "Create";
+		application_mode = &temp;
+	}
+
+	ImGui::SameLine();
+
+	if(ImGui::Button("Simulate"))
+	{
+		std::string temp = "Simulate";
+		application_mode = &temp;
+	}
+
+
+	ImGui::End();
+
 	//Creation of Sidebar
 	ImGui::Begin("Side bar", &show, io->ConfigFlags);
 	
@@ -276,7 +339,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 	ImGui::End();
 	//End of Sidebar
 
-	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 0.0f));
+	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 20.0f));
 	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
 
 	//Creation of our own window always starts with Begin()
@@ -292,7 +355,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef)
 		sceneFocused = false;
 	}
 
-	ImGui::Image((ImTextureID)RTO, ImVec2(sceneWidth - 10.0f, sceneHeight - 32.5f));
+	ImGui::Image((ImTextureID)RTO, ImVec2(sceneWidth, sceneHeight - 30.0f));
 
 	ImGui::End();
 
