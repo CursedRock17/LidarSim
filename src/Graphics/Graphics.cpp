@@ -80,7 +80,6 @@ void Graphics::RenderingEnd()
 
 void Graphics::SimulationSetup()
 {
-
 	// -- All the GL Functions -- //
 
 	//These functions allow 3D rendering to be resolved nicely
@@ -110,15 +109,11 @@ void Graphics::SimulationLoop()
 	//Each Objects Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
-		if(gizmosRef->objectName != "Light")
-		{
-			gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_, true);
-		}
-		else 
-			gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_, false);
+		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
+			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 		
 		if(gizmosRef->objectName != "Light"){
-			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
+			//gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 			if(_mode == "Simulate")
 			{
 				gizmosRef->UpdateGizmoSpace();
@@ -136,10 +131,28 @@ void Graphics::SimulationLoop()
 void Graphics::RefreshGizmos()
 {
 	//Use This as a loop in order to render all of the vertices of each object 
-	for(auto &gizmosRef : _gizmosVec)
+	for(const auto &gizmosRef : _gizmosVec)
 	{
 		gizmosRef->RenderContainer();
 	}
+}
+
+void Graphics::DeleteGizmo(int targetID)
+{
+	bool targetFound{false};
+	//Have to linearly find the target we want to delete as its a vector, but after that point we will just condense IDs by 1 less
+	for(std::vector<std::shared_ptr<Gizmos>>::iterator iter = _gizmosVec.begin(); iter != _gizmosVec.end();) {
+	//Have to use a double pointer on the iterator in order to access the actual object
+	if((**iter).ID == targetID) {
+			_gizmosVec.erase(iter);
+		  	targetFound = true;
+	} else {
+	        if(targetFound){	
+			_gizmosVec.at((**iter).ID - 1)->ID = (**iter).ID - 1;
+		}
+		++iter;
+	    }	
+    }
 }
 
 /* Additional OpenGL funcitons */

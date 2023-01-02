@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <filesystem>
 
 #include "imgui.h"
 #include <glad/glad.h>
@@ -67,10 +68,20 @@ bool show{true};
 
 // Our Main Context for the Menu
 ImGuiIO *io;
+ImGuiStyle  *style;
+
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 unsigned int RTO;
 std::shared_ptr<Gizmos> activeGizmo = nullptr;
 
+std::string my_str = "Mine";
+
+//Specialized Functions for ImGui
+static bool ImGui_InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0);
+static int StringResizeCallback(ImGuiInputTextCallbackData* data);
+
+void SetupStyles();
+const char* GetFile();
 
 void DestroyMenu();
 };

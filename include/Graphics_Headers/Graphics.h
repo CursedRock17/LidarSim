@@ -44,6 +44,7 @@ void CreateLight();
 // Simple Object Creation Functions
 
 void RefreshGizmos();
+void DeleteGizmo(int targetID);
 
 //Need a public list of Gizmos Because we only change them here and the Application needs access to all of them
 std::vector<std::shared_ptr<Gizmos>> GetGizmosVec();

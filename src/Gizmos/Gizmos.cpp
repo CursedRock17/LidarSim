@@ -1,6 +1,5 @@
 #include "../../include/Gizmos_Headers/Gizmos.h"
 
-#include <filesystem>
 
 //Include the definition for image insertion **Can only go in one cpp file
 #define STB_IMAGE_IMPLEMENTATION
@@ -44,7 +43,7 @@ void Gizmos::GizmosInit()
 	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
 }
 
-void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, bool hasTexture)
+void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
 	glUseProgram(shaderProgram);
@@ -360,10 +359,12 @@ void Gizmos::GizmosCleanUp()
 
 void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
 {
+    if(imgLocation && imgSpecularLocation)
+    	hasTexture = true;
+
     // Created a lamdba function that will need to be called for each image path needed
     auto bindImage = [this](const char* path) -> unsigned int
     {
-
 	unsigned int tempTexture;
 	glGenTextures(1, &tempTexture);
     

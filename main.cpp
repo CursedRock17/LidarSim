@@ -3,5 +3,6 @@ int main(){
 	Application app;
 	// Run the cycle //
 	app.ApplicationLoop();
+
 	return 0;
 }

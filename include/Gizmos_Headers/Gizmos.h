@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <filesystem>
 
 // Start of Framebuffer Class
 
@@ -52,7 +53,7 @@ void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 
 void GizmosInit();
 
-void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, bool hasTexture);
+void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
 void RenderContainer();
 
 unsigned int shaderProgram;
@@ -86,6 +87,7 @@ void UpdateGizmoSpace(); // Set the values of the gizmo for the world space
 
 int ID;
 std::string objectName;
+bool hasTexture{false};
 
 // Simple Example Creations
 

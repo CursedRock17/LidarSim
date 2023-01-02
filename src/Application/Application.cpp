@@ -119,6 +119,7 @@ while(!glfwWindowShouldClose(window))
 		ui->MenuLoop(GraphicsRef, &mode);
 	}
 
+
     	// Check Buffers of Data
     	glfwSwapBuffers(window);
 	glfwPollEvents();
