@@ -1,6 +1,5 @@
 #include "../../include/Gizmos_Headers/Gizmos.h"
 
-
 //Include the definition for image insertion **Can only go in one cpp file
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../include/Gizmos_Headers/stb_image.h"	
@@ -17,6 +16,7 @@ Gizmos::~Gizmos()
 
 void Gizmos::GizmosInit()
 {
+
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
 	model = glm::scale(model, Scale);
@@ -53,8 +53,8 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
     	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
-	// Orientation of Gizmo
 	
+	// Orientation of Gizmo
 	if(hasTexture){
 		TexturesLoop();
 	}
@@ -87,20 +87,15 @@ void Gizmos::TexturesLoop()
 	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
 
 	// ** Must Render the Textures Before the Actual Object ** //
-        glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, imgMap);
+	glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, imgMap);
     	
         glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
-
 }
 
 void Gizmos::RenderContainer()
 {
-        //Make sure to actually render the model in this 3D space
-	unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	
 	//Finish rendering the entire shape
         glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
@@ -238,7 +233,6 @@ void Gizmos::UpdateGizmoSpace()
 
 //Updater Functions to Create Changes before the total loop
 
-
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
 {
     //Going to immediatily load in our shading files
@@ -312,6 +306,7 @@ void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath)
 
     //- - - - - - End of Shader Code - - - - - -//
 }
+
 
 void Gizmos::CreateTextures(int totPoints, std::vector<float> verts) {	
     //Initialize Variables needed for this gizmo
@@ -414,8 +409,10 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
     }; //End of bindImage
     	
     //Find the textures for each image created
-    imgMap = bindImage(imgLocation);
-    imgSpecularMap = bindImage(imgSpecularLocation);
+    if(hasTexture){
+    		imgMap = bindImage(imgLocation);
+    		imgSpecularMap = bindImage(imgSpecularLocation);
+	}
 
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
@@ -482,9 +479,9 @@ void Gizmos::CreateCube()
 	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
 	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(8, cubeVertices);
-	RenderTextures(nullptr, nullptr);
 	objectName = "Cube";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
+	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -519,9 +516,9 @@ void Gizmos::CreatePyramid()
 
 	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(8, pyramidVertices);
-	RenderTextures(nullptr, nullptr);
 	objectName = "Pyramid";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
+	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -577,10 +574,10 @@ void Gizmos::CreateLight()
 	CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	CreateTextures(8, lightVertices);
 	//Can pass nullptr if you don't have textures to apply
-	RenderTextures(nullptr, nullptr);
 	objectName = "Light";
 	SetScale(0.2f);
 	SetTranslation(1.0f, 1.0f, -1.0f);
+	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -641,7 +638,7 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	UnbindFramebuffer();
 
 	// Draw as a wireframe
-	// glPolygonmode
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 }
 
@@ -652,3 +649,89 @@ unsigned int Framebuffer::GetFramebufferTexture()
 }
 
 // End of Framebuffer Class
+ 
+// Start of Shader Class
+Shader::Shader(const char* vertexPath, const char* fragmentPath)
+{
+    //Going to immediatily load in our shading files
+    vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+    fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+    try { 
+	//Copying the glsl files into cpp code
+        vertexFile.open(vertexPath);
+        fragmentFile.open(fragmentPath);
+
+        std::stringstream VertexStreamString, FragmentStreamString; 
+        VertexStreamString << vertexFile.rdbuf();
+        FragmentStreamString << fragmentFile.rdbuf();
+
+        vertexFile.close();
+        fragmentFile.close();
+
+        vertexBuffer = VertexStreamString.str();
+        fragmentBuffer = FragmentStreamString.str();
+
+    } catch (std::ifstream::failure& e){
+        std::cout << e.what() << std::endl;
+    }
+
+    const char* vertexShaderSource = vertexBuffer.c_str();
+    const char* fragmentShaderSource = fragmentBuffer.c_str();
+
+    //Compile the vertex shader through glsl
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    glCompileShader(vertexShader);
+    
+    //Checking errors in this shader
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if(!success){
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        std::cout << "Vertex Shader failed to compile: " << infoLog << '\n';
+    }
+
+    //Creating the fragment shader for these shapes
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success){
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        std::cout << "Frag Shader failed to compile: " << infoLog << '\n';
+    }
+
+    //Creating and Linking a Shader program by adding all of the shading pieces
+    shaderID = glCreateProgram();
+
+    //Linking Shaders
+    glAttachShader(shaderID, vertexShader);
+    glAttachShader(shaderID, fragmentShader);
+    glLinkProgram(shaderID);
+
+    glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
+    if(!success){
+        glGetProgramInfoLog(shaderID, 512, nullptr, infoLog);
+    }
+
+    //Cleanup after the project is used
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    //- - - - - - End of Shader Code - - - - - -//
+}
+
+Shader::~Shader(){}
+
+void Shader::UseShader()
+{
+	glUseProgram(shaderID);
+}
+
+// End of Shader Class
+
+

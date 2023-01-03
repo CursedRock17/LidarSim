@@ -373,7 +373,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 	}
 
 	ImGui::Image((ImTextureID)RTO, ImVec2(sceneWidth, sceneHeight - 30.0f));
-
+	
 	ImGui::End();
 
         ImGui::Render();

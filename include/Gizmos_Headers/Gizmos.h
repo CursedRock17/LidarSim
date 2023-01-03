@@ -18,6 +18,25 @@
 #include <filesystem>
 
 // Start of Framebuffer Class
+class Shader {
+public:
+	Shader(const char* vertexPath, const char* fragmentPath);
+	~Shader();
+
+	unsigned int shaderID;
+	void UseShader();
+
+private:
+
+//Reading from other files
+
+std::ifstream vertexFile;
+std::ifstream fragmentFile;
+std::string vertexBuffer;
+std::string fragmentBuffer;
+ 
+};
+
 
 class Framebuffer {
 public:
@@ -39,13 +58,11 @@ unsigned int RTO, FBO, DBO;
 
 // End of Framebuffer Class
 
-
 class Gizmos
 {	
 public:
 Gizmos();
 ~Gizmos();
-
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
@@ -99,7 +116,6 @@ void CreateLight();
 private:
 unsigned int VBO, VAO;
 
-
 //Describing the Object to Create
 int totalVerticeArgs;
 int totalVerticeShaderArgs;
@@ -123,14 +139,13 @@ glm::vec3 specularStrength = glm::vec3(1.0f);
 glm::vec3 diffuseStrength = glm::vec3(0.5f);
 float specularShiny = 64.0f;
 
-void TexturesLoop();
-
 //Reading from other files
 std::ifstream vertexFile;
 std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
 
+void TexturesLoop();
 void GizmosCleanUp();
 };
 

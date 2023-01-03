@@ -61,6 +61,7 @@ void Application::ApplicationLoad()
 
 	mFrame.FramebufferTexture(768, 1024);
 	mFrame.UnbindFramebuffer();
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // SETUP OTHER OBJECTS
 }
 
@@ -98,6 +99,7 @@ while(!glfwWindowShouldClose(window))
 
 	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well
 	mFrame.BindFramebuffer();
+	glEnable(GL_DEPTH_TEST);
     	clearScreen();
 
 	//Update the Engine Layer
@@ -106,12 +108,11 @@ while(!glfwWindowShouldClose(window))
 	
 	//Once we have access to the scene we can remove the Framebuffer
 	mFrame.UnbindFramebuffer();
-	glDisable(GL_DEPTH_TEST);
 	//Once we have updated the framebuffer we can reset the screen
 	clearScreen();
+	glDisable(GL_DEPTH_TEST);
 
 	//After we have unbound the framebuffer to hold onto the objects we ccan render them
-	
 	//Set Up the Menu with all the necessary info and begin it's loop
 	for(auto& ui : ApplicationUI)
 	{

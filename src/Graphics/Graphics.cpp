@@ -103,23 +103,18 @@ void Graphics::SimulationSetup()
 
 void Graphics::SimulationLoop()
 {
-    //Create the infinite Loop that will run the _window
-  
-    // In this loop rendering order is extremely important going to need to add Layers in application
 	//Each Objects Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
 		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
-			gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
+		gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 		
 		if(gizmosRef->objectName != "Light"){
-			//gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 			if(_mode == "Simulate")
 			{
+				//Consistenly change the object in the space while the play button is pressed
 				gizmosRef->UpdateGizmoSpace();
 			}
-			//If we're in the creation mode we can just set everything back to the default to make it only make one change during the frame, equvilent to a one time move
-
 		}
 		gizmosRef->RenderContainer();
 	}
