@@ -104,7 +104,6 @@ while(!glfwWindowShouldClose(window))
 
 	//Update the Engine Layer
     	GraphicsRef->SimulationLoop();
-	GraphicsRef->RefreshGizmos();
 	
 	//Once we have access to the scene we can remove the Framebuffer
 	mFrame.UnbindFramebuffer();

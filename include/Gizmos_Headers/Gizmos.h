@@ -25,6 +25,8 @@ public:
 
 	unsigned int shaderID;
 	void UseShader();
+	
+	void SetOneFloat(const char* itemTarget, float item);
 
 private:
 
@@ -94,6 +96,8 @@ glm::vec3 SetColor(float totalColor);
 glm::vec3 SetLightPosition(float totalPosition);
 glm::vec3 SetViewPos(float totalPosition);
 glm::vec3 SetViewPos(glm::vec3 vectorPosition);
+
+void SetShaderID(unsigned int _shaderID);
 
 //All the Getter functions
 glm::vec3 GetRotation();

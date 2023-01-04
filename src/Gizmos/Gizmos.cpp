@@ -16,7 +16,6 @@ Gizmos::~Gizmos()
 
 void Gizmos::GizmosInit()
 {
-
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
 	model = glm::scale(model, Scale);
@@ -46,8 +45,7 @@ void Gizmos::GizmosInit()
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-	glUseProgram(shaderProgram);
-	//shaderProgram = shader->shaderId;
+	//glUseProgram(shaderProgram);
 
 	//After Initing the Object in 3D Space handle Color
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
@@ -55,11 +53,15 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
-	// Orientation of Gizmo
+	//We have to make sure each object has a defaulted texture, then we can see if(hasTexture) to see what we need to apply
+        glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+	
 	if(hasTexture){
 		TexturesLoop();
 	}
-
+	
 	//Have to use the &[0][0] for all Matrices
 	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
@@ -69,9 +71,6 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 
 	// Orientation of Gizmo
-
-	/* Enable UpdateGizmoSpace in the loop when the features need to change every Frame */
-	//UpdateGizmoSpace();
 }
 
 void Gizmos::TexturesLoop()
@@ -90,7 +89,7 @@ void Gizmos::TexturesLoop()
 	// ** Must Render the Textures Before the Actual Object ** //
 	glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, imgMap);
-    	
+    
         glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
 }
@@ -98,9 +97,7 @@ void Gizmos::TexturesLoop()
 void Gizmos::RenderContainer()
 {
 	//Finish rendering the entire shape
-        glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
-
 }
 
 
@@ -207,6 +204,11 @@ glm::vec3 Gizmos::GetColor()
 	return objectColor;
 }
 
+void Gizmos::SetShaderID(unsigned int _shaderID)
+{ 
+	shaderProgram = _shaderID; 
+}
+
 void Gizmos::ResetGizmoSpace()
 {
 	//The default world space values are jsut those for the rotation, translation, and scale in the header file
@@ -236,6 +238,7 @@ void Gizmos::UpdateGizmoSpace()
 
 void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
 {
+	
     //Going to immediatily load in our shading files
     vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
@@ -410,10 +413,8 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
     }; //End of bindImage
     	
     //Find the textures for each image created
-    if(hasTexture){
-    		imgMap = bindImage(imgLocation);
-    		imgSpecularMap = bindImage(imgSpecularLocation);
-	}
+    imgMap = bindImage(imgLocation);
+    imgSpecularMap = bindImage(imgSpecularLocation);
 
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
@@ -482,7 +483,6 @@ void Gizmos::CreateCube()
 	CreateTextures(8, cubeVertices);
 	objectName = "Cube";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
-	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -519,7 +519,6 @@ void Gizmos::CreatePyramid()
 	CreateTextures(8, pyramidVertices);
 	objectName = "Pyramid";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
-	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -578,7 +577,6 @@ void Gizmos::CreateLight()
 	objectName = "Light";
 	SetScale(0.2f);
 	SetTranslation(1.0f, 1.0f, -1.0f);
-	RenderTextures(nullptr, nullptr);
 	GizmosInit();
 }
 
@@ -654,7 +652,7 @@ unsigned int Framebuffer::GetFramebufferTexture()
 // Start of Shader Class
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
-	/*
+	
     //Going to immediatily load in our shading files
     vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
@@ -723,7 +721,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     //Cleanup after the project is used
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-*/
+
     //- - - - - - End of Shader Code - - - - - -//
 }
 
@@ -731,8 +729,17 @@ Shader::~Shader(){}
 
 void Shader::UseShader()
 {
-	//glUseProgram(shaderID);
+	glUseProgram(shaderID);
 }
+
+// Uniform Handling
+
+void Shader::SetOneFloat(const char* itemTarget, float item)
+{
+	glUniform1f(glGetUniformLocation(shaderID, itemTarget), item);
+}
+
+// Uniform Handling
 
 // End of Shader Class
 
