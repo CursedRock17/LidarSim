@@ -99,6 +99,9 @@ void Graphics::SimulationSetup()
 	
 	//Setting up the Camera
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
+//	shader = std::make_shared<Shader>("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+
+//	shader->UseShader();
 }
 
 void Graphics::SimulationLoop()
@@ -106,6 +109,7 @@ void Graphics::SimulationLoop()
 	//Each Objects Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
+		shader->UseShader();
 		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 		gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 		
@@ -128,7 +132,7 @@ void Graphics::RefreshGizmos()
 	//Use This as a loop in order to render all of the vertices of each object 
 	for(const auto &gizmosRef : _gizmosVec)
 	{
-		gizmosRef->RenderContainer();
+		//gizmosRef->RenderContainer();
 	}
 }
 

@@ -47,6 +47,7 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
 	glUseProgram(shaderProgram);
+	//shaderProgram = shader->shaderId;
 
 	//After Initing the Object in 3D Space handle Color
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
@@ -653,6 +654,7 @@ unsigned int Framebuffer::GetFramebufferTexture()
 // Start of Shader Class
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
+	/*
     //Going to immediatily load in our shading files
     vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
@@ -721,7 +723,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     //Cleanup after the project is used
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
+*/
     //- - - - - - End of Shader Code - - - - - -//
 }
 
@@ -729,9 +731,8 @@ Shader::~Shader(){}
 
 void Shader::UseShader()
 {
-	glUseProgram(shaderID);
+	//glUseProgram(shaderID);
 }
 
 // End of Shader Class
-
 

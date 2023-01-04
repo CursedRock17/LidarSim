@@ -50,10 +50,12 @@ void DeleteGizmo(int targetID);
 std::vector<std::shared_ptr<Gizmos>> GetGizmosVec();
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 
+std::shared_ptr<Shader> shader;
 
 private:
 void RenderingInit();
 void RenderingEnd();
+
 
 /* Additional OpenGL funcitons */
 void AcceptInput();

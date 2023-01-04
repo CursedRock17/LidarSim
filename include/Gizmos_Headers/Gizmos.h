@@ -71,6 +71,8 @@ void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 void GizmosInit();
 
 void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+//void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, std::shared_ptr<Shader> shader);
+
 void RenderContainer();
 
 unsigned int shaderProgram;
