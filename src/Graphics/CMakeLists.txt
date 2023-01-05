@@ -1,4 +1,4 @@
-add_library(Graphics Graphics.cpp UI.cpp Imgui_OpenGL3_Impl.cpp ImGuiInput.cpp)
+add_library(Graphics Graphics.cpp UI.cpp Imgui_OpenGL3_Impl.cpp ImGuiInput.cpp FolderUI.cpp)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

@@ -17,28 +17,8 @@
 #include <vector>
 #include <filesystem>
 
+
 // Start of Framebuffer Class
-class Shader {
-public:
-	Shader(const char* vertexPath, const char* fragmentPath);
-	~Shader();
-
-	unsigned int shaderID;
-	void UseShader();
-	
-	void SetOneFloat(const char* itemTarget, float item);
-
-private:
-
-//Reading from other files
-
-std::ifstream vertexFile;
-std::ifstream fragmentFile;
-std::string vertexBuffer;
-std::string fragmentBuffer;
- 
-};
-
 
 class Framebuffer {
 public:
@@ -73,7 +53,6 @@ void RenderTextures(const char* imgLocation, const char* specularMapLocation);
 void GizmosInit();
 
 void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
-//void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV, std::shared_ptr<Shader> shader);
 
 void RenderContainer();
 
@@ -86,7 +65,7 @@ glm::vec3 SetScale(float xScale, float yScale, float zScale);
 glm::vec3 SetColor(float red, float green, float blue);
 glm::vec3 SetLightPosition(float xCoord, float yCoord, float zCoord);
 glm::vec3 SetViewPos(float xCoord, float yCoord, float zCoord);
-
+glm::vec3 SetMaterialStrengths(float ambient, float specular, float diffuse);
 
 //Override setFunction for equivelency across all axis
 glm::vec3 SetRotation(float totalRotation);
@@ -96,8 +75,6 @@ glm::vec3 SetColor(float totalColor);
 glm::vec3 SetLightPosition(float totalPosition);
 glm::vec3 SetViewPos(float totalPosition);
 glm::vec3 SetViewPos(glm::vec3 vectorPosition);
-
-void SetShaderID(unsigned int _shaderID);
 
 //All the Getter functions
 glm::vec3 GetRotation();
@@ -141,7 +118,7 @@ unsigned int imgMap, imgSpecularMap;
 glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 
 glm::vec3 ambientStrength = glm::vec3(0.2f);
-glm::vec3 specularStrength = glm::vec3(1.0f);
+glm::vec3 specularStrength = glm::vec3(0.5f);
 glm::vec3 diffuseStrength = glm::vec3(0.5f);
 float specularShiny = 64.0f;
 

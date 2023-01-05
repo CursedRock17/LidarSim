@@ -16,6 +16,8 @@ Gizmos::~Gizmos()
 
 void Gizmos::GizmosInit()
 {
+	glUseProgram(shaderProgram);
+	
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
 	model = glm::scale(model, Scale);
@@ -45,7 +47,7 @@ void Gizmos::GizmosInit()
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-	//glUseProgram(shaderProgram);
+	glUseProgram(shaderProgram);
 
 	//After Initing the Object in 3D Space handle Color
     	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
@@ -138,6 +140,14 @@ glm::vec3 Gizmos::SetViewPos(float xCoord, float yCoord, float zCoord)
 	return viewPosition;
 }
 
+void Gizmos::SetMaterialStrengths(float ambient, float specular, float diffuse)
+{
+	ambientStrength = glm::vec3(ambient);
+	specularStrength = glm::vec3(specular);
+	diffuseStrength = glm::vec3(diffuse);
+}
+
+
 // Essential Setter Functions //
 
 //Override setFunction for equivelency across all axis
@@ -204,10 +214,6 @@ glm::vec3 Gizmos::GetColor()
 	return objectColor;
 }
 
-void Gizmos::SetShaderID(unsigned int _shaderID)
-{ 
-	shaderProgram = _shaderID; 
-}
 
 void Gizmos::ResetGizmoSpace()
 {
@@ -649,97 +655,3 @@ unsigned int Framebuffer::GetFramebufferTexture()
 
 // End of Framebuffer Class
  
-// Start of Shader Class
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
-{
-	
-    //Going to immediatily load in our shading files
-    vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    try { 
-	//Copying the glsl files into cpp code
-        vertexFile.open(vertexPath);
-        fragmentFile.open(fragmentPath);
-
-        std::stringstream VertexStreamString, FragmentStreamString; 
-        VertexStreamString << vertexFile.rdbuf();
-        FragmentStreamString << fragmentFile.rdbuf();
-
-        vertexFile.close();
-        fragmentFile.close();
-
-        vertexBuffer = VertexStreamString.str();
-        fragmentBuffer = FragmentStreamString.str();
-
-    } catch (std::ifstream::failure& e){
-        std::cout << e.what() << std::endl;
-    }
-
-    const char* vertexShaderSource = vertexBuffer.c_str();
-    const char* fragmentShaderSource = fragmentBuffer.c_str();
-
-    //Compile the vertex shader through glsl
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-    
-    //Checking errors in this shader
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-        std::cout << "Vertex Shader failed to compile: " << infoLog << '\n';
-    }
-
-    //Creating the fragment shader for these shapes
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-        std::cout << "Frag Shader failed to compile: " << infoLog << '\n';
-    }
-
-    //Creating and Linking a Shader program by adding all of the shading pieces
-    shaderID = glCreateProgram();
-
-    //Linking Shaders
-    glAttachShader(shaderID, vertexShader);
-    glAttachShader(shaderID, fragmentShader);
-    glLinkProgram(shaderID);
-
-    glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
-    if(!success){
-        glGetProgramInfoLog(shaderID, 512, nullptr, infoLog);
-    }
-
-    //Cleanup after the project is used
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    //- - - - - - End of Shader Code - - - - - -//
-}
-
-Shader::~Shader(){}
-
-void Shader::UseShader()
-{
-	glUseProgram(shaderID);
-}
-
-// Uniform Handling
-
-void Shader::SetOneFloat(const char* itemTarget, float item)
-{
-	glUniform1f(glGetUniformLocation(shaderID, itemTarget), item);
-}
-
-// Uniform Handling
-
-// End of Shader Class
-
