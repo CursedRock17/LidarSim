@@ -77,11 +77,6 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 
 void Gizmos::TexturesLoop()
 {
-	ambientStrength = glm::vec3(0.4f);
-	specularStrength = glm::vec3(1.0f);
-	diffuseStrength = glm::vec3(0.5f);
-	specularShiny = 64.0f;
-	
 	//Setup Gizmo's Material Makeup 
 	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
 	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
@@ -147,6 +142,10 @@ void Gizmos::SetMaterialStrengths(float ambient, float specular, float diffuse)
 	diffuseStrength = glm::vec3(diffuse);
 }
 
+void Gizmos::SetMaterialShine(float materialShine)
+{
+	specularShiny = materialShine;
+}
 
 // Essential Setter Functions //
 
@@ -214,6 +213,16 @@ glm::vec3 Gizmos::GetColor()
 	return objectColor;
 }
 
+glm::vec3 Gizmos::GetMaterialStrengths()
+{
+	glm::vec3 tempStrengths = glm::vec3(ambientStrength[0], specularStrength[0], diffuseStrength[0]);
+	return tempStrengths;
+}
+
+float Gizmos::GetMaterialShine()
+{
+	return specularShiny;
+}
 
 void Gizmos::ResetGizmoSpace()
 {

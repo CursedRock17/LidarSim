@@ -165,6 +165,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 	//Creation of our own window always starts with Begin()
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
 	//With the bottom dockable bar we want access to things such as the Gizmos and Imports
+	
 
 	ImGui::Text("Hello World!");  
 
@@ -282,6 +283,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
 
 		ImGui::Separator();
+		//* This is the Textures part of the UI *//
 
 		/*TODO:: going to turn this into a popup of the finder window of whatever OS the user is using that will get the path of the texture the user wants
 		* In this method the color is currently overriding the texture so if there's a texture we need to disable the color and set the whole thing to black
@@ -289,9 +291,29 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 		if(ImGui::Button("Set textures")){
 			CurrentGizmosRef->RenderTextures("./resources/crate.png", "./resources/crateSpecular.png");
 			CurrentGizmosRef->SetColor(0.0f, 0.0f, 0.0f);
+
+			//Open up the Folder Finder Window that we will make ourselves
+			ImGui::OpenPopup("FolderFinder");
 		}
 
-		ImGui::Spacing();
+		// If we opened the Folder Finder We can Begin Displaying this new Menu
+		//if(ImGui::BeginPopup("FolderFinder")){
+		//		ImGui::Text("List Files");
+		//		ImGui::EndPopup();
+		//}
+
+		SetupWindow();
+
+		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
+		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
+		CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
+
+		float shiny = CurrentGizmosRef->GetMaterialShine();
+		ImGui::InputFloat("Specular Shine", &shiny);
+		CurrentGizmosRef->SetMaterialShine(shiny);
+
+
+		ImGui::Separator();
 
 		//Create a Delete Handler
 		if(ImGui::Button("Delete"))

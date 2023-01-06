@@ -65,7 +65,8 @@ glm::vec3 SetScale(float xScale, float yScale, float zScale);
 glm::vec3 SetColor(float red, float green, float blue);
 glm::vec3 SetLightPosition(float xCoord, float yCoord, float zCoord);
 glm::vec3 SetViewPos(float xCoord, float yCoord, float zCoord);
-glm::vec3 SetMaterialStrengths(float ambient, float specular, float diffuse);
+void SetMaterialStrengths(float ambient, float specular, float diffuse);
+void SetMaterialShine(float materialShine);
 
 //Override setFunction for equivelency across all axis
 glm::vec3 SetRotation(float totalRotation);
@@ -81,6 +82,8 @@ glm::vec3 GetRotation();
 glm::vec3 GetTranslation();
 glm::vec3 GetScale();
 glm::vec3 GetColor();
+glm::vec3 GetMaterialStrengths();
+float GetMaterialShine();
 
 void ResetGizmoSpace(); // Set all the world space values to the default
 void UpdateGizmoSpace(); // Set the values of the gizmo for the world space
