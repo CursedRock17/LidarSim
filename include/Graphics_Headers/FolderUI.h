@@ -9,10 +9,20 @@
 // Graphics Libraries
 #include "imgui.h"
 
+class FolderUI {
+
+public:
+FolderUI();
+~FolderUI();
+
 void SetupWindow();
 void LoopDirectory();
 
-const bool show{true};
+private:
+constexpr static bool show{true};
 std::vector<std::filesystem::path> currentPathsVector;
+std::filesystem::path selectedPath = std::filesystem::current_path();
+
+};
 
 #endif

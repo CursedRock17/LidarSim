@@ -83,6 +83,7 @@ static int StringResizeCallback(ImGuiInputTextCallbackData* data);
 
 void SetupStyles();
 const char* GetFile();
+FolderUI Folder;
 
 void DestroyMenu();
 };

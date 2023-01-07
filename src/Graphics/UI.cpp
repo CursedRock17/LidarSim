@@ -296,13 +296,7 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 			ImGui::OpenPopup("FolderFinder");
 		}
 
-		// If we opened the Folder Finder We can Begin Displaying this new Menu
-		//if(ImGui::BeginPopup("FolderFinder")){
-		//		ImGui::Text("List Files");
-		//		ImGui::EndPopup();
-		//}
-
-		SetupWindow();
+		Folder.SetupWindow();
 
 		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
 		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
