@@ -5,6 +5,8 @@
 #include <iostream>
 #include <filesystem>
 #include <vector>
+#include <string>
+
 
 // Graphics Libraries
 #include "imgui.h"
@@ -16,12 +18,15 @@ FolderUI();
 ~FolderUI();
 
 void SetupWindow();
-void LoopDirectory();
+std::filesystem::path* GetTargetPath();
 
 private:
-constexpr static bool show{true};
 std::vector<std::filesystem::path> currentPathsVector;
 std::filesystem::path selectedPath = std::filesystem::current_path();
+std::filesystem::path* endPath{nullptr};
+
+void LoopDirectory();
+void ReverseDirectory();
 
 };
 

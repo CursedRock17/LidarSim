@@ -285,15 +285,24 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 		ImGui::Separator();
 		//* This is the Textures part of the UI *//
 
-		/*TODO:: going to turn this into a popup of the finder window of whatever OS the user is using that will get the path of the texture the user wants
-		* In this method the color is currently overriding the texture so if there's a texture we need to disable the color and set the whole thing to black
-		*/
-		if(ImGui::Button("Set textures")){
-			CurrentGizmosRef->RenderTextures("./resources/crate.png", "./resources/crateSpecular.png");
-			CurrentGizmosRef->SetColor(0.0f, 0.0f, 0.0f);
-
+		if(ImGui::Button("Set diffuse map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
+	
+			std::cout << Folder.GetTargetPath() << std::endl << std::move(Folder.GetTargetPath()) << std::endl;
+			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
+			CurrentGizmosRef->RenderTextures();
+    			CurrentGizmosRef->SetColor(0.0f);
+
+		}
+		
+		if(ImGui::Button("Set specular map")){
+			//Open up the Folder Finder Window that we will make ourselves
+			ImGui::OpenPopup("FolderFinder");
+
+			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
+			CurrentGizmosRef->RenderTextures();
+    			CurrentGizmosRef->SetColor(0.0f);
 		}
 
 		Folder.SetupWindow();

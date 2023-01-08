@@ -371,13 +371,13 @@ void Gizmos::GizmosCleanUp()
 }
 
 
-void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLocation)
+void Gizmos::RenderTextures()
 {
-    if(imgLocation && imgSpecularLocation)
+    if(diffuseLocation && specularLocation){
     	hasTexture = true;
 
     // Created a lamdba function that will need to be called for each image path needed
-    auto bindImage = [this](const char* path) -> unsigned int
+    auto bindImage = [this](std::filesystem::path* path) -> unsigned int
     {
 	unsigned int tempTexture;
 	glGenTextures(1, &tempTexture);
@@ -388,7 +388,7 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
 	//Make Sure Image Runs Top Down
 	stbi_set_flip_vertically_on_load(true);
 
-    	unsigned char *imgData = stbi_load(path, &imgW, &imgH, &numImgColChannels, 0);
+    	unsigned char *imgData = stbi_load(path->c_str(), &imgW, &imgH, &numImgColChannels, 0);
 
     	//Generate the image as a form of respect to perspective
 	//glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
@@ -428,9 +428,10 @@ void Gizmos::RenderTextures(const char* imgLocation, const char* imgSpecularLoca
     }; //End of bindImage
     	
     //Find the textures for each image created
-    imgMap = bindImage(imgLocation);
-    imgSpecularMap = bindImage(imgSpecularLocation);
-
+    imgMap = bindImage(diffuseLocation);
+    imgSpecularMap = bindImage(specularLocation);
+	
+    }
     //Link these textures in the glsl files
     glUseProgram(shaderProgram);
     //Set up Maps

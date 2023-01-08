@@ -48,7 +48,7 @@ Gizmos();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
-void RenderTextures(const char* imgLocation, const char* specularMapLocation);
+void RenderTextures();
 
 void GizmosInit();
 
@@ -90,7 +90,10 @@ void UpdateGizmoSpace(); // Set the values of the gizmo for the world space
 
 int ID;
 std::string objectName;
+
 bool hasTexture{false};
+std::filesystem::path* specularLocation{nullptr};
+std::filesystem::path* diffuseLocation{nullptr};
 
 // Simple Example Creations
 
