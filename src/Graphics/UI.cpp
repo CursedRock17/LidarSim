@@ -284,28 +284,31 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 
 		ImGui::Separator();
 		//* This is the Textures part of the UI *//
-
-		if(ImGui::Button("Set diffuse map")){
+		Folder.SetupWindow();
+		
+		if(ImGui::Button("Diffuse map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
-	
-			std::cout << Folder.GetTargetPath() << std::endl << std::move(Folder.GetTargetPath()) << std::endl;
+		}
+		ImGui::SameLine();
+		if(ImGui::Button("Set diffuse")){
 			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
 			CurrentGizmosRef->RenderTextures();
     			CurrentGizmosRef->SetColor(0.0f);
-
 		}
-		
-		if(ImGui::Button("Set specular map")){
+			
+		if(ImGui::Button("Specular map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
 
+		}
+		ImGui::SameLine();
+		if(ImGui::Button("Set specular")){
 			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
 			CurrentGizmosRef->RenderTextures();
     			CurrentGizmosRef->SetColor(0.0f);
-		}
 
-		Folder.SetupWindow();
+		}
 
 		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
 		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
@@ -318,13 +321,17 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 
 		ImGui::Separator();
 
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
 		//Create a Delete Handler
 		if(ImGui::Button("Delete"))
 		{
+			activeGizmo = nullptr;
 			_GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);			
 		}
+		ImGui::PopStyleColor();
 	};
 
+	//* End of Textures Changing in UI *//
 
 	ImGui::Begin("Gizmos list", &show, io->ConfigFlags);
 	/* Create a Sidebar where we have both the list of all the Gizmos in the application, each of these will be interactable

@@ -372,12 +372,12 @@ void Gizmos::GizmosCleanUp()
 
 
 void Gizmos::RenderTextures()
-{
-    if(diffuseLocation && specularLocation){
+{	
+    if(diffuseLocation != "" && specularLocation != ""){
     	hasTexture = true;
 
     // Created a lamdba function that will need to be called for each image path needed
-    auto bindImage = [this](std::filesystem::path* path) -> unsigned int
+    auto bindImage = [this](std::filesystem::path path) -> unsigned int
     {
 	unsigned int tempTexture;
 	glGenTextures(1, &tempTexture);
@@ -388,7 +388,7 @@ void Gizmos::RenderTextures()
 	//Make Sure Image Runs Top Down
 	stbi_set_flip_vertically_on_load(true);
 
-    	unsigned char *imgData = stbi_load(path->c_str(), &imgW, &imgH, &numImgColChannels, 0);
+    	unsigned char *imgData = stbi_load(path.c_str(), &imgW, &imgH, &numImgColChannels, 0);
 
     	//Generate the image as a form of respect to perspective
 	//glTexImage has a texture target, the level of mipmap, the colors needed in respect to its size as well as what to make as a texture
@@ -418,7 +418,7 @@ void Gizmos::RenderTextures()
     	}
     	else
     	{
-		if(path)
+		if(path != "")
 	    		std::cout << "Failed to Load Texture" << std::endl;	
     	}
 

@@ -92,8 +92,8 @@ int ID;
 std::string objectName;
 
 bool hasTexture{false};
-std::filesystem::path* specularLocation{nullptr};
-std::filesystem::path* diffuseLocation{nullptr};
+std::filesystem::path specularLocation{""};
+std::filesystem::path diffuseLocation{""};
 
 // Simple Example Creations
 

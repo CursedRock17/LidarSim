@@ -18,15 +18,16 @@ FolderUI();
 ~FolderUI();
 
 void SetupWindow();
-std::filesystem::path* GetTargetPath();
+std::filesystem::path GetTargetPath();
 
 private:
 std::vector<std::filesystem::path> currentPathsVector;
 std::filesystem::path selectedPath = std::filesystem::current_path();
-std::filesystem::path* endPath{nullptr};
+std::filesystem::path endPath{""};
 
 void LoopDirectory();
 void ReverseDirectory();
+void QueryDirectory();
 
 };
 
