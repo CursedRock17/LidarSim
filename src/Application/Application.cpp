@@ -49,15 +49,16 @@ void Application::ApplicationLoad()
 
     // Must give each object access to the window and all of the gizmos that will be applied within each scene
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos, mode);
-	std::shared_ptr<UI>ControlRef = std::make_shared<UI>(window, windowHeight, windowWidth, ApplicationGizmos); 
-	ApplicationUI.emplace_back(ControlRef);
+
+	std::shared_ptr<MainUI>MainUIRef = std::make_shared<MainUI>(window, windowHeight, windowWidth, ApplicationGizmos); 
 	
 	GraphicsRef->SimulationSetup();
 	
-	for(auto& ui : ApplicationUI)
-	{
-		ui->SetupMenu();
-	}
+	//Once we've declared the creation of all our UIs we set the starting UI to just the main interface from there, when we change tabs we can switch
+	//the current UI to whichever one we need
+	CurrentUI = MainUIRef;
+
+	CurrentUI->SetupMenu();
 
 	mFrame.FramebufferTexture(768, 1024);
 	mFrame.UnbindFramebuffer();
@@ -90,11 +91,7 @@ while(!glfwWindowShouldClose(window))
 	//Application Gizmos with the only thing that can change them
 	ApplicationGizmos = GraphicsRef->GetGizmosVec();
 
-	for(auto& ui : ApplicationUI)
-	{
-	 	ui->SetGizmosVec(ApplicationGizmos);
-	}
-
+ 	CurrentUI->SetGizmosVec(ApplicationGizmos);
 	//After We update the application gizmos we can begin the rendering process
 
 	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well
@@ -113,11 +110,8 @@ while(!glfwWindowShouldClose(window))
 
 	//After we have unbound the framebuffer to hold onto the objects we ccan render them
 	//Set Up the Menu with all the necessary info and begin it's loop
-	for(auto& ui : ApplicationUI)
-	{
-		ui->SetRenderedTexture(mFrame.GetFramebufferTexture());
-		ui->MenuLoop(GraphicsRef, &mode);
-	}
+	CurrentUI->SetRenderedTexture(mFrame.GetFramebufferTexture());
+	CurrentUI->MenuLoop(GraphicsRef, &mode);
 
 
     	// Check Buffers of Data

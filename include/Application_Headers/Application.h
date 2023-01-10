@@ -26,14 +26,13 @@ private:
 	static constexpr int windowHeight{600};
 
 	std::vector<std::shared_ptr<Gizmos>> ApplicationGizmos;
-	std::vector<std::shared_ptr<UI>> ApplicationUI;
-
 	std::string mode{"Create"}; // The way the application is running whether, we clicked the play button or not
 	
 	void ApplicationLoad();
 	void ApplicationClose();
 
 	std::shared_ptr<Graphics> GraphicsRef;
+	std::shared_ptr<MainUI> CurrentUI;
 
 	Framebuffer mFrame;
 };

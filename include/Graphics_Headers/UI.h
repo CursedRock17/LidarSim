@@ -24,8 +24,8 @@ public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~UI();
 
-void SetupMenu();
-void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
+virtual void SetupMenu();
+virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
 
 void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 void SetRenderedTexture(unsigned int _RTO);
@@ -37,7 +37,6 @@ float sceneHeight;
 void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
 void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
 
-private:
 void ImGuiContextLoop();
 
 // GLFW Window Settings
@@ -75,17 +74,33 @@ std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
 unsigned int RTO;
 std::shared_ptr<Gizmos> activeGizmo = nullptr;
 
-std::string my_str = "Mine";
-
 //Specialized Functions for ImGui
 static bool ImGui_InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0);
 static int StringResizeCallback(ImGuiInputTextCallbackData* data);
 
 void SetupStyles();
-const char* GetFile();
 FolderUI Folder;
 
 void DestroyMenu();
+};
+
+class MainUI : public UI {
+public:
+MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
+~MainUI();
+
+virtual void SetupMenu();
+virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
+
+float sceneWidth;
+float sceneHeight;
+
+private:
+
+void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
+void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
+	
+
 };
 
 #endif

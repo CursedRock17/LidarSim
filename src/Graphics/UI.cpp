@@ -13,6 +13,153 @@ UI::~UI()
 
 void UI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
+}	
+
+void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
+{
+}
+
+void UI::ImGuiContextLoop()
+{
+	//All of this information has to be processed for every UI setting that deals with imgui which simply processes out the current window
+	io = &ImGui::GetIO();
+	
+	//Find a Difference in Time
+	time = (float)glfwGetTime();
+	io->DeltaTime = time - lastTime;
+	lastTime = time;
+
+	//Handle the Input for ImGui which runs loops of callbacks
+	ImGui_Input_Loop(_window);
+
+	//Get Information About the Window to set up the menu correctly
+	glfwGetWindowSize(_window, &tempW, &tempH);
+	glfwGetFramebufferSize(_window, &displayW, &displayH);
+	io->DisplaySize = ImVec2((float)tempW, (float)tempH);
+	
+	if(tempW > 0 && tempH > 0)
+		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
+}
+
+void UI::SetupMenu()
+{
+}
+
+
+void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode)
+{
+}
+
+
+bool UI::ImGui_InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
+{
+	//This function is created in reference to the ImGui docs stating overload functions for std::string compared to const char* due to resizing capabillities check: https://github.com/ocornut/imgui/blob/docking/misc/cpp/imgui_stdlib.h for more details
+	IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
+	return ImGui::InputText(label, str->data(), (size_t)64, flags, StringResizeCallback, (void*)str);
+}
+
+int UI::StringResizeCallback(ImGuiInputTextCallbackData* data)
+{
+	if(data->EventFlag == ImGuiInputTextFlags_CallbackResize){
+		std::string* str = (std::string*)data->UserData;
+		IM_ASSERT(str->data() == data->Buf);
+		str->resize(data->BufSize);
+
+		data->Buf = str->data();
+	}
+	return 0;
+}
+
+void UI::DestroyMenu()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui::DestroyContext();
+}
+
+
+
+void UI::SetupStyles()
+{
+	style = &ImGui::GetStyle();
+	style->Colors[ImGuiCol_Text]                  = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+	style->Colors[ImGuiCol_TextDisabled]          = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+	style->Colors[ImGuiCol_WindowBg]              = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	style->Colors[ImGuiCol_ChildBg]               = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+	style->Colors[ImGuiCol_PopupBg]               = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+	style->Colors[ImGuiCol_Border]                = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+	style->Colors[ImGuiCol_BorderShadow]          = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	style->Colors[ImGuiCol_FrameBg]               = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	style->Colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+	style->Colors[ImGuiCol_FrameBgActive]         = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+	style->Colors[ImGuiCol_TitleBg]               = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+	style->Colors[ImGuiCol_TitleBgActive]         = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+	style->Colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+	style->Colors[ImGuiCol_MenuBarBg]             = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	style->Colors[ImGuiCol_ScrollbarBg]           = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	style->Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+	style->Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	style->Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+	style->Colors[ImGuiCol_CheckMark]             = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+	style->Colors[ImGuiCol_SliderGrab]            = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+	style->Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.08f, 0.50f, 0.72f, 1.00f);
+	style->Colors[ImGuiCol_Button]                = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	style->Colors[ImGuiCol_ButtonHovered]         = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+	style->Colors[ImGuiCol_ButtonActive]          = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+	style->Colors[ImGuiCol_Header]                = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
+	style->Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	style->Colors[ImGuiCol_HeaderActive]          = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
+	style->Colors[ImGuiCol_Separator]             = style->Colors[ImGuiCol_Border];
+	style->Colors[ImGuiCol_SeparatorHovered]      = ImVec4(0.41f, 0.42f, 0.44f, 1.00f);
+	style->Colors[ImGuiCol_SeparatorActive]       = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	style->Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	style->Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.29f, 0.30f, 0.31f, 0.67f);
+	style->Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	style->Colors[ImGuiCol_Tab]                   = ImVec4(0.08f, 0.08f, 0.09f, 0.83f);
+	style->Colors[ImGuiCol_TabHovered]            = ImVec4(0.33f, 0.34f, 0.36f, 0.83f);
+	style->Colors[ImGuiCol_TabActive]             = ImVec4(0.23f, 0.23f, 0.24f, 1.00f);
+	style->Colors[ImGuiCol_TabUnfocused]          = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+	style->Colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
+	style->Colors[ImGuiCol_DockingPreview]        = ImVec4(0.26f, 0.59f, 0.98f, 0.70f);
+	style->Colors[ImGuiCol_DockingEmptyBg]        = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+	style->Colors[ImGuiCol_PlotLines]             = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+	style->Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+	style->Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+	style->Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+	style->Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+	style->Colors[ImGuiCol_DragDropTarget]        = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+	style->Colors[ImGuiCol_NavHighlight]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	style->Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	style->Colors[ImGuiCol_NavWindowingDimBg]     = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+	style->Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+	style->GrabRounding                           = style->FrameRounding = 2.5f;
+}
+
+void UI::SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec)
+{
+	//Use this function to update the _gizmosVec every single frame
+	_gizmosVec = gizmosVec;
+}
+
+void UI::SetRenderedTexture(unsigned int _RTO)
+{
+	RTO = _RTO;
+}
+
+
+// Start of MainUI Class
+MainUI::MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : UI(window, windowHeight, windowWidth, gizmosVec)
+{ 
+
+}
+
+MainUI::~MainUI()
+{
+	//Should be default because it will call base classes destructor
+}
+
+
+void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
+{
 	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse -- we also check if the mouse is our window
 	if(sceneFocused){
 		if(ImGui::IsMouseDown(ImGuiMouseButton_Left)){
@@ -27,7 +174,7 @@ void UI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 	}
 }	
 
-void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
+void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 {
 	//Utilize these keybinds if we are on the main scene (simulation Graphics)
 	if(sceneFocused){
@@ -83,54 +230,7 @@ void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
    }
 }
 
-void UI::ImGuiContextLoop()
-{
-	//All of this information has to be processed for every UI setting that deals with imgui which simply processes out the current window
-	io = &ImGui::GetIO();
-	
-	//Find a Difference in Time
-	time = (float)glfwGetTime();
-	io->DeltaTime = time - lastTime;
-	lastTime = time;
-
-	//Handle the Input for ImGui which runs loops of callbacks
-	ImGui_Input_Loop(_window);
-
-	//Get Information About the Window to set up the menu correctly
-	glfwGetWindowSize(_window, &tempW, &tempH);
-	glfwGetFramebufferSize(_window, &displayW, &displayH);
-	io->DisplaySize = ImVec2((float)tempW, (float)tempH);
-	
-	if(tempW > 0 && tempH > 0)
-		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
-}
-
-void UI::SetupMenu()
-{
-	//Create Some Settings with the Menu and Setup the Context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	io = &ImGui::GetIO();
-	//Setup Flags so that we can more easily customize our imgui menu
-	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
-	io->ConfigFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
-
-
-	ImGui_Input_Setup(_window);
-	SetupStyles();
-
-	// Flag Settings that User Can Set
-	if(darkMode)
-		ImGui::StyleColorsDark();
-	else
-		ImGui::StyleColorsLight();
-	// Flag Settings that User Can Set
-
-	ImGui_ImplOpenGL3_Init("#version 330");
-}
-
-void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode)
+void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode)
 {
 	// ^^ Passing GraphicsRef because we need a reference to the Graphics in order to deal with input but we have to change features within that object instead of being able to create a copy
 	ImGuiContextLoop();
@@ -410,107 +510,29 @@ void UI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* applicati
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	
 }
 
-bool UI::ImGui_InputText(const char* label, std::string* str, ImGuiInputTextFlags flags)
+void MainUI::SetupMenu()
 {
-	//This function is created in reference to the ImGui docs stating overload functions for std::string compared to const char* due to resizing capabillities check: https://github.com/ocornut/imgui/blob/docking/misc/cpp/imgui_stdlib.h for more details
-	IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
-	return ImGui::InputText(label, str->data(), (size_t)64, flags, StringResizeCallback, (void*)str);
+	//Create Some Settings with the Menu and Setup the Context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	io = &ImGui::GetIO();
+	//Setup Flags so that we can more easily customize our imgui menu
+	io->ConfigFlags |= ImGuiWindowFlags_NoTitleBar;
+	io->ConfigFlags |= ImGuiWindowFlags_NoFocusOnAppearing;
+
+
+	ImGui_Input_Setup(_window);
+	SetupStyles();
+
+	// Flag Settings that User Can Set
+	if(darkMode)
+		ImGui::StyleColorsDark();
+	else
+		ImGui::StyleColorsLight();
+	// Flag Settings that User Can Set
+
+	ImGui_ImplOpenGL3_Init("#version 330");
 }
-
-int UI::StringResizeCallback(ImGuiInputTextCallbackData* data)
-{
-	if(data->EventFlag == ImGuiInputTextFlags_CallbackResize){
-		std::string* str = (std::string*)data->UserData;
-		IM_ASSERT(str->data() == data->Buf);
-		str->resize(data->BufSize);
-
-		data->Buf = str->data();
-	}
-	return 0;
-}
-
-void UI::DestroyMenu()
-{
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui::DestroyContext();
-}
-
-const char* UI::GetFile()
-{
-	std::filesystem::directory_entry de;
-
-	//Need to access the file finder specific to the OS then return the entire path as a c_string
-	return "";
-}
-
-void UI::SetupStyles()
-{
-	style = &ImGui::GetStyle();
-	style->Colors[ImGuiCol_Text]                  = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-	style->Colors[ImGuiCol_TextDisabled]          = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	style->Colors[ImGuiCol_WindowBg]              = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-	style->Colors[ImGuiCol_ChildBg]               = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
-	style->Colors[ImGuiCol_PopupBg]               = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
-	style->Colors[ImGuiCol_Border]                = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
-	style->Colors[ImGuiCol_BorderShadow]          = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style->Colors[ImGuiCol_FrameBg]               = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	style->Colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
-	style->Colors[ImGuiCol_FrameBgActive]         = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
-	style->Colors[ImGuiCol_TitleBg]               = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
-	style->Colors[ImGuiCol_TitleBgActive]         = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
-	style->Colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-	style->Colors[ImGuiCol_MenuBarBg]             = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-	style->Colors[ImGuiCol_ScrollbarBg]           = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-	style->Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-	style->Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
-	style->Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
-	style->Colors[ImGuiCol_CheckMark]             = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
-	style->Colors[ImGuiCol_SliderGrab]            = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
-	style->Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.08f, 0.50f, 0.72f, 1.00f);
-	style->Colors[ImGuiCol_Button]                = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	style->Colors[ImGuiCol_ButtonHovered]         = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
-	style->Colors[ImGuiCol_ButtonActive]          = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
-	style->Colors[ImGuiCol_Header]                = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
-	style->Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	style->Colors[ImGuiCol_HeaderActive]          = ImVec4(0.67f, 0.67f, 0.67f, 0.39f);
-	style->Colors[ImGuiCol_Separator]             = style->Colors[ImGuiCol_Border];
-	style->Colors[ImGuiCol_SeparatorHovered]      = ImVec4(0.41f, 0.42f, 0.44f, 1.00f);
-	style->Colors[ImGuiCol_SeparatorActive]       = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-	style->Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style->Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.29f, 0.30f, 0.31f, 0.67f);
-	style->Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-	style->Colors[ImGuiCol_Tab]                   = ImVec4(0.08f, 0.08f, 0.09f, 0.83f);
-	style->Colors[ImGuiCol_TabHovered]            = ImVec4(0.33f, 0.34f, 0.36f, 0.83f);
-	style->Colors[ImGuiCol_TabActive]             = ImVec4(0.23f, 0.23f, 0.24f, 1.00f);
-	style->Colors[ImGuiCol_TabUnfocused]          = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
-	style->Colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(0.13f, 0.14f, 0.15f, 1.00f);
-	style->Colors[ImGuiCol_DockingPreview]        = ImVec4(0.26f, 0.59f, 0.98f, 0.70f);
-	style->Colors[ImGuiCol_DockingEmptyBg]        = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-	style->Colors[ImGuiCol_PlotLines]             = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-	style->Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-	style->Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-	style->Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-	style->Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
-	style->Colors[ImGuiCol_DragDropTarget]        = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
-	style->Colors[ImGuiCol_NavHighlight]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	style->Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-	style->Colors[ImGuiCol_NavWindowingDimBg]     = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-	style->Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-	style->GrabRounding                           = style->FrameRounding = 2.5f;
-}
-
-void UI::SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec)
-{
-	//Use this function to update the _gizmosVec every single frame
-	_gizmosVec = gizmosVec;
-}
-
-void UI::SetRenderedTexture(unsigned int _RTO)
-{
-	RTO = _RTO;
-}
-
