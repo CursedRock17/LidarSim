@@ -320,12 +320,8 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
 			//the rotation visuals to represent the new rotation of the object
-			CurrentGizmosRef->SetRotation(updatedRotationX, updatedRotationY, updatedRotationZ);
-			CurrentGizmosRef->UpdateGizmoSpace();
-
+			CurrentGizmosRef->UpdateRotation(updatedRotationX, updatedRotationY, updatedRotationZ);
 			CurrentGizmosRef->SetRotation(rotations[0], rotations[1], rotations[2]);
-
-
 		}
 		//Translation Setter
 		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] }; 
@@ -338,11 +334,10 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
 			
 			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
-			//the translation visuals to represent the new location of the object
-			CurrentGizmosRef->SetTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
-			CurrentGizmosRef->UpdateGizmoSpace();
-			
+			//the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
+			CurrentGizmosRef->UpdateTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
 			CurrentGizmosRef->SetTranslation(translations[0], translations[1], translations[2]);
+
 		}
 
 		//Scale Setter
@@ -363,11 +358,8 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			float updatedScaleZ = scale[2] / CurrentGizmosRef->GetScale()[2];
 			
 			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
-			//the scale visuals to represent the new scale of the object
-
-			CurrentGizmosRef->SetScale(updatedScaleX, updatedScaleY, updatedScaleZ);
-			CurrentGizmosRef->UpdateGizmoSpace();
-			
+			//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visual
+			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
 			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
 		}
 
@@ -375,9 +367,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
 		
 		ImGui::BeginDisabled(CurrentGizmosRef->hasTexture);
-
 		ImGui::ColorEdit3("Color: ", color);
-	
 		ImGui::EndDisabled();
 
 		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
@@ -418,7 +408,6 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		ImGui::InputFloat("Specular Shine", &shiny);
 		CurrentGizmosRef->SetMaterialShine(shiny);
 
-
 		ImGui::Separator();
 
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
@@ -429,6 +418,12 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			_GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);			
 		}
 		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		if(ImGui::Button("Duplicate")){
+			_GraphicsRef->DuplicateGizmo(CurrentGizmosRef->ID);
+		}
+
 	};
 
 	//* End of Textures Changing in UI *//

@@ -45,6 +45,7 @@ void CreateLight();
 
 void RefreshGizmos();
 void DeleteGizmo(int targetID);
+void DuplicateGizmo(int targetID);
 
 //Need a public list of Gizmos Because we only change them here and the Application needs access to all of them
 std::vector<std::shared_ptr<Gizmos>> GetGizmosVec();
@@ -53,7 +54,6 @@ void SetGizmosVec(std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 private:
 void RenderingInit();
 void RenderingEnd();
-
 
 /* Additional OpenGL funcitons */
 void AcceptInput();

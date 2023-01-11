@@ -77,6 +77,16 @@ glm::vec3 SetLightPosition(float totalPosition);
 glm::vec3 SetViewPos(float totalPosition);
 glm::vec3 SetViewPos(glm::vec3 vectorPosition);
 
+//Updating Features by applying to the model for Each Object
+glm::vec3 UpdateRotation(float xRotation, float yRotation, float zRotation);
+glm::vec3 UpdateTranslation(float xTranslation, float yTranslation, float zTranslation);
+glm::vec3 UpdateScale(float xScale, float yScale, float zScale);
+
+//Override UpdateObject for equivelency across all axis
+glm::vec3 UpdateRotation(float totalRotation);
+glm::vec3 UpdateTranslation(float totalTranslation);
+glm::vec3 UpdateScale(float totalScale);
+
 //All the Getter functions
 glm::vec3 GetRotation();
 glm::vec3 GetTranslation();
@@ -104,6 +114,7 @@ void CreateLight();
 // Simple Example Creations
 private:
 unsigned int VBO, VAO;
+unsigned int modelLoc;
 
 //Describing the Object to Create
 int totalVerticeArgs;

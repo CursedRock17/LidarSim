@@ -28,7 +28,7 @@ void Gizmos::GizmosInit()
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//For the spinning use (float)glfwGetTime();
-        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 	//After Initing the Object in 3D Space handle Color
@@ -192,6 +192,79 @@ glm::vec3 Gizmos::SetViewPos(glm::vec3 vectorPosition)
 	return viewPosition;
 }
 
+// * List of Updater Functions * //
+
+glm::vec3 Gizmos::UpdateRotation(float xRotation, float yRotation, float zRotation)
+{
+	Rotation = glm::vec3(xRotation, yRotation, zRotation);
+	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
+
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Rotation;
+}
+
+glm::vec3 Gizmos::UpdateTranslation(float xTranslation, float yTranslation, float zTranslation)
+{
+	Translation = glm::vec3(xTranslation, yTranslation, zTranslation);
+	
+	//Actually Move the object
+	model = glm::translate(model, Translation);
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Translation;
+}
+
+glm::vec3 Gizmos::UpdateScale(float xScale, float yScale, float zScale)
+{
+	Scale = glm::vec3(xScale, yScale, zScale);
+	model = glm::scale(model, Scale);
+	
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Scale;
+}
+
+//Override UpdateObject for equivelency across all axis
+glm::vec3 Gizmos::UpdateRotation(float totalRotation)
+{
+	Rotation = glm::vec3(totalRotation);	
+	model = glm::rotate(model, glm::radians(Rotation[0]) , glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
+
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Rotation;
+}
+
+glm::vec3 Gizmos::UpdateTranslation(float totalTranslation)
+{
+	Translation = glm::vec3(totalTranslation);
+	
+	//Actually Move the object
+	model = glm::translate(model, Translation);
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Translation;
+}
+
+glm::vec3 Gizmos::UpdateScale(float totalScale)
+{
+	Scale = glm::vec3(totalScale);
+	model = glm::scale(model, Scale);
+	
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	return Scale;
+}
+
+
+// * List of Updater Functions * //
+
+
 //List of Getter Functions
 glm::vec3 Gizmos::GetRotation()
 {
@@ -245,7 +318,6 @@ void Gizmos::UpdateGizmoSpace()
 	model = glm::scale(model, Scale);
 
 	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
-        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
