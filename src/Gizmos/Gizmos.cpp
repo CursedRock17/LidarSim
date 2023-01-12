@@ -97,6 +97,12 @@ void Gizmos::RenderContainer()
 	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
 }
 
+//This RenderContainer Represents
+void Gizmos::RenderContainer(int numObjects)
+{
+	//Finish rendering the entire shape
+	glDrawArraysInstanced(GL_TRIANGLES, 0, totalVerticeArgs, numObjects);
+}
 
 // Essential Setter Functions //
 glm::vec3 Gizmos::SetRotation(float xRotation, float yRotation, float zRotation)

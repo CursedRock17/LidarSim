@@ -48,6 +48,7 @@ Gizmos();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
 void CreateTextures(int totPoint, std::vector<float> verts);
+
 void RenderTextures();
 
 void GizmosInit();
@@ -55,6 +56,8 @@ void GizmosInit();
 void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
 
 void RenderContainer();
+//Theis will represent instancing
+void RenderContainer(int numObjects);
 
 unsigned int shaderProgram;
 
