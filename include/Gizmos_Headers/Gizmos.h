@@ -17,28 +17,7 @@
 #include <vector>
 #include <filesystem>
 
-
-// Start of Framebuffer Class
-
-class Framebuffer {
-public:
-
-Framebuffer();
-~Framebuffer();
-
-void FramebufferTexture(int imageH, int imageW);
-void BindFramebuffer();
-void UnbindFramebuffer();
-
-unsigned int GetFramebufferTexture();
-
-private:
-//If we need to transform a texture into an image use this stuff
-unsigned int RTO, FBO, DBO;
-
-};
-
-// End of Framebuffer Class
+#include "./GizmosExtensions.h"
 
 class Gizmos
 {	
@@ -59,6 +38,7 @@ void RenderContainer();
 //Theis will represent instancing
 void RenderContainer(int numObjects);
 
+Shader shad;
 unsigned int shaderProgram;
 
 //Setting Features for Each Object

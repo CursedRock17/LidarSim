@@ -1,4 +1,4 @@
-add_library(Gizmos_Headers INTERFACE Gizmos.h stb_image.h)
+add_library(Gizmos_Headers INTERFACE Gizmos.h stb_image.h GizmosExtensions.h)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

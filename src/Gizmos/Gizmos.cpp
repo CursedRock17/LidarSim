@@ -16,7 +16,7 @@ Gizmos::~Gizmos()
 
 void Gizmos::GizmosInit()
 {
-	glUseProgram(shaderProgram);
+	glUseProgram(shad.shaderProgram);
 	
 	//Initialize the Position, Rotation, and Scale of Object
 	model = glm::translate(model, Translation);
@@ -28,32 +28,32 @@ void Gizmos::GizmosInit()
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//For the spinning use (float)glfwGetTime();
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 	//After Initing the Object in 3D Space handle Color
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
+    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
+    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightPos"), 1, &lightPosition[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
 	//Setup Gizmo's Material Makeup 
-	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
-	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "specularStrength"), 1, &specularStrength[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
+	glUniform1f(glGetUniformLocation(shad.shaderProgram, "shiny"), specularShiny);
 }
 
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
         //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
-	glUseProgram(shaderProgram);
+	glUseProgram(shad.shaderProgram);
 
 	//After Initing the Object in 3D Space handle Color
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, &objectColor[0]);
-    	glUniform3fv(glGetUniformLocation(shaderProgram, "lightShader"), 1, &lightShader[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, &lightPosition[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, &viewPosition[0]);
+    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
+    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightPos"), 1, &lightPosition[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
 	//We have to make sure each object has a defaulted texture, then we can see if(hasTexture) to see what we need to apply
         glBindVertexArray(VAO);
@@ -65,11 +65,11 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	}
 	
 	//Have to use the &[0][0] for all Matrices
-	unsigned int viewLocation = glGetUniformLocation(shaderProgram ,"viewer");
+	unsigned int viewLocation = glGetUniformLocation(shad.shaderProgram ,"viewer");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 	
 	glm::mat4 perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
-	unsigned int perspectLocation = glGetUniformLocation(shaderProgram ,"perspective");
+	unsigned int perspectLocation = glGetUniformLocation(shad.shaderProgram ,"perspective");
 	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 
 	// Orientation of Gizmo
@@ -78,10 +78,10 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 void Gizmos::TexturesLoop()
 {
 	//Setup Gizmo's Material Makeup 
-	glUniform3fv(glGetUniformLocation(shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "specularStrength"), 1, &specularStrength[0]);
-	glUniform3fv(glGetUniformLocation(shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
-	glUniform1f(glGetUniformLocation(shaderProgram, "shiny"), specularShiny);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "ambientStrength"), 1, &ambientStrength[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "specularStrength"), 1, &specularStrength[0]);
+	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "diffuseStrength"), 1, &diffuseStrength[0]);
+	glUniform1f(glGetUniformLocation(shad.shaderProgram, "shiny"), specularShiny);
 
 	// ** Must Render the Textures Before the Actual Object ** //
 	glActiveTexture(GL_TEXTURE0);
@@ -207,7 +207,7 @@ glm::vec3 Gizmos::UpdateRotation(float xRotation, float yRotation, float zRotati
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Rotation;
 }
@@ -218,7 +218,7 @@ glm::vec3 Gizmos::UpdateTranslation(float xTranslation, float yTranslation, floa
 	
 	//Actually Move the object
 	model = glm::translate(model, Translation);
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Translation;
 }
@@ -228,7 +228,7 @@ glm::vec3 Gizmos::UpdateScale(float xScale, float yScale, float zScale)
 	Scale = glm::vec3(xScale, yScale, zScale);
 	model = glm::scale(model, Scale);
 	
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Scale;
 }
@@ -241,7 +241,7 @@ glm::vec3 Gizmos::UpdateRotation(float totalRotation)
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Rotation;
 }
@@ -252,7 +252,7 @@ glm::vec3 Gizmos::UpdateTranslation(float totalTranslation)
 	
 	//Actually Move the object
 	model = glm::translate(model, Translation);
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Translation;
 }
@@ -262,12 +262,10 @@ glm::vec3 Gizmos::UpdateScale(float totalScale)
 	Scale = glm::vec3(totalScale);
 	model = glm::scale(model, Scale);
 	
-        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Scale;
 }
-
-
 // * List of Updater Functions * //
 
 
@@ -329,82 +327,6 @@ void Gizmos::UpdateGizmoSpace()
 
 //Updater Functions to Create Changes before the total loop
 
-void Gizmos::CreateShaders(const char* vertexPath, const char* fragmentPath) 
-{
-	
-    //Going to immediatily load in our shading files
-    vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    try { 
-	//Copying the glsl files into cpp code
-        vertexFile.open(vertexPath);
-        fragmentFile.open(fragmentPath);
-
-        std::stringstream VertexStreamString, FragmentStreamString; 
-        VertexStreamString << vertexFile.rdbuf();
-        FragmentStreamString << fragmentFile.rdbuf();
-
-        vertexFile.close();
-        fragmentFile.close();
-
-        vertexBuffer = VertexStreamString.str();
-        fragmentBuffer = FragmentStreamString.str();
-
-    } catch (std::ifstream::failure& e){
-        std::cout << e.what() << std::endl;
-    }
-
-    const char* vertexShaderSource = vertexBuffer.c_str();
-    const char* fragmentShaderSource = fragmentBuffer.c_str();
-
-    //Compile the vertex shader through glsl
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-    
-    //Checking errors in this shader
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-        std::cout << "Vertex Shader failed to compile: " << infoLog << '\n';
-    }
-
-    //Creating the fragment shader for these shapes
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-        std::cout << "Frag Shader failed to compile: " << infoLog << '\n';
-    }
-
-    //Creating and Linking a Shader program by adding all of the shading pieces
-    shaderProgram = glCreateProgram();
-
-    //Linking Shaders
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success){
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-    }
-
-    //Cleanup after the project is used
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    //- - - - - - End of Shader Code - - - - - -//
-}
-
-
 void Gizmos::CreateTextures(int totPoints, std::vector<float> verts) {	
     //Initialize Variables needed for this gizmo
     totalVerticeShaderArgs = totPoints;
@@ -445,7 +367,7 @@ void Gizmos::GizmosCleanUp()
     //When finished with the program we can delete everything
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shad.shaderProgram);
 }
 
 
@@ -511,14 +433,11 @@ void Gizmos::RenderTextures()
 	
     }
     //Link these textures in the glsl files
-    glUseProgram(shaderProgram);
+    glUseProgram(shad.shaderProgram);
     //Set up Maps
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuseMap" ), 0); 
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.specularMap" ), 1);
+    glUniform1i(glGetUniformLocation(shad.shaderProgram, "material.diffuseMap" ), 0); 
+    glUniform1i(glGetUniformLocation(shad.shaderProgram, "material.specularMap" ), 1);
 }
-
-
-
 
 
 // Simple Example Functions
@@ -573,7 +492,7 @@ void Gizmos::CreateCube()
 	// Code for creating a cube // - Create a Cube Gizmo then emplace it to the vector at the end 
 
 	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
-	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	shad.CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(8, cubeVertices);
 	objectName = "Cube";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
@@ -609,7 +528,7 @@ void Gizmos::CreatePyramid()
 	};
 
 
-	CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
+	shad.CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
 	CreateTextures(8, pyramidVertices);
 	objectName = "Pyramid";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
@@ -665,7 +584,7 @@ void Gizmos::CreateLight()
 
 
 	// ***** Have to Render the Lights after all the object ********* //
-	CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
+	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	CreateTextures(8, lightVertices);
 	//Can pass nullptr if you don't have textures to apply
 	objectName = "Light";
@@ -676,70 +595,3 @@ void Gizmos::CreateLight()
 
 // Simple Example Functions
 
-// Framebuffer Class
-Framebuffer::Framebuffer(){}
-Framebuffer::~Framebuffer()
-{
-	glDeleteFramebuffers(1, &FBO);
-}
-
-
-void Framebuffer::BindFramebuffer()
-{
-	//Set up the Framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-	//Need to Recall GLvewport because screen size changed
-	glViewport(0, 0, 1024, 800);
-}
-
-
-void Framebuffer::UnbindFramebuffer()
-{
-	//Can Remove Everything From inside Framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Framebuffer::FramebufferTexture(int imageH, int imageW)
-{
-	// This function will allow use to take our gizmos and convert it to a texture through the framebuffef
-	glGenFramebuffers(1, &FBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-
-	//Create a New Texture to Showcase
-	glGenTextures(1, &RTO);
-	glBindTexture(GL_TEXTURE_2D, RTO);
-
-	//Turn our Rendered Object into our Rendered Texture (RTO)
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageW, imageH, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//Set up the actual temperary texture in the RenderTextures Function
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTO, 0);
-
-	//Create Depth Testing within the texture
-	glGenRenderbuffers(1, &DBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageW, imageH);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DBO);
-	
-	//Error Check - See if the framebuffer works
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
-
-	UnbindFramebuffer();
-
-	// Draw as a wireframe
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-}
-
-unsigned int Framebuffer::GetFramebufferTexture()
-{
-	//Simple Getter Function that allows us to showcase the object we turn into a texture
-	return RTO;
-}
-
-// End of Framebuffer Class
- 
