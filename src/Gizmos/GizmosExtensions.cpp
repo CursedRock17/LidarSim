@@ -149,14 +149,14 @@ unsigned int Framebuffer::GetFramebufferTexture()
 // End of Framebuffer Class
  
 // Start of Instanced Objects Class
-InstancedObjects::InstancedObjects(){}
-InstancedObjects::~InstancedObjects(){}
+InstancedObject::InstancedObject(){}
+InstancedObject::~InstancedObject(){}
 
-void InstancedObjects::PrepareObjects(std::vector<float> vertices, int objectPoints, int objectAmount )
+void InstancedObject::PrepareObjects(std::vector<float> vertices, int objectPoints, int objectAmount )
 {
 	totalObjectPoints = objectPoints;
 	objectCount = objectAmount;
-	//Have to convert the vector to a pure array so we can pass as a pointer
+/*	//Have to convert the vector to a pure array so we can pass as a pointer
 	float verts[vertices.size()];
 	for(int i = 0; i < vertices.size(); i++){
 		verts[i] = vertices.at(i);		
@@ -173,12 +173,42 @@ void InstancedObjects::PrepareObjects(std::vector<float> vertices, int objectPoi
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glVertexAttribDivisor(2, 1);
+*/
+
 }
 
 
-void InstancedObjects::RenderingLoop()
+void InstancedObject::RenderingLoop()
 {
-	glDrawArraysInstanced(GL_TRIANGLES, 0, totalObjectPoints, objectCount);
+//	glDrawArraysInstanced(GL_TRIANGLES, 0, totalObjectPoints, (GLsizei)objectCount);
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+    // Enable the vertex array
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    // Create the vertex data for the grid
+    GLfloat vertes[(21*2+21*2)*2];
+    for (int i = -10; i <= 10; i++) {
+        // Horizontal lines
+        vertes[(i+10)*4+0] = -10.0f;
+        vertes[(i+10)*4+1] = i;
+        vertes[(i+10)*4+2] = 10.0f;
+        vertes[(i+10)*4+3] = i;
+
+        // Vertical lines
+        vertes[(i+10)*4+4] = i;
+        vertes[(i+10)*4+5] = -10.0f;
+        vertes[(i+10)*4+6] = i;
+        vertes[(i+10)*4+7] = 10.0f;
+    }
+    // Bind the vertex data
+    glVertexPointer(2, GL_FLOAT, 0, vertes);
+
+    // Draw the grid lines
+    glDrawArrays(GL_LINES, 0, (21*2+21*2));
+
+    // Disable the vertex array
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 

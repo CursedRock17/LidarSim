@@ -55,10 +55,10 @@ unsigned int RTO, FBO, DBO;
 
 // End of Framebuffer Class
 
-class InstancedObjects {
+class InstancedObject {
 public:	
-InstancedObjects();
-~InstancedObjects();
+InstancedObject();
+~InstancedObject();
 
 void PrepareObjects(std::vector<float> vertices, int objectPoints, int objectAmount);
 void RenderingLoop();

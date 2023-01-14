@@ -19,8 +19,7 @@
 // Additional Classes Needed //
 #include "../Gizmos_Headers/Gizmos.h"
 #include "../Camera_Headers/Camera.h"
-
-
+#include "../Gizmos_Headers/GizmosExtensions.h"
 
 class Graphics {
 public:
@@ -76,6 +75,9 @@ float yOffset{45.0f};
 
 //There should only be one camera object
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
+
+//Background Objects
+std::unique_ptr<InstancedObject> floorMap = std::make_unique<InstancedObject>();
 
 //List of all the Gizmos we are able to change
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
