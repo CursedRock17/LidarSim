@@ -152,14 +152,14 @@ unsigned int Framebuffer::GetFramebufferTexture()
 InstancedObject::InstancedObject(){}
 InstancedObject::~InstancedObject(){}
 
-void InstancedObject::PrepareObjects(std::vector<float> floorVertices, int objectPoints, int objectAmount )
+void InstancedObject::PrepareObjects(std::vector<float> vertices, int objectPoints, int objectAmount )
 {
 	totalObjectPoints = objectPoints;
 	objectCount = objectAmount;
 	//Have to convert the vector to a pure array so we can pass as a pointer
-	float verts[floorVertices.size()];
-	for(int i = 0; i < floorVertices.size(); i++){
-		verts[i] = floorVertices.at(i);		
+	float verts[vertices.size()];
+	for(int i = 0; i < vertices.size(); i++){
+		verts[i] = vertices.at(i);		
 	}
 
 	//We can create our own VBO for this new object without a VAO because it's one continous object
@@ -193,59 +193,10 @@ DrawnNonGizmo::~DrawnNonGizmo()
 	DestroyBuffers();
 }
 
-void DrawnNonGizmo::CreateBuffers()
-{
-	//Must create space for both the Vertex Array Object and Vertex Buffer Object then link them
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+void CreateBuffers(std::vector<glm::vec2> vertices);
+void RenderBuffers();
 
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+void DestroyBuffers();
 
-	//Begin loading in the set of transformations in floorVertices
-	glBufferData(GL_ARRAY_BUFFER, floorVertices.size() * sizeof(glm::vec3), floorVertices.data(), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,  sizeof(glm::vec3), (void*)0);
-
-	//Unbind the objects
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-}
-
-void DrawnNonGizmo::RenderBuffers()
-{
-	//Bind the the object, draw the floorVertices as lines, then unbind
-	glBindVertexArray(VAO);
-
-	glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
-
-	glBindVertexArray(0);
-}
-
-void DrawnNonGizmo::DestroyBuffers()
-{
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-}
-
-void DrawnNonGizmo::CreateGrid()
-{
-	//Setting up the Grid Floor
-	SizeTaken = 100;
-	Spacing = 1;
-
-	//Push back (-SizeTaken^) floorVertices as 3's because we need y to = 0, also the grid object can just be stored in the class closing modules
-	for(int i = 0; i < SizeTaken; i++){
-	for(int k = 0; k < SizeTaken; k++){
-            // Horizontal lines
-        	floorVertices.push_back(glm::vec3(-SizeTaken * Spacing, 0, i * Spacing));
-		floorVertices.push_back(glm::vec3(SizeTaken * Spacing, 0,  i * Spacing));
-            
-	    //floorVertices.push_back(glm::vec3(i * Spacing, 0, -SizeTaken * Spacing));
-            //floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
-	}}
-
-}
 
 //End of DrawnNonGizmo

@@ -100,24 +100,16 @@ void Graphics::SimulationSetup()
 	//Setting up the Camera
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 
-	std::vector<float> floorVertices = {
-        //Location          Textures        Normals      
-     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-      0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f, //Bottom Square
-      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f
-	};
 	//Setting up background objects
-	floorMap->PrepareObjects(floorVertices, 8, 100);
+	gridFloor->CreateGrid();
+	gridFloor->CreateBuffers();
 }
 
 void Graphics::SimulationLoop()
 {
-	floorMap->RenderingLoop();
-
-	//Each Objects Loop function
+	gridFloor->RenderBuffers();
+	
+	//Each Gizmos Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
 		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);

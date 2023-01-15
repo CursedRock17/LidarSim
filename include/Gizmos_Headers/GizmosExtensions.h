@@ -14,6 +14,10 @@
 #include <GLFW/glfw3.h>
 // Rendering Libraries //
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 //Start of Shader Class
 
 class Shader {
@@ -68,5 +72,25 @@ int totalObjectPoints, objectCount;
 unsigned int VBO;
 
 };
+
+class DrawnNonGizmo {
+public:
+DrawnNonGizmo();
+~DrawnNonGizmo();
+
+void CreateBuffers();
+void RenderBuffers();
+
+void CreateGrid();
+
+private:
+void DestroyBuffers();
+unsigned int VAO, VBO;
+
+int Spacing, SizeTaken;
+std::vector<glm::vec3> floorVertices;
+
+};
+
 
 #endif

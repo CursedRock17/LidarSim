@@ -77,7 +77,7 @@ float yOffset{45.0f};
 std::shared_ptr<Camera> cameraRef = std::make_shared<Camera>();
 
 //Background Objects
-std::unique_ptr<InstancedObject> floorMap = std::make_unique<InstancedObject>();
+std::unique_ptr<DrawnNonGizmo> gridFloor = std::make_unique<DrawnNonGizmo>();
 
 //List of all the Gizmos we are able to change
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
