@@ -94,7 +94,7 @@ void Graphics::SimulationSetup()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glEnable(GL_MULTISAMPLE);
 
-	//Face Culling Will save resources as we don't ahve to look at some vertices
+	//Face Culling Will save resources as we don't have to look at some vertices
 	// -- All the GL Functions -- //
 	
 	//Setting up the Camera
@@ -108,7 +108,6 @@ void Graphics::SimulationSetup()
 void Graphics::SimulationLoop()
 {
 	gridFloor->RenderBuffers();
-	
 	//Each Gizmos Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
@@ -124,7 +123,6 @@ void Graphics::SimulationLoop()
 		}
 		gizmosRef->RenderContainer();
 	}
-
 	cameraRef->CameraLoop();
 	//Each Objects Loop function
 }

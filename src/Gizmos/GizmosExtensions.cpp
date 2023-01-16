@@ -195,6 +195,8 @@ DrawnNonGizmo::~DrawnNonGizmo()
 
 void DrawnNonGizmo::CreateBuffers()
 {
+	Shader shad;
+	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
 	//Must create space for both the Vertex Array Object and Vertex Buffer Object then link them
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -205,7 +207,7 @@ void DrawnNonGizmo::CreateBuffers()
 	//Begin loading in the set of transformations in floorVertices
 	glBufferData(GL_ARRAY_BUFFER, floorVertices.size() * sizeof(glm::vec3), floorVertices.data(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,  sizeof(glm::vec3), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,  sizeof(glm::vec3), (void*)0);
 
 	//Unbind the objects
 	glBindVertexArray(0);
@@ -236,15 +238,16 @@ void DrawnNonGizmo::CreateGrid()
 	Spacing = 1;
 
 	//Push back (-SizeTaken^) floorVertices as 3's because we need y to = 0, also the grid object can just be stored in the class closing modules
-	for(int i = 0; i < SizeTaken; i++){
-	for(int k = 0; k < SizeTaken; k++){
-            // Horizontal lines
+	for(int i = -SizeTaken; i < SizeTaken; i++){
+            
+		// Horizontal Lines
         	floorVertices.push_back(glm::vec3(-SizeTaken * Spacing, 0, i * Spacing));
 		floorVertices.push_back(glm::vec3(SizeTaken * Spacing, 0,  i * Spacing));
-            
-	    //floorVertices.push_back(glm::vec3(i * Spacing, 0, -SizeTaken * Spacing));
-            //floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
-	}}
+		// Vertical Lines
+		floorVertices.push_back(glm::vec3(i * Spacing, 0, -SizeTaken * Spacing));
+            	floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
+	
+	}
 
 }
 

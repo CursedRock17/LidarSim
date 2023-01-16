@@ -59,14 +59,10 @@ void Update_Mouse_Details(GLFWwindow* window)
 	io = &ImGui::GetIO();
 	//Update Position and Buttons
 	io->AddMousePosEvent(-FLT_MAX, -FLT_MAX);
-	const bool focused = glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0;
 
-	if(focused)
-	{
-		double mouse_x, mouse_y;
-		glfwGetCursorPos(window, &mouse_x, &mouse_y);
-		io->AddMousePosEvent((float)mouse_x, (float)mouse_y);
-	}
+	double mouse_x, mouse_y;
+	glfwGetCursorPos(window, &mouse_x, &mouse_y);
+	io->AddMousePosEvent((float)mouse_x, (float)mouse_y);
 
 }
 
