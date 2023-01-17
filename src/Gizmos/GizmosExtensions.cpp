@@ -195,32 +195,32 @@ DrawnNonGizmo::~DrawnNonGizmo()
 
 void DrawnNonGizmo::CreateBuffers()
 {
-	Shader shad;
-	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
+    //shad.CreateShaders("./resources/shaders/basicVertex.vs", "./resources/shaders/lightFrag.fs");
 	//Must create space for both the Vertex Array Object and Vertex Buffer Object then link them
 	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
 	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	//Begin loading in the set of transformations in floorVertices
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, floorVertices.size() * sizeof(glm::vec3), floorVertices.data(), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	
+    glBindVertexArray(VAO);
+    
+    glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,  sizeof(glm::vec3), (void*)0);
 
 	//Unbind the objects
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+    
+    //glUseProgram(shad.shaderProgram);
 }
 
 void DrawnNonGizmo::RenderBuffers()
 {
-	//Bind the the object, draw the floorVertices as lines, then unbind
-	glBindVertexArray(VAO);
-
-	glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
+    glBindVertexArray(VAO);
+	
+    glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
 
 	glBindVertexArray(0);
 }
@@ -239,13 +239,12 @@ void DrawnNonGizmo::CreateGrid()
 
 	//Push back (-SizeTaken^) floorVertices as 3's because we need y to = 0, also the grid object can just be stored in the class closing modules
 	for(int i = -SizeTaken; i < SizeTaken; i++){
-            
 		// Horizontal Lines
-        	floorVertices.push_back(glm::vec3(-SizeTaken * Spacing, 0, i * Spacing));
+        floorVertices.push_back(glm::vec3(-SizeTaken * Spacing, 0, i * Spacing));
 		floorVertices.push_back(glm::vec3(SizeTaken * Spacing, 0,  i * Spacing));
 		// Vertical Lines
 		floorVertices.push_back(glm::vec3(i * Spacing, 0, -SizeTaken * Spacing));
-            	floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
+        floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
 	
 	}
 

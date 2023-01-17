@@ -85,12 +85,11 @@ void CreateGrid();
 
 private:
 void DestroyBuffers();
+	Shader shad;
 unsigned int VAO, VBO;
 
 int Spacing, SizeTaken;
 std::vector<glm::vec3> floorVertices;
 
 };
-
-
 #endif

@@ -28,12 +28,12 @@ void Gizmos::GizmosInit()
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//For the spinning use (float)glfwGetTime();
-        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 	//After Initing the Object in 3D Space handle Color
-    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
-    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
+   	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
+   	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
 	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightPos"), 1, &lightPosition[0]);
 	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
@@ -46,19 +46,19 @@ void Gizmos::GizmosInit()
 
 void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
-        //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
+    //The program object that will be used for enacting the program and starting to use the VAO, then drawing it
 	glUseProgram(shad.shaderProgram);
 
 	//After Initing the Object in 3D Space handle Color
-    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
-    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
+   	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
+   	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightShader"), 1, &lightShader[0]);
 	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "lightPos"), 1, &lightPosition[0]);
 	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
 	//We have to make sure each object has a defaulted texture, then we can see if(hasTexture) to see what we need to apply
-        glBindVertexArray(VAO);
+    glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 	
 	if(hasTexture){
 		TexturesLoop();
@@ -85,9 +85,9 @@ void Gizmos::TexturesLoop()
 
 	// ** Must Render the Textures Before the Actual Object ** //
 	glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, imgMap);
+    glBindTexture(GL_TEXTURE_2D, imgMap);
     
-        glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, imgSpecularMap);
 }
 
@@ -207,8 +207,8 @@ glm::vec3 Gizmos::UpdateRotation(float xRotation, float yRotation, float zRotati
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
-        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Rotation;
 }
 
@@ -218,8 +218,8 @@ glm::vec3 Gizmos::UpdateTranslation(float xTranslation, float yTranslation, floa
 	
 	//Actually Move the object
 	model = glm::translate(model, Translation);
-        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Translation;
 }
 
