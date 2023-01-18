@@ -322,7 +322,7 @@ void Gizmos::UpdateGizmoSpace()
 	model = glm::scale(model, Scale);
 
 	//For the spinning use (float)glfwGetTime() in the second slot of rotation;
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
 //Updater Functions to Create Changes before the total loop
@@ -595,3 +595,59 @@ void Gizmos::CreateLight()
 
 // Simple Example Functions
 
+void Gizmos::CreateFloor()
+{
+	std::vector<float> floorVertices = {
+        //Location     
+    -100.0f,  0.0f, -100.0f,  
+     100.0f,  0.0f, -100.0f, 
+     100.0f, 50.0f, -100.0f,
+     100.0f, 50.0f, -100.0f, 
+    -100.0f, 50.0f, -100.0f, 
+    -100.0f,  0.0f, -100.0f,
+
+    -100.0f,  0.0f,  100.0f,
+     100.0f,  0.0f,  100.0f, 
+     100.0f, 50.0f,  100.0f,
+     100.0f, 50.0f,  100.0f,  
+    -100.0f, 50.0f,  100.0f, 
+    -100.0f,  0.0f,  100.0f,
+
+    -100.0f, 50.0f,  100.0f, 
+    -100.0f, 50.0f, -100.0f,
+    -100.0f,  0.0f, -100.0f, 
+    -100.0f,  0.0f, -100.0f, 
+    -100.0f,  0.0f,  100.0f, 
+    -100.0f, 50.0f,  100.0f, 
+ 
+     100.0f, 50.0f,  100.0f, 
+     100.0f, 50.0f, -100.0f,
+     100.0f,  0.0f, -100.0f, 
+     100.0f,  0.0f, -100.0f, 
+     100.0f,  0.0f,  100.0f,  
+     100.0f, 50.0f,  100.0f, 
+
+    -100.0f,  0.0f, -100.0f, 
+     100.0f,  0.0f, -100.0f, 
+     100.0f,  0.0f,  100.0f,  
+     100.0f,  0.0f,  100.0f, 
+    -100.0f,  0.0f,  100.0f, 
+    -100.0f,  0.0f, -100.0f,  
+
+    -100.0f, 50.0f, -100.0f, 
+     100.0f, 50.0f, -100.0f,   
+     100.0f, 50.0f,  100.0f,  
+     100.0f, 50.0f,  100.0f,
+    -100.0f, 50.0f,  100.0f, 
+    -100.0f, 50.0f, -100.0f
+	}; 
+
+	// Code for creating a cube // - Create a Cube Gizmo then emplace it to the vector at the end 
+
+	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
+	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
+	CreateTextures(3, floorVertices);
+	objectName = "Floor";
+	SetLightPosition(0.0f, 1.0f, 0.0f);
+	GizmosInit();
+}

@@ -7,6 +7,6 @@ uniform mat4 viewer;
 uniform mat4 perspective;
 
 void main(){
-    gl_Position = perspective * viewer * model * vec4(aPos, 1.0f);
+   gl_Position = perspective * viewer * model * vec4(aPos, 1.0f);
 }
 

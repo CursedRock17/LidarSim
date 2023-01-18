@@ -102,17 +102,23 @@ void Graphics::SimulationSetup()
 
 	//Setting up background objects
 	gridFloor->CreateGrid();
-	gridFloor->CreateBuffers();
+    gridFloor->CreateBuffers();
+
+    std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
+    floorGizmos->CreateFloor();
+	floorGizmos->ID = _gizmosVec.size();
+
+	_gizmosVec.emplace_back(floorGizmos);
 }
 
 void Graphics::SimulationLoop()
 {
-	gridFloor->RenderBuffers();
+	gridFloor->RenderBuffers(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 	//Each Gizmos Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{
-		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 		gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
+		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 		
 		if(gizmosRef->objectName != "Light"){
 			if(_mode == "Simulate")

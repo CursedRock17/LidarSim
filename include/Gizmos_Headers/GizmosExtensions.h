@@ -79,7 +79,7 @@ DrawnNonGizmo();
 ~DrawnNonGizmo();
 
 void CreateBuffers();
-void RenderBuffers();
+void RenderBuffers(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
 
 void CreateGrid();
 
@@ -88,6 +88,10 @@ void DestroyBuffers();
 	Shader shad;
 unsigned int VAO, VBO;
 
+        glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        glm::mat4 view          = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
+        
 int Spacing, SizeTaken;
 std::vector<glm::vec3> floorVertices;
 

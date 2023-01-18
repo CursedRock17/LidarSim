@@ -93,6 +93,7 @@ std::filesystem::path diffuseLocation{""};
 void CreateCube();
 void CreatePyramid();
 void CreateLight();
+void CreateFloor();
 
 // Simple Example Creations
 private:
@@ -130,6 +131,8 @@ std::string fragmentBuffer;
 
 void TexturesLoop();
 void GizmosCleanUp();
+
+
 };
 
 // End of Gizmo Class

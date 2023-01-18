@@ -195,7 +195,7 @@ DrawnNonGizmo::~DrawnNonGizmo()
 
 void DrawnNonGizmo::CreateBuffers()
 {
-    //shad.CreateShaders("./resources/shaders/basicVertex.vs", "./resources/shaders/lightFrag.fs");
+    shad.CreateShaders("./resources/shaders/basicVertex.vs", "./resources/shaders/lightFrag.fs");
 	//Must create space for both the Vertex Array Object and Vertex Buffer Object then link them
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -206,23 +206,33 @@ void DrawnNonGizmo::CreateBuffers()
 	
     glBindVertexArray(VAO);
     
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,  sizeof(glm::vec3), (void*)0);
 
 	//Unbind the objects
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     
-    //glUseProgram(shad.shaderProgram);
+    glUseProgram(shad.shaderProgram);
 }
 
-void DrawnNonGizmo::RenderBuffers()
+void DrawnNonGizmo::RenderBuffers(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 {
-    glBindVertexArray(VAO);
-	
-    glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
+        glUseProgram(shad.shaderProgram);        // create transformations
 
-	glBindVertexArray(0);
+        glBindVertexArray(VAO);
+    
+        //Have to use the &[0][0] for all Matrices
+	    unsigned int viewLocation = glGetUniformLocation(shad.shaderProgram ,"viewer");
+	    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+	
+	    glm::mat4 perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
+	    unsigned int perspectLocation = glGetUniformLocation(shad.shaderProgram ,"perspective");
+	    glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
+	
+        glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
+
+	//glBindVertexArray(0);
 }
 
 void DrawnNonGizmo::DestroyBuffers()
