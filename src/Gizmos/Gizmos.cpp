@@ -228,8 +228,8 @@ glm::vec3 Gizmos::UpdateScale(float xScale, float yScale, float zScale)
 	Scale = glm::vec3(xScale, yScale, zScale);
 	model = glm::scale(model, Scale);
 	
-        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Scale;
 }
 
@@ -241,8 +241,8 @@ glm::vec3 Gizmos::UpdateRotation(float totalRotation)
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
-        modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Rotation;
 }
 
@@ -599,53 +599,53 @@ void Gizmos::CreateFloor()
 {
 	std::vector<float> floorVertices = {
         //Location     
-    -100.0f,  0.0f, -100.0f,  
-     100.0f,  0.0f, -100.0f, 
-     100.0f, 50.0f, -100.0f,
-     100.0f, 50.0f, -100.0f, 
-    -100.0f, 50.0f, -100.0f, 
-    -100.0f,  0.0f, -100.0f,
+    -10.0f,  -0.30f, -10.0f,  
+     10.0f,  -0.30f, -10.0f, 
+     10.0f, -0.15f, -10.0f,
+     10.0f, -0.15f, -10.0f, 
+    -10.0f, -0.15f, -10.0f, 
+    -10.0f,  -0.30f, -10.0f,
 
-    -100.0f,  0.0f,  100.0f,
-     100.0f,  0.0f,  100.0f, 
-     100.0f, 50.0f,  100.0f,
-     100.0f, 50.0f,  100.0f,  
-    -100.0f, 50.0f,  100.0f, 
-    -100.0f,  0.0f,  100.0f,
+    -10.0f,  -0.30f,  10.0f,
+     10.0f,  -0.30f,  10.0f, 
+     10.0f, -0.15f,  10.0f,
+     10.0f, -0.15f,  10.0f,  
+    -10.0f, -0.15f,  10.0f, 
+    -10.0f,  -0.30f,  10.0f,
 
-    -100.0f, 50.0f,  100.0f, 
-    -100.0f, 50.0f, -100.0f,
-    -100.0f,  0.0f, -100.0f, 
-    -100.0f,  0.0f, -100.0f, 
-    -100.0f,  0.0f,  100.0f, 
-    -100.0f, 50.0f,  100.0f, 
+    -10.0f, -0.15f,  10.0f, 
+    -10.0f, -0.15f, -10.0f,
+    -10.0f,  -0.30f, -10.0f, 
+    -10.0f,  -0.30f, -10.0f, 
+    -10.0f,  -0.30f,  10.0f, 
+    -10.0f, -0.15f,  10.0f, 
  
-     100.0f, 50.0f,  100.0f, 
-     100.0f, 50.0f, -100.0f,
-     100.0f,  0.0f, -100.0f, 
-     100.0f,  0.0f, -100.0f, 
-     100.0f,  0.0f,  100.0f,  
-     100.0f, 50.0f,  100.0f, 
+     10.0f, -0.15f,  10.0f, 
+     10.0f, -0.15f, -10.0f,
+     10.0f,  -0.30f, -10.0f, 
+     10.0f,  -0.30f, -10.0f, 
+     10.0f,  -0.30f,  10.0f,  
+     10.0f, -0.15f,  10.0f, 
 
-    -100.0f,  0.0f, -100.0f, 
-     100.0f,  0.0f, -100.0f, 
-     100.0f,  0.0f,  100.0f,  
-     100.0f,  0.0f,  100.0f, 
-    -100.0f,  0.0f,  100.0f, 
-    -100.0f,  0.0f, -100.0f,  
+    -10.0f,  -0.30f, -10.0f, 
+     10.0f,  -0.30f, -10.0f, 
+     10.0f,  -0.30f,  10.0f,  
+     10.0f,  -0.30f,  10.0f, 
+    -10.0f,  -0.30f,  10.0f, 
+    -10.0f,  -0.30f, -10.0f,  
 
-    -100.0f, 50.0f, -100.0f, 
-     100.0f, 50.0f, -100.0f,   
-     100.0f, 50.0f,  100.0f,  
-     100.0f, 50.0f,  100.0f,
-    -100.0f, 50.0f,  100.0f, 
-    -100.0f, 50.0f, -100.0f
+    -10.0f, -0.15f, -10.0f, 
+     10.0f, -0.15f, -10.0f,   
+     10.0f, -0.15f,  10.0f,  
+     10.0f, -0.15f,  10.0f,
+    -10.0f, -0.15f,  10.0f, 
+    -10.0f, -0.15f, -10.0f
 	}; 
 
 	// Code for creating a cube // - Create a Cube Gizmo then emplace it to the vector at the end 
 
 	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
-	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
+	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/basicFrag.fs");
 	CreateTextures(3, floorVertices);
 	objectName = "Floor";
 	SetLightPosition(0.0f, 1.0f, 0.0f);

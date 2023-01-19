@@ -101,9 +101,6 @@ void Graphics::SimulationSetup()
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 
 	//Setting up background objects
-	gridFloor->CreateGrid();
-    gridFloor->CreateBuffers();
-
     std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
     floorGizmos->CreateFloor();
 	floorGizmos->ID = _gizmosVec.size();
@@ -113,7 +110,6 @@ void Graphics::SimulationSetup()
 
 void Graphics::SimulationLoop()
 {
-	gridFloor->RenderBuffers(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
 	//Each Gizmos Loop function
 	for(const auto &gizmosRef : _gizmosVec)
 	{

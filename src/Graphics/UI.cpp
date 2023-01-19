@@ -330,7 +330,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		if(ImGui::IsItemDeactivatedAfterEdit()){
 			//We have to create a updated Translation because otherwise we woould just continous apply the new value instead of update to get that desired value
 			float updatedTranslationX = translations[0] - CurrentGizmosRef->GetTranslation()[0];
-			float updatedTranslationY = translations[1] - CurrentGizmosRef->GetTranslation()[1];
+			float updatedTranslationY = -1.0f * (translations[1] - CurrentGizmosRef->GetTranslation()[1]);
 			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
 			
 			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update

@@ -89,8 +89,6 @@ void Camera::RotateCamera(float xPos, float yPos)
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch)); //Roll
 
 	cameraFront = glm::normalize(direction);
-	//cameraUp = 
-	//camerPos = 
 }
 
 

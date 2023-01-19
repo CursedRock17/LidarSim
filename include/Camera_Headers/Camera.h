@@ -60,9 +60,9 @@ float yaw{-90.0f};
 float pitch{0.0f};
 
 // Camera Poisiton Values
-glm::vec3 cameraPos = glm::vec3(0.0f, 10.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraPos = glm::vec3(20.0f, -10.0f, 15.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 2.5f, 0.0f);
 
 //How the Camera Sees using the 5 differenet Veiw models scuulpted in orthographic
 glm::mat4 view = glm::mat4(1.0f);
