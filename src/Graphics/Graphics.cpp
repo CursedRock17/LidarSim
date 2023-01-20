@@ -70,6 +70,12 @@ void Graphics::MoveCamDirection(Directions dirs)
 
 }
 
+//Handeling Logic for Gizmo Selection
+void Graphics::SelectGizmo()
+{
+
+}
+
 void Graphics::RenderingInit()
 {
 }

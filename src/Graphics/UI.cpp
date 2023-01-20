@@ -163,12 +163,18 @@ void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 	//Controls for Rotating the Camera - In order to do so we need to check the position of the mouse -- we also check if the mouse is our window
 	if(sceneFocused){
 		if(ImGui::IsMouseDown(ImGuiMouseButton_Left)){
+            if(ImGui::IsKeyDown(ImGuiKey_LeftCtrl)){
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
+            } //Now Handle Input for Object Selection
+            else {
+            _GraphicsRef->SelectGizmo();
+            }  
+            
 		}
 		else {
 			//Only need to reset the first touch if we are not actively moving
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
-		}	
+		}
 	} else {
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
 	}
@@ -184,7 +190,7 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 	// Move Forward
 	if(ImGui::IsKeyPressed(ImGuiKey_W) || ImGui::IsKeyPressed(ImGuiKey_UpArrow)){
 		//Limited Keys so use shift to control y axis
-		if(ImGui::IsKeyPressed(ImGuiKey_LeftShift)){
+		if(ImGui::IsKeyDown(ImGuiKey_LeftShift)){
 			Directions dir = y_pos;
 			_GraphicsRef->MoveCamDirection(dir);
 		} else {
@@ -196,7 +202,7 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 	//Move Backward
 	if(ImGui::IsKeyPressed(ImGuiKey_S) || ImGui::IsKeyPressed(ImGuiKey_DownArrow)){
 		//Limited Keys so use shift to control y axis
-		if(ImGui::IsKeyPressed(ImGuiKey_LeftShift)){
+		if(ImGui::IsKeyDown(ImGuiKey_LeftShift)){
 			Directions dir = y_neg;
 			_GraphicsRef->MoveCamDirection(dir);
 		} else {

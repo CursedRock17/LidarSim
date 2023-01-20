@@ -36,6 +36,8 @@ void RotateCam(float xPosition, float yPosition, bool newClick);
 void ZoomCam(bool zoomingIn);
 void MoveCamDirection(Directions dir);
 
+//Gizmo Alteration API
+void SelectGizmo();
 // Simple Object Creation Functions
 void CreateCube();
 void CreatePyramid();
