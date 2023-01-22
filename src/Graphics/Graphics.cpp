@@ -71,9 +71,16 @@ void Graphics::MoveCamDirection(Directions dirs)
 }
 
 //Handeling Logic for Gizmo Selection
-void Graphics::SelectGizmo()
+void Graphics::SelectGizmo(int mouse_x, int mouse_y)
 {
+    //Get the current mouse position from the input which allows us to track and find which object we're on by converting to framebuffer space
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
 
+    //Read to see what's at the current pixel, to see if it matches with an object
+    float pixels[4];
+    glReadPixels(mouse_x, viewport[3] - mouse_y , 1, 1, GL_RGBA, GL_FLOAT, &pixels);
+    std::cout << pixels[0] << " " << pixels[1] << " " << pixels[2] << std::endl;
 }
 
 void Graphics::RenderingInit()

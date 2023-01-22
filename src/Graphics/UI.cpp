@@ -167,7 +167,7 @@ void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
             } //Now Handle Input for Object Selection
             else {
-            _GraphicsRef->SelectGizmo();
+            _GraphicsRef->SelectGizmo(static_cast<int>(io->MousePos.x), static_cast<int>(io->MousePos.y));
             }  
             
 		}

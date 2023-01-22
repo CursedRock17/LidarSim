@@ -39,7 +39,7 @@ glm::vec3 GetCameraPosition();
 
 // Camera Changes //
 
-float cameraSpeed{2.5f};
+float cameraSpeed{5.0f};
 float FOV_{45.0f};
 float aspect;
 bool firstClick{true};
