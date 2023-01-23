@@ -97,10 +97,10 @@ while(!glfwWindowShouldClose(window))
 	//This renders the framebuffer for the main scene, which needs or Ui Menus scene details because when it updates it should be able to adjust as well
 	mFrame.BindFramebuffer();
 	glEnable(GL_DEPTH_TEST);
-    	clearScreen();
+   	clearScreen();
 
 	//Update the Engine Layer
-    	GraphicsRef->SimulationLoop();
+    GraphicsRef->SimulationLoop();
 	
 	//Once we have access to the scene we can remove the Framebuffer
 	mFrame.UnbindFramebuffer();
@@ -113,15 +113,13 @@ while(!glfwWindowShouldClose(window))
 	CurrentUI->SetRenderedTexture(mFrame.GetFramebufferTexture());
 	CurrentUI->MenuLoop(GraphicsRef, &mode);
 
-
-    	// Check Buffers of Data
-    	glfwSwapBuffers(window);
+    // Check Buffers of Data
+   	glfwSwapBuffers(window);
 	glfwPollEvents();
     	
 	// Input
-    	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
+   	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	glfwSetWindowShouldClose(window, true);
 } // End of While Loop
 
 }

@@ -70,17 +70,40 @@ void Graphics::MoveCamDirection(Directions dirs)
 
 }
 
+//A multipurpose function that will reverse order of our mouse click in order to return a ray cast
+glm::vec3 Graphics::CreateRayCast(float mouse_x, float mouse_y)
+{
+   //First reverse the viewport coordinates to get range of [-1,1]
+   float clip_x = (2.0f * mouse_x) / _windowWidth - 1.0f;
+   float clip_y = 1.0f - (2.0f * mouse_y) / _windowHeight;
+   // There's no z axis in the 2d screen or clip space
+   //Prep Transform from the Clip Space with a 4D matrix that will align with the projection matrix
+   glm::vec4 rayClip = glm::vec4(clip_x, clip_y, -1.0f, 1.0f);
+
+   //Now go to the View Space by inverting the projection matrix with the viewport RayClip
+   glm::mat4 projectionMatrix = glm::perspective(glm::radians(cameraRef->FOV_), cameraRef->aspect, 0.1f, 100.0f);
+   glm::vec4 rayEye = glm::inverse(projectionMatrix) * rayClip;
+   rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+   //Now We can finally move to the world coordinates by inverting the view matrix
+   glm::mat4 viewMatrix = cameraRef->CameraViewMatrix();
+   glm::vec3 rayWorld = (glm::inverse(viewMatrix) * rayEye);
+   rayWorld = glm::normalize(rayWorld);
+
+   return rayWorld;
+}
+
 //Handeling Logic for Gizmo Selection
-void Graphics::SelectGizmo(int mouse_x, int mouse_y)
+void Graphics::SelectGizmo(float mouse_x, float mouse_y)
 {
     //Get the current mouse position from the input which allows us to track and find which object we're on by converting to framebuffer space
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    glm::vec3 pickingRay = CreateRayCast(mouse_x, mouse_y);
+    std::cout << pickingRay[0] << " " << pickingRay[1] << " " << pickingRay[2] << std::endl;
 
     //Read to see what's at the current pixel, to see if it matches with an object
-    float pixels[4];
-    glReadPixels(mouse_x, viewport[3] - mouse_y , 1, 1, GL_RGBA, GL_FLOAT, &pixels);
-    std::cout << pixels[0] << " " << pixels[1] << " " << pixels[2] << std::endl;
+    //float pixels[4];
+    //glReadPixels(mouse_x, pickingRay[1] - mouse_y , 1, 1, GL_RGBA, GL_FLOAT, &pixels);
+    //std::cout << pixels[0] << " " << pixels[1] << " " << pixels[2] << std::endl;
 }
 
 void Graphics::RenderingInit()

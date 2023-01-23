@@ -37,7 +37,8 @@ void ZoomCam(bool zoomingIn);
 void MoveCamDirection(Directions dir);
 
 //Gizmo Alteration API
-void SelectGizmo(int mouse_x, int mouse_y);
+glm::vec3 CreateRayCast(float mouse_x, float mouse_y);
+void SelectGizmo(float mouse_x, float mouse_y);
 // Simple Object Creation Functions
 void CreateCube();
 void CreatePyramid();
