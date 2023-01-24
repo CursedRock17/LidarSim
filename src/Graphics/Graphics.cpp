@@ -98,7 +98,11 @@ void Graphics::SelectGizmo(float mouse_x, float mouse_y)
 {
     //Get the current mouse position from the input which allows us to track and find which object we're on by converting to framebuffer space
     glm::vec3 pickingRay = CreateRayCast(mouse_x, mouse_y);
-    std::cout << pickingRay[0] << " " << pickingRay[1] << " " << pickingRay[2] << std::endl;
+    glm::vec3 pickedRay = glm::normalize(pickingRay);
+   pickedRay += 3;
+
+    std::cout << pickedRay[0] << " " << pickedRay[1] << " " << pickedRay[2] << std::endl;
+
 
     //Read to see what's at the current pixel, to see if it matches with an object
     //float pixels[4];
