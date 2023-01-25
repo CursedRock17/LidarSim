@@ -1,5 +1,5 @@
 {
     "name" : "lidarsim",
-    "dependencies" : [ "glad", "opengl", "glfw3", "glm", { "name" : "imgui", "features" : ["docking-experimental"]} ],
+    "dependencies" : [ "glad", "opengl", "glfw3", "glm", { "name" : "imgui", "features" : ["docking-experimental"]}, "assimp" ],
     "version" : "1.0" 
 }

@@ -651,3 +651,30 @@ void Gizmos::CreateFloor()
 	SetLightPosition(0.0f, 1.0f, 0.0f);
 	GizmosInit();
 }
+
+const aiScene* Gizmos::ImportGizmoWrapper(const std::string& file_name)
+{
+	Assimp::Importer importer;
+	int post_processing_flags = aiProcess_CalcTangentSpace |aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
+	
+	const aiScene* newGizmo = importer.ReadFile(file_name, post_processing_flags);
+
+	//If the import fails then we will end up with a nullptr to assert
+	if(nullptr != newGizmo){
+		return nullptr;
+	}
+
+	return newGizmo;
+}
+
+void Gizmos::CreateCustomGizmo(const std::string& filePath)
+{
+	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/basicFrag.fs");
+	//We can then copy over information from the whole import
+	const aiScene* customImport = ImportGizmoWrapper(filePath);
+	//Destructure the import and insert the values into a regular Gizmo buffer
+
+	SetLightPosition(0.0f, 1.0f, 0.0f);
+	GizmosInit();
+}
+

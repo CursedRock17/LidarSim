@@ -43,6 +43,7 @@ void SelectGizmo(float mouse_x, float mouse_y);
 void CreateCube();
 void CreatePyramid();
 void CreateLight();
+void ImportCustomGizmo(const std::string& filePath);
 // Simple Object Creation Functions
 
 void RefreshGizmos();
@@ -65,8 +66,7 @@ void AcceptInput();
 GLFWwindow* _window;
 int _windowWidth{800};
 int _windowHeight{600};
-std::string _mode;
-
+std::string _mode; 
 //Control for the Rotation
 double xPos = _windowWidth / 2;
 double yPos = _windowHeight / 2;

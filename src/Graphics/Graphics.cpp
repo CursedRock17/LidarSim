@@ -101,8 +101,7 @@ void Graphics::SelectGizmo(float mouse_x, float mouse_y)
     glm::vec3 pickedRay = glm::normalize(pickingRay);
    pickedRay += 3;
 
-    std::cout << pickedRay[0] << " " << pickedRay[1] << " " << pickedRay[2] << std::endl;
-
+    //std::cout << pickedRay[0] << " " << pickedRay[1] << " " << pickedRay[2] << std::endl;
 
     //Read to see what's at the current pixel, to see if it matches with an object
     //float pixels[4];
@@ -236,6 +235,16 @@ void Graphics::CreateLight()
 	light->ID = _gizmosVec.size();
 
 	_gizmosVec.emplace_back(light);
+}
+
+void Graphics::ImportCustomGizmo(const std::string& filePath)
+{
+	std::shared_ptr<Gizmos> customModel = std::make_shared<Gizmos>();
+	customModel->CreateCustomGizmo();
+	customModel->ID = _gizmosVec.size();
+
+	_gizmosVec.emplace_back(customModel);
+	
 }
 
 //Simple Object Creation Functions

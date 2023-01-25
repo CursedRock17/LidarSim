@@ -13,7 +13,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
-
+find_package(assimp CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
 PRIVATE
@@ -33,6 +33,7 @@ glad::glad
 glfw
 glm::glm
 imgui::imgui
+assimp::assimp
 )
 
 
@@ -43,5 +44,5 @@ PUBLIC
 "${PROJECT_SOURCE_DIR}/src"
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -O3)
 

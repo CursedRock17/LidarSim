@@ -9,6 +9,9 @@
 // Rendering Libraries //
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 // Rendering Libraries //
 
 #include <iostream>
@@ -94,6 +97,8 @@ void CreateCube();
 void CreatePyramid();
 void CreateLight();
 void CreateFloor();
+void CreateCustomGizmo(const std::string& filePath);
+
 
 // Simple Example Creations
 private:
@@ -132,6 +137,7 @@ std::string fragmentBuffer;
 void TexturesLoop();
 void GizmosCleanUp();
 
+const aiScene* ImportGizmoWrapper(const std::string& file_name);
 
 };
 
