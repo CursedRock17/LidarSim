@@ -28,8 +28,8 @@ void Gizmos::GizmosInit()
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//For the spinning use (float)glfwGetTime();
-    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 	//After Initing the Object in 3D Space handle Color
    	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "objectColor"), 1, &objectColor[0]);
@@ -56,9 +56,9 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	glUniform3fv(glGetUniformLocation(shad.shaderProgram, "viewPos"), 1, &viewPosition[0]);
 	
 	//We have to make sure each object has a defaulted texture, then we can see if(hasTexture) to see what we need to apply
-    glBindVertexArray(VAO);
+	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	if(hasTexture){
 		TexturesLoop();
@@ -670,10 +670,25 @@ const aiScene* Gizmos::ImportGizmoWrapper(const std::string& file_name)
 void Gizmos::CreateCustomGizmo(const std::string& filePath)
 {
 	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/basicFrag.fs");
-	//We can then copy over information from the whole import
-	const aiScene* customImport = ImportGizmoWrapper(filePath);
-	//Destructure the import and insert the values into a regular Gizmo buffer
+	//Load the Import with Assimp
+	Assimp::Importer importer;
+	int post_processing_flags = aiProcess_CalcTangentSpace |aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
+	const aiScene* newGizmo = importer.ReadFile(filePath, post_processing_flags);
 
+	//We can then copy over information from the whole import
+	const aiScene* customImport = newGizmo;//ImportGizmoWrapper(filePath);
+	//Destructure the import and insert the values into a regular Gizmo buffer
+	if(customImport->HasMeshes()){
+		//for(const auto& mesh : customImport->mMeshes){}
+		std::cout << customImport->mMeshes << std::endl;
+	} else {
+		std::cout << "NO" << std::endl;
+	}
+
+	std::vector<float> gizmoMesh;
+	const aiMesh* mesh = *customImport->mMeshes;	
+
+	CreateTextures(1, gizmoMesh);
 	SetLightPosition(0.0f, 1.0f, 0.0f);
 	GizmosInit();
 }

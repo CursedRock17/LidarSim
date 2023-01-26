@@ -5,7 +5,6 @@ FolderUI::~FolderUI(){}
 
 void FolderUI::SetupWindow()
 {
-
 	if(ImGui::BeginPopupModal("FolderFinder")){
 		ImGui::Text("List Files");
 		
@@ -29,9 +28,7 @@ void FolderUI::SetupWindow()
 			ImGui::Spacing();
 		}
 
-
 		//Add a Close Button so we can easily escape
-
 		ImGui::Separator();
 		if(ImGui::Button("Close")){
 			ImGui::CloseCurrentPopup();

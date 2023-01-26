@@ -75,9 +75,6 @@ void Application::ApplicationClose()
 void Application::ApplicationLoop()
 {
 //Create the infinite Loop that will run the window
-
-// In this loop rendering order is extremely important going to need to add Layers in application
-
 while(!glfwWindowShouldClose(window))
 {
 	auto clearScreen = [](){
@@ -100,7 +97,7 @@ while(!glfwWindowShouldClose(window))
    	clearScreen();
 
 	//Update the Engine Layer
-    GraphicsRef->SimulationLoop();
+	GraphicsRef->SimulationLoop();
 	
 	//Once we have access to the scene we can remove the Framebuffer
 	mFrame.UnbindFramebuffer();
@@ -119,7 +116,7 @@ while(!glfwWindowShouldClose(window))
     	
 	// Input
    	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	glfwSetWindowShouldClose(window, true);
+	    glfwSetWindowShouldClose(window, true);
 } // End of While Loop
 
 }

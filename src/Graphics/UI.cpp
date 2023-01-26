@@ -272,6 +272,9 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
 	//With the bottom dockable bar we want access to things such as the Gizmos and Imports
 	
+	//Have to run an additional instance of the Setup for all folder actions
+	Folder.SetupWindow();
+	
 	ImGui::Text("Hello World!");  
 
 	//Create a button in an if statement to use as an on click
@@ -296,9 +299,12 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	if(ImGui::Button("Import\nModel", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
 	{
-		Folder.SetupWindow();
 		//This one needs a folder finder which can push the file as a Gizmo
 		ImGui::OpenPopup("FolderFinder");
+	}
+
+	if(ImGui::Button("Set Model")){
+		_GraphicsRef->ImportCustomGizmo(Folder.GetTargetPath());
 	}
 
 	ImGui::End();

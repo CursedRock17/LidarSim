@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 
 #include <memory>
+#include <thread>
 #include <vector>
 
 
@@ -33,6 +34,7 @@ private:
 
 	std::shared_ptr<Graphics> GraphicsRef;
 	std::shared_ptr<MainUI> CurrentUI;
+	std::thread mainThread;
 
 	Framebuffer mFrame;
 };
