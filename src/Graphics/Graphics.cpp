@@ -240,10 +240,12 @@ void Graphics::CreateLight()
 void Graphics::ImportCustomGizmo(const std::string& filePath)
 {
 	std::shared_ptr<Gizmos> customModel = std::make_shared<Gizmos>();
-	customModel->CreateCustomGizmo(filePath);
-	customModel->ID = _gizmosVec.size();
-
-	_gizmosVec.emplace_back(customModel);
+	//Since importing we have to check to see if it works
+	if(customModel->CreateCustomGizmo(filePath)){
+		customModel->ID = _gizmosVec.size();
+		_gizmosVec.emplace_back(customModel);
+		customModel->objectName = "Default";
+	}
 	
 }
 

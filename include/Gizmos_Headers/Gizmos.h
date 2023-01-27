@@ -97,7 +97,7 @@ void CreateCube();
 void CreatePyramid();
 void CreateLight();
 void CreateFloor();
-void CreateCustomGizmo(const std::string& filePath);
+bool CreateCustomGizmo(const std::string& filePath);
 
 
 // Simple Example Creations
@@ -136,8 +136,6 @@ std::string fragmentBuffer;
 
 void TexturesLoop();
 void GizmosCleanUp();
-
-const aiScene* ImportGizmoWrapper(const std::string& file_name);
 
 };
 

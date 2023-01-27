@@ -652,22 +652,7 @@ void Gizmos::CreateFloor()
 	GizmosInit();
 }
 
-const aiScene* Gizmos::ImportGizmoWrapper(const std::string& file_name)
-{
-	Assimp::Importer importer;
-	int post_processing_flags = aiProcess_CalcTangentSpace |aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
-	
-	const aiScene* newGizmo = importer.ReadFile(file_name, post_processing_flags);
-
-	//If the import fails then we will end up with a nullptr to assert
-	if(nullptr != newGizmo){
-		return nullptr;
-	}
-
-	return newGizmo;
-}
-
-void Gizmos::CreateCustomGizmo(const std::string& filePath)
+bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 {
 	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/basicFrag.fs");
 	//Load the Import with Assimp
@@ -676,20 +661,38 @@ void Gizmos::CreateCustomGizmo(const std::string& filePath)
 	const aiScene* newGizmo = importer.ReadFile(filePath, post_processing_flags);
 
 	//We can then copy over information from the whole import
-	const aiScene* customImport = newGizmo;//ImportGizmoWrapper(filePath);
+	std::vector<float> gizmoMesh;
+
 	//Destructure the import and insert the values into a regular Gizmo buffer
-	if(customImport->HasMeshes()){
-		//for(const auto& mesh : customImport->mMeshes){}
-		std::cout << customImport->mMeshes << std::endl;
+	//Look at the faces which are sets of triangles needed to make the object
+	if(newGizmo){
+		std::cout << newGizmo->mMeshes[0]->mFaces[0].mNumIndices << std::endl;
+		for(int i = 0; i < newGizmo->mNumMeshes; ++i){
+			//Now we can loop through and add each 3d vector (for vertices)
+			for(int j = 0; j < newGizmo->mMeshes[i]->mNumFaces; ++j){
+				float current = newGizmo->mMeshes[i]->mFaces[j].mIndices[0];
+				std::cout << current << " ";
+				gizmoMesh.push_back(current);
+				current = newGizmo->mMeshes[i]->mFaces[j].mIndices[1];
+				std::cout << current << " ";
+				gizmoMesh.push_back(current);
+				current = newGizmo->mMeshes[i]->mFaces[j].mIndices[2];
+				std::cout << current << " " << std::endl;
+				gizmoMesh.push_back(current);
+			}
+		}
+
+		CreateTextures(3, gizmoMesh);
+		SetLightPosition(0.0f, 1.0f, 0.0f);
+		GizmosInit();
+
+		return true;
 	} else {
-		std::cout << "NO" << std::endl;
+		std::cout << "Failed to Initialize Import" << std::endl;
+		return false;
 	}
 
-	std::vector<float> gizmoMesh;
-	const aiMesh* mesh = *customImport->mMeshes;	
+	return false;
 
-	CreateTextures(1, gizmoMesh);
-	SetLightPosition(0.0f, 1.0f, 0.0f);
-	GizmosInit();
 }
 
