@@ -3,7 +3,7 @@
 //Include the definition for image insertion **Can only go in one cpp file
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../include/Gizmos_Headers/stb_image.h"	
-
+#include <cmath>
 Gizmos::Gizmos()
 {
 }
@@ -207,8 +207,8 @@ glm::vec3 Gizmos::UpdateRotation(float xRotation, float yRotation, float zRotati
 	model = glm::rotate(model, glm::radians(Rotation[1]) , glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Rotation[2]) , glm::vec3(0.0f, 0.0f, 1.0f));
 
-    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Rotation;
 }
 
@@ -218,8 +218,8 @@ glm::vec3 Gizmos::UpdateTranslation(float xTranslation, float yTranslation, floa
 	
 	//Actually Move the object
 	model = glm::translate(model, Translation);
-    modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	modelLoc = glGetUniformLocation(shad.shaderProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	return Translation;
 }
 
@@ -666,19 +666,18 @@ bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 	//Destructure the import and insert the values into a regular Gizmo buffer
 	//Look at the faces which are sets of triangles needed to make the object
 	if(newGizmo){
-		std::cout << newGizmo->mMeshes[0]->mFaces[0].mNumIndices << std::endl;
+		std::cout << "Verts: " << newGizmo->mMeshes[0]->mNumVertices << "  Faces: "<< newGizmo->mMeshes[0]->mNumFaces << " Indices: " << newGizmo->mMeshes[0]->mFaces->mNumIndices << std::endl;	
 		for(int i = 0; i < newGizmo->mNumMeshes; ++i){
-			//Now we can loop through and add each 3d vector (for vertices)
+			//Check Each face which resembles a triangle and get the Indices
 			for(int j = 0; j < newGizmo->mMeshes[i]->mNumFaces; ++j){
-				float current = newGizmo->mMeshes[i]->mFaces[j].mIndices[0];
-				std::cout << current << " ";
-				gizmoMesh.push_back(current);
-				current = newGizmo->mMeshes[i]->mFaces[j].mIndices[1];
-				std::cout << current << " ";
-				gizmoMesh.push_back(current);
-				current = newGizmo->mMeshes[i]->mFaces[j].mIndices[2];
-				std::cout << current << " " << std::endl;
-				gizmoMesh.push_back(current);
+				//For Each Indice we can check what the vertex would be in that place and add the vector3D to the gizmoMesh
+				for(int k = 0; k < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; k++){ //Simple Loop for each of the 3 coords on a vector3D
+				int index = newGizmo->mMeshes[i]->mFaces[(int)floor(j / 3)].mIndices[k];
+					for(int l = 0; l < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; l++){ 
+					float current = newGizmo->mMeshes[i]->mVertices[index][l];
+					gizmoMesh.push_back(current);
+				    }
+				}
 			}
 		}
 
