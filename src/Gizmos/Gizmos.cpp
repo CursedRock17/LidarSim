@@ -94,7 +94,7 @@ void Gizmos::TexturesLoop()
 void Gizmos::RenderContainer()
 {
 	//Finish rendering the entire shape
-	glDrawArrays(GL_TRIANGLES, 0, totalVerticeArgs);
+	glDrawElements(GL_TRIANGLES, totalVerticeArgs, GL_UNSIGNED_INT, 0);
 }
 
 //This RenderContainer Represents
@@ -327,24 +327,25 @@ void Gizmos::UpdateGizmoSpace()
 
 //Updater Functions to Create Changes before the total loop
 
-void Gizmos::CreateTextures(int totPoints, std::vector<float> verts) {	
+void Gizmos::CreateTextures(int totPoints, std::vector<float> verts, std::vector<int> _indices) {	
     //Initialize Variables needed for this gizmo
     totalVerticeShaderArgs = totPoints;
-    totalVerticeArgs = verts.size() / totPoints;
+    totalVerticeArgs = _indices.size();//verts.size() / totPoints;
 
     //Creating the Vertex Array Object then Vertex Buffer Object, then the Element Buffer Object
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    float vertices[verts.size()];
-    for(int i = 0; i < verts.size(); i++)
-    {
-	    vertices[i] = verts.at(i);
-    }
+    glGenBuffers(1, &EBO);
 
     //Copy all the data from the VBO
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts), &verts[0], GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() *  sizeof(_indices), &_indices[0], GL_STATIC_DRAW);
 
     //Set up the triangle
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)0);
@@ -367,6 +368,7 @@ void Gizmos::GizmosCleanUp()
     //When finished with the program we can delete everything
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shad.shaderProgram);
 }
 
@@ -449,51 +451,39 @@ void Gizmos::CreateCube()
     -0.5f, -1.0f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
      0.5f, -1.0f, -0.5f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
      0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
     -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f, 
-    -0.5f, -1.0f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
 
     -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
      0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
      0.5f,  0.0f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
- 
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-
-    -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f, 
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.0f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
+    -0.5f,  0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f
 	}; 
+
+	std::vector<int> cubeIndices = {
+		0, 1, 2, 
+		2, 3, 0, //Back Face 
+		
+		4, 5, 6, 
+		6, 7, 4, //Front Face 
+		
+		7, 3, 0, 
+		0, 4, 7, //Left Face 
+		
+		6, 2, 1, 
+		1, 5, 6, //Right Face 
+		
+		0, 1, 5, 
+		5, 4, 0, //Top Face 
+		
+		3, 2, 6, 
+		6, 7, 3 //Bottom Face 
+	};
 
 	// Code for creating a cube // - Create a Cube Gizmo then emplace it to the vector at the end 
 
 	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
 	shad.CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	CreateTextures(8, cubeVertices);
+	CreateTextures(8, cubeVertices, cubeIndices);
 	objectName = "Cube";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
 	GizmosInit();
@@ -503,33 +493,26 @@ void Gizmos::CreatePyramid()
 {
 	std::vector<float> pyramidVertices = {
         //Location          Textures        Normals      
-     -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-      0.5f, -1.0f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-      0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f, //Bottom Square
-      0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-
-     0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.0f,  0.0f,  0.0f,  0.5f, 1.0f,  0.0f, -1.0f,  0.0f, //Front
-    -0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     
-     0.5f, -1.0f, -0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.0f,  0.0f,  0.0f,  0.5f, 1.0f,  0.0f, -1.0f,  0.0f, //Back
-    -0.5f, -1.0f, -0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.0f,  0.0f,  0.0f,  0.5f, 1.0f,  0.0f, -1.0f,  0.0f, //Left
-    -0.5f, -1.0f, -0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-
-     0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.0f,  0.0f,  0.0f,  0.5f, 1.0f,  0.0f, -1.0f,  0.0f, //Right
-     0.5f, -1.0f, -0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+     -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+      0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+      0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f, //Bottom Square
+     -0.5f,  0.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,  0.5f, 1.0f,  0.0f, -1.0f,  0.0f, //Front
 	};
 
+	std::vector<int> pyramidIndices = {
+		0, 1, 2,
+		2, 3, 0, // Bottom
+
+		2, 4, 3, // Front
+		0, 4, 1, // Back
+		0, 4, 3, // Left
+		1, 4, 2, // Right
+	};
 
 	shad.CreateShaders("./resources/shaders/vertex.vs", "./resources/shaders/fragment.fs");
-	CreateTextures(8, pyramidVertices);
+	
+	CreateTextures(8, pyramidVertices, pyramidIndices);
 	objectName = "Pyramid";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
 	GizmosInit();
@@ -542,50 +525,38 @@ void Gizmos::CreateLight()
     -0.5f, -1.0f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
      0.5f, -1.0f, -0.5f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
      0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
     -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f, 
-    -0.5f, -1.0f, -0.5f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
 
     -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
      0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
      0.5f,  0.0f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
-    -0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f,
- 
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-     0.5f, -1.0f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -1.0f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -1.0f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-
-    -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.0f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f, 
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.0f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.0f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.0f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
+    -0.5f,  0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f
 	}; 
+
+	std::vector<int> lightIndices = {
+		0, 1, 2, 
+		2, 3, 0, //Back Face 
+		
+		4, 5, 6, 
+		6, 7, 4, //Front Face 
+		
+		7, 3, 0, 
+		0, 4, 7, //Left Face 
+		
+		6, 2, 1, 
+		1, 5, 6, //Right Face 
+		
+		0, 1, 5, 
+		5, 4, 0, //Top Face 
+		
+		3, 2, 6, 
+		6, 7, 3 //Bottom Face 
+	};
 
 
 	// ***** Have to Render the Lights after all the object ********* //
 	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/lightFrag.fs");
-	CreateTextures(8, lightVertices);
+	CreateTextures(8, lightVertices, lightIndices);
 	//Can pass nullptr if you don't have textures to apply
 	objectName = "Light";
 	SetScale(0.2f);
@@ -602,51 +573,39 @@ void Gizmos::CreateFloor()
     -10.0f,  0.0f, -10.0f,  
      10.0f,  0.0f, -10.0f, 
      10.0f, 0.15, -10.0f,
-     10.0f, 0.15, -10.0f, 
     -10.0f, 0.15, -10.0f, 
-    -10.0f,  0.0f, -10.0f,
 
     -10.0f,  0.0f,  10.0f,
      10.0f,  0.0f,  10.0f, 
      10.0f, 0.15,  10.0f,
-     10.0f, 0.15,  10.0f,  
-    -10.0f, 0.15,  10.0f, 
-    -10.0f,  0.0f,  10.0f,
+    -10.0f, 0.15,  10.0f 
+}; 
 
-    -10.0f, 0.15,  10.0f, 
-    -10.0f, 0.15, -10.0f,
-    -10.0f,  0.0f, -10.0f, 
-    -10.0f,  0.0f, -10.0f, 
-    -10.0f,  0.0f,  10.0f, 
-    -10.0f, 0.15,  10.0f, 
- 
-     10.0f, 0.15,  10.0f, 
-     10.0f, 0.15, -10.0f,
-     10.0f,  0.0f, -10.0f, 
-     10.0f,  0.0f, -10.0f, 
-     10.0f,  0.0f,  10.0f,  
-     10.0f, 0.15,  10.0f, 
-
-    -10.0f,  0.0f, -10.0f, 
-     10.0f,  0.0f, -10.0f, 
-     10.0f,  0.0f,  10.0f,  
-     10.0f,  0.0f,  10.0f, 
-    -10.0f,  0.0f,  10.0f, 
-    -10.0f,  0.0f, -10.0f,  
-
-    -10.0f, 0.15, -10.0f, 
-     10.0f, 0.15, -10.0f,   
-     10.0f, 0.15,  10.0f,  
-     10.0f, 0.15,  10.0f,
-    -10.0f, 0.15,  10.0f, 
-    -10.0f, 0.15, -10.0f
-	}; 
+	std::vector<int> floorIndices = {
+		0, 1, 2, 
+		2, 3, 0, //Back Face 
+		
+		4, 5, 6, 
+		6, 7, 4, //Front Face 
+		
+		7, 3, 0, 
+		0, 4, 7, //Left Face 
+		
+		6, 2, 1, 
+		1, 5, 6, //Right Face 
+		
+		0, 1, 5, 
+		5, 4, 0, //Top Face 
+		
+		3, 2, 6, 
+		6, 7, 3 //Bottom Face 
+	};
 
 	// Code for creating a cube // - Create a Cube Gizmo then emplace it to the vector at the end 
 
 	// Just a Basic Cube Doesn't Need Extra Shaders Right Now
 	shad.CreateShaders("./resources/shaders/vertexLight.vs", "./resources/shaders/basicFrag.fs");
-	CreateTextures(3, floorVertices);
+	CreateTextures(3, floorVertices, floorIndices);
 	objectName = "Floor";
 	SetLightPosition(0.0f, 1.0f, 0.0f);
 	GizmosInit();
@@ -661,27 +620,33 @@ bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 	const aiScene* newGizmo = importer.ReadFile(filePath, post_processing_flags);
 
 	//We can then copy over information from the whole import
-	std::vector<float> gizmoMesh;
+	std::vector<float> gizmoVertices;
+	std::vector<int> gizmoIndices;
 
 	//Destructure the import and insert the values into a regular Gizmo buffer
 	//Look at the faces which are sets of triangles needed to make the object
 	if(newGizmo){
-		std::cout << "Verts: " << newGizmo->mMeshes[0]->mNumVertices << "  Faces: "<< newGizmo->mMeshes[0]->mNumFaces << " Indices: " << newGizmo->mMeshes[0]->mFaces->mNumIndices << std::endl;	
-		for(int i = 0; i < newGizmo->mNumMeshes; ++i){
-			//Check Each face which resembles a triangle and get the Indices
-			for(int j = 0; j < newGizmo->mMeshes[i]->mNumFaces; ++j){
-				//For Each Indice we can check what the vertex would be in that place and add the vector3D to the gizmoMesh
-				for(int k = 0; k < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; k++){ //Simple Loop for each of the 3 coords on a vector3D
-				int index = newGizmo->mMeshes[i]->mFaces[(int)floor(j / 3)].mIndices[k];
-					for(int l = 0; l < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; l++){ 
-					float current = newGizmo->mMeshes[i]->mVertices[index][l];
-					gizmoMesh.push_back(current);
-				    }
+		std::cout << "Verts: " << newGizmo->mMeshes[0]->mNumVertices << "  Faces: "<< newGizmo->mMeshes[0]->mNumFaces << " Indices: " << newGizmo->mMeshes[0]->mFaces->mNumIndices << " Meshes: " << newGizmo->mNumMeshes << std::endl;	
+
+		for(int i = 1; i < 2/*newGizmo->mNumMeshes*/; i++){
+			for(int j = 0; j < newGizmo->mMeshes[i]->mNumFaces; j++){
+				//Add all the indices
+				for(int k = 0; k < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; k++){ //Simple Loop to insert all the gimzo's indices
+					gizmoIndices.push_back(newGizmo->mMeshes[i]->mFaces[j].mIndices[k]);
+				}	
+				//Add all the vertices
+				for(int n = 0; n < newGizmo->mMeshes[i]->mNumVertices; n++){
+					//Just Transfer all the vector3Ds to floats
+					for(int b = 0; b < 3; b++){
+					gizmoVertices.push_back(newGizmo->mMeshes[i]->mVertices[n][b]);
 				}
+			    }
 			}
 		}
 
-		CreateTextures(3, gizmoMesh);
+		std::cout << gizmoVertices.size() << " Now Indies:  " << gizmoIndices.size() << std::endl;
+
+		CreateTextures(3, gizmoVertices, gizmoIndices);
 		SetLightPosition(0.0f, 1.0f, 0.0f);
 		GizmosInit();
 

@@ -84,6 +84,9 @@ std::unique_ptr<DrawnNonGizmo> gridFloor = std::make_unique<DrawnNonGizmo>();
 
 //List of all the Gizmos we are able to change
 std::vector<std::shared_ptr<Gizmos>> _gizmosVec;
+
+//Internal Creation Methods
+void CreateFloor();
 };
 
 

@@ -29,7 +29,7 @@ Gizmos();
 ~Gizmos();
 
 void CreateShaders(const char* vertexPath, const char* fragmentPath);
-void CreateTextures(int totPoint, std::vector<float> verts);
+void CreateTextures(int totPoint, std::vector<float> verts, std::vector<int> _indices);
 
 void RenderTextures();
 
@@ -102,7 +102,7 @@ bool CreateCustomGizmo(const std::string& filePath);
 
 // Simple Example Creations
 private:
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, EBO;
 unsigned int modelLoc;
 
 //Describing the Object to Create

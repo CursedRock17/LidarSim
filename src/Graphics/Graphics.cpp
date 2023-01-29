@@ -140,11 +140,7 @@ void Graphics::SimulationSetup()
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 
 	//Setting up background objects
-    std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
-    floorGizmos->CreateFloor();
-	floorGizmos->ID = _gizmosVec.size();
-
-	_gizmosVec.emplace_back(floorGizmos);
+	CreateFloor();
 }
 
 void Graphics::SimulationLoop()
@@ -235,6 +231,16 @@ void Graphics::CreateLight()
 	light->ID = _gizmosVec.size();
 
 	_gizmosVec.emplace_back(light);
+}
+
+void Graphics::CreateFloor()
+{
+	std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
+	floorGizmos->CreateFloor();
+	floorGizmos->ID = _gizmosVec.size();
+
+	_gizmosVec.emplace_back(floorGizmos);
+
 }
 
 void Graphics::ImportCustomGizmo(const std::string& filePath)
