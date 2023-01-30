@@ -341,11 +341,11 @@ void Gizmos::CreateTextures(int totPoints, std::vector<float> verts, std::vector
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts), &verts[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float/*verts*/), &verts[0], GL_STATIC_DRAW);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() *  sizeof(_indices), &_indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() *  sizeof(GLuint/*_indices*/), &_indices[0], GL_STATIC_DRAW);
 
     //Set up the triangle
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, totalVerticeShaderArgs * sizeof(float), (void*)0);
@@ -549,7 +549,7 @@ void Gizmos::CreateLight()
 		0, 1, 5, 
 		5, 4, 0, //Top Face 
 		
-		3, 2, 6, 
+		3, 2, 6	, 
 		6, 7, 3 //Bottom Face 
 	};
 
@@ -628,7 +628,7 @@ bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 	if(newGizmo){
 		std::cout << "Verts: " << newGizmo->mMeshes[0]->mNumVertices << "  Faces: "<< newGizmo->mMeshes[0]->mNumFaces << " Indices: " << newGizmo->mMeshes[0]->mFaces->mNumIndices << " Meshes: " << newGizmo->mNumMeshes << std::endl;	
 
-		for(int i = 1; i < 2/*newGizmo->mNumMeshes*/; i++){
+		for(int i = 0; i < newGizmo->mNumMeshes; i++){
 			for(int j = 0; j < newGizmo->mMeshes[i]->mNumFaces; j++){
 				//Add all the indices
 				for(int k = 0; k < newGizmo->mMeshes[i]->mFaces[j].mNumIndices; k++){ //Simple Loop to insert all the gimzo's indices
@@ -642,13 +642,17 @@ bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 				}
 			    }
 			}
+		
+			//At the end of each mesh we need to reset all the buffers to keep data cosnsitent
+			CreateTextures(3, gizmoVertices, gizmoIndices);
+			gizmoIndices.clear();
+			gizmoVertices.clear();
+			GizmosInit();
 		}
 
-		std::cout << gizmoVertices.size() << " Now Indies:  " << gizmoIndices.size() << std::endl;
-
-		CreateTextures(3, gizmoVertices, gizmoIndices);
+		//CreateTextures(3, gizmoVertices, gizmoIndices);
 		SetLightPosition(0.0f, 1.0f, 0.0f);
-		GizmosInit();
+		//GizmosInit();
 
 		return true;
 	} else {
