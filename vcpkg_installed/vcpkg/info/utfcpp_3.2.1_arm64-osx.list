@@ -1,0 +1,17 @@
+arm64-osx/
+arm64-osx/include/
+arm64-osx/include/utf8cpp/
+arm64-osx/include/utf8cpp/utf8.h
+arm64-osx/include/utf8cpp/utf8/
+arm64-osx/include/utf8cpp/utf8/checked.h
+arm64-osx/include/utf8cpp/utf8/core.h
+arm64-osx/include/utf8cpp/utf8/cpp11.h
+arm64-osx/include/utf8cpp/utf8/cpp17.h
+arm64-osx/include/utf8cpp/utf8/unchecked.h
+arm64-osx/share/
+arm64-osx/share/utf8cpp/
+arm64-osx/share/utf8cpp/utf8cppConfig.cmake
+arm64-osx/share/utfcpp/
+arm64-osx/share/utfcpp/copyright
+arm64-osx/share/utfcpp/vcpkg.spdx.json
+arm64-osx/share/utfcpp/vcpkg_abi_info.txt

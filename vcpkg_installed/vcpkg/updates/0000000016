@@ -1,0 +1,10 @@
+Package: minizip
+Version: 1.2.11
+Port-Version: 11
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: 6ade0460eba58d560ed97efbe395103f482add1437eefb06689037de5424a026
+Description: Zip compression library
+Type: Port
+Status: install ok half-installed

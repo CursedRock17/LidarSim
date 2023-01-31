@@ -1,0 +1,8 @@
+Package: stb
+Version: 2021-09-10
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: 7b08f125da72142832b80c6e9b85d27befc0177983d461d5c630c1afc458a189
+Description: public domain header-only libraries
+Type: Port
+Status: install ok installed

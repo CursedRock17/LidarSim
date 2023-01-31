@@ -235,7 +235,7 @@ void Graphics::CreateLight()
 
 void Graphics::CreateFloor()
 {
-	std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
+    std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
 	floorGizmos->CreateFloor();
 	floorGizmos->ID = _gizmosVec.size();
 
