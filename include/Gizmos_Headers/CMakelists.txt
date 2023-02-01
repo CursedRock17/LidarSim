@@ -5,7 +5,6 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
 
-
 target_link_libraries(Gizmos_Headers
 INTERFACE
 glad::glad

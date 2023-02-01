@@ -1,9 +1,0 @@
-Package: kubazip
-Version: 0.1.19
-Port-Version: 1
-Architecture: arm64-osx
-Multi-Arch: same
-Abi: 266d55fbd9f85f2b5d9ece5a7b276820cf7d96af9e2049d378a857d834a7dbb1
-Description: A portable, simple zip library written in C
-Type: Port
-Status: install ok installed

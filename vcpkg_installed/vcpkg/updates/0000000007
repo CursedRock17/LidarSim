@@ -1,8 +1,0 @@
-Package: utfcpp
-Version: 3.2.1
-Architecture: arm64-osx
-Multi-Arch: same
-Abi: 20e6debe1444ac590ab00513cbd36a3b54f97cec5bdc2b5a1f24018001f91431
-Description: UTF-8 with C++ in a Portable Way
-Type: Port
-Status: install ok installed

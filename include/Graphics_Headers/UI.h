@@ -6,9 +6,9 @@
 #include <memory>
 #include <filesystem>
 
-#include "imgui.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui.h"
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
 #include "../../include/Graphics_Headers/FolderUI.h"

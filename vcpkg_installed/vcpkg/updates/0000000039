@@ -1,7 +1,0 @@
-Package: imgui
-Feature: docking-experimental
-Architecture: arm64-osx
-Multi-Arch: same
-Description: Build with docking support
-Type: Port
-Status: install ok installed
