@@ -25,10 +25,10 @@ void ImGui_Key_Callback(GLFWwindow* window, int key, int scancode, int action, i
 {
 	int updatedKey = GLFW_To_ImGui_Keybinds(key);
 	if(action == GLFW_PRESS){
-		io->AddKeyEvent(updatedKey, true);	
+		io->AddKeyEvent((ImGuiKey)updatedKey, true);	
 	}
 	else if(action == GLFW_RELEASE){
-		io->AddKeyEvent(updatedKey, false);
+		io->AddKeyEvent((ImGuiKey)updatedKey, false);
    }
 }
 
