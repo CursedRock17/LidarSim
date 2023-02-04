@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 #set(VCPKG_TARGET_TRIPLET "arm64-osx")
 #set(CMAKE_TOOLCHAIN_FILE "/Users/cursedrock17/vcpkg/scripts/buildsystems/vcpkg.cmake")
-#set(CMAKE_PREFIX_PATH "/Users/cursedrock17/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 find_package(assimp CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
@@ -18,8 +17,6 @@ if(${assimp_FOUND})
 	message(STATUS "assimp include path: ${assimp_DIR}")
 endif(${assimp_FOUND})
 
-message(STATUS "glm include path: ${glm_DIR}")
-
 add_executable(${PROJECT_NAME} main.cpp)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -O3)
 
@@ -27,7 +24,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 
 target_link_libraries(${PROJECT_NAME}
-	PUBLIC
+PRIVATE
 Graphics
 Graphics_Headers
 
@@ -54,4 +51,3 @@ PUBLIC
 "${PROJECT_SOURCE_DIR}/src"
 )
 
-message(STATUS "more glad include path: ${glad_INCLUDE_DIR}")
