@@ -7,23 +7,25 @@ void FolderUI::SetupWindow()
 {
 	if(ImGui::BeginPopupModal("FolderFinder")){
 		ImGui::Text("List Files");
-		
+
 		//Gain access to all the current files and folder underneath our selected path
 		LoopDirectory();
 
 		//Create a Selectable Object for each path
-		for(auto path : currentPathsVector){
+		for(auto const& path : currentPathsVector){
 			if(ImGui::Selectable((path.filename()).c_str(), false, ImGuiSelectableFlags_DontClosePopups, ImVec2(325.0f, 10.0f) )){
 				selectedPath = path;
-				//Once finished looking through all the files allow the program to refresh
-				currentPathsVector.clear();
-				
+
 				//If the file has an extension then we've found a file to select otherwise it would be another folder to recur through
 			 	if(path.has_extension()){
 					endPath = path;
-					selectedPath = path.parent_path();	
+					selectedPath = path.parent_path();
 					ImGui::CloseCurrentPopup();
 				}
+
+                //Once finished looking through all the files allow the program to refresh
+				currentPathsVector.clear();
+                LoopDirectory();
 			}
 			ImGui::Spacing();
 		}
@@ -33,7 +35,7 @@ void FolderUI::SetupWindow()
 		if(ImGui::Button("Close")){
 			ImGui::CloseCurrentPopup();
 		}
-	
+
 		ImGui::SameLine();
 		if(ImGui::Button("Back")){
 			ReverseDirectory();
@@ -63,7 +65,7 @@ void FolderUI::ReverseDirectory()
 	for(auto const& contents : std::filesystem::directory_iterator{selectedPath}){
 		currentPathsVector.push_back(contents.path());
 	}
-	
+
 }
 
 std::filesystem::path FolderUI::GetTargetPath()
@@ -74,7 +76,7 @@ std::filesystem::path FolderUI::GetTargetPath()
 void FolderUI::QueryDirectory()
 {
 	//Going to take the entire directory and section it out into groups of 100 so the search doesn't take an abmissmal amount of time by tracking how far we've scrolled
-	
+
 
 }
 
