@@ -11,7 +11,8 @@ when working with a camera everything in 3D terms
 is just based on perspective 
 
 ## Libraries being used
+- assimp
 - glm
-- opengl
 - glfw
 - glad
+- [opengl](https://www.opengl.org/)
