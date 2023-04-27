@@ -13,7 +13,9 @@ void FolderUI::SetupWindow()
 
 		//Create a Selectable Object for each path
 		for(auto const& path : currentPathsVector){
-			if(ImGui::Selectable((path.filename()).c_str(), false, ImGuiSelectableFlags_DontClosePopups, ImVec2(325.0f, 10.0f) )){
+			if(ImGui::Selectable(path.stem().c_str(), false, ImGuiSelectableFlags_DontClosePopups, ImVec2(325.0f, 10.0f) )){
+            std::cout << typeid(path.stem().c_str()).name() << std::endl;
+        /*
 				selectedPath = path;
 
 				//If the file has an extension then we've found a file to select otherwise it would be another folder to recur through
@@ -22,10 +24,13 @@ void FolderUI::SetupWindow()
 					selectedPath = path.parent_path();
 					ImGui::CloseCurrentPopup();
 				}
+                else {
+                    LoopDirectory();
+                }
 
                 //Once finished looking through all the files allow the program to refresh
 				currentPathsVector.clear();
-                LoopDirectory();
+                */
 			}
 			ImGui::Spacing();
 		}
@@ -51,6 +56,7 @@ void FolderUI::LoopDirectory()
 	if(currentPathsVector.size() == 0){
 		for(auto const& contents : std::filesystem::directory_iterator{selectedPath}){
 			currentPathsVector.push_back(contents.path());
+            std::cout << contents.path().stem().c_str() << std::endl;
 		}
 	}
 }
