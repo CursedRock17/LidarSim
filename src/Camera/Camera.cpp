@@ -15,11 +15,11 @@ void Camera::CameraLoop()
 {
 
 	float currentFrame =  static_cast<float>(glfwGetTime());
-	
+
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	cameraSpeed = 5.0f * deltaTime;
-	
+	cameraSpeed = 7.5f * deltaTime;
+
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 	aspect = static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_);
