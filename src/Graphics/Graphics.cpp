@@ -128,14 +128,14 @@ void Graphics::SimulationSetup()
 	glEnable(GL_STENCIL_TEST);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glEnable(GL_MULTISAMPLE);
 
 	//Face Culling Will save resources as we don't have to look at some vertices
 	// -- All the GL Functions -- //
-	
+
 	//Setting up the Camera
 	cameraRef->createView(_windowWidth, _windowHeight, 45.0f);
 
@@ -150,7 +150,7 @@ void Graphics::SimulationLoop()
 	{
 		gizmosRef->SetViewPos(cameraRef->GetCameraPosition());
 		gizmosRef->GizmosLoop(cameraRef->CameraViewMatrix(), cameraRef->aspect, cameraRef->FOV_);
-		
+
 		if(gizmosRef->objectName != "Light"){
 			if(_mode == "Simulate")
 			{
@@ -166,7 +166,7 @@ void Graphics::SimulationLoop()
 
 void Graphics::RefreshGizmos()
 {
-	//Use This as a loop in order to render all of the vertices of each object 
+	//Use This as a loop in order to render all of the vertices of each object
 	for(const auto &gizmosRef : _gizmosVec)
 	{
 	}
@@ -182,11 +182,11 @@ void Graphics::DeleteGizmo(int targetID)
 			_gizmosVec.erase(iter);
 		  	targetFound = true;
 	} else {
-	        if(targetFound){	
+	        if(targetFound){
 			_gizmosVec.at((**iter).ID - 1)->ID = (**iter).ID - 1;
 		}
 		++iter;
-	    }	
+	    }
     }
 }
 
@@ -194,7 +194,8 @@ void Graphics::DuplicateGizmo(int targetID)
 {
 	//Just access and create a copy of the Gizmo (Most likely the one we're on) by creating a new one
 	//std::shared_ptr<Gizmos> copiedGizmo = std::make_shared<Gizmos>();
-	
+	std::shared_ptr<Gizmos> copiedGizmp = _gizmosVec.at(targetID);
+
 	//copiedGizmo->ID = _gizmosVec.size() - 1;
 	//copiedGizmo->objectName = copiedGizmo->objectName + " (Copy) ";
 
@@ -252,7 +253,7 @@ void Graphics::ImportCustomGizmo(const std::string& filePath)
 		_gizmosVec.emplace_back(customModel);
 		customModel->objectName = "Default";
 	}
-	
+
 }
 
 //Simple Object Creation Functions
