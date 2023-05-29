@@ -66,10 +66,10 @@ void AcceptInput();
 GLFWwindow* _window;
 int _windowWidth{800};
 int _windowHeight{600};
-std::string _mode; 
+std::string _mode;
 //Control for the Rotation
-double xPos = _windowWidth / 2;
-double yPos = _windowHeight / 2;
+double xPos = static_cast<double>(_windowWidth / 2);
+double yPos = static_cast<double>(_windowHeight / 2);
 double lastXPos, lastYPos;
 
 //Control for the Zoom

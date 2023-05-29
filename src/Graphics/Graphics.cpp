@@ -207,7 +207,7 @@ void Graphics::DuplicateGizmo(int targetID)
 //Simple Object Creation Functions
 void Graphics::CreateCube()
 {
-	std::shared_ptr<Gizmos> cube = std::make_shared<Gizmos>();
+	std::shared_ptr<BasicGizmo> cube = std::make_shared<BasicGizmo>();
 	cube->CreateCube();
 	cube->ID = _gizmosVec.size();
 
@@ -218,7 +218,7 @@ void Graphics::CreateCube()
 void Graphics::CreatePyramid()
 {
 	//Same Logic to the Cube
-	std::shared_ptr<Gizmos> pyramid = std::make_shared<Gizmos>();
+	std::shared_ptr<BasicGizmo> pyramid = std::make_shared<BasicGizmo>();
 	pyramid->CreatePyramid();
 	pyramid->ID = _gizmosVec.size();
 
@@ -227,7 +227,7 @@ void Graphics::CreatePyramid()
 
 void Graphics::CreateLight()
 {
-	std::shared_ptr<Gizmos> light = std::make_shared<Gizmos>();
+	std::shared_ptr<BasicGizmo> light = std::make_shared<BasicGizmo>();
 	light->CreateLight();
 	light->ID = _gizmosVec.size();
 
@@ -236,7 +236,7 @@ void Graphics::CreateLight()
 
 void Graphics::CreateFloor()
 {
-    std::shared_ptr<Gizmos> floorGizmos = std::make_shared<Gizmos>();
+    std::shared_ptr<BasicGizmo> floorGizmos = std::make_shared<BasicGizmo>();
 	floorGizmos->CreateFloor();
 	floorGizmos->ID = _gizmosVec.size();
 

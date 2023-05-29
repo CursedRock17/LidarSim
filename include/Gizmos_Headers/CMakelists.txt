@@ -1,4 +1,4 @@
-add_library(Gizmos_Headers INTERFACE Gizmos.h stb_image.h GizmosExtensions.h)
+add_library(Gizmos_Headers INTERFACE Gizmos.h Mesh.h stb_image.h GizmosExtensions.h)
 
 set(CMAKE_TOOLCHAIN_FILE "/Users/cursedrock17/vcpkg/scripts/buildsystems/vcpkg.cmake")
 find_package(glad CONFIG REQUIRED)

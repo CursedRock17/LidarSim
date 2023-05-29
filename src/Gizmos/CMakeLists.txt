@@ -1,4 +1,4 @@
-add_library(Gizmos Gizmos.cpp GizmosExtensions.cpp)
+add_library(Gizmos Gizmos.cpp Mesh.cpp GizmosExtensions.cpp)
 
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

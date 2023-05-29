@@ -4,16 +4,16 @@
 Shader::Shader(){};
 Shader::~Shader(){};
 
-void Shader::CreateShaders(const char* vertexPath, const char* fragmentPath){ 
+void Shader::CreateShaders(const char* vertexPath, const char* fragmentPath){
     //Going to immediatily load in our shading files
     vertexFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fragmentFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    try { 
+    try {
 	//Copying the glsl files into cpp code
         vertexFile.open(vertexPath);
         fragmentFile.open(fragmentPath);
 
-        std::stringstream VertexStreamString, FragmentStreamString; 
+        std::stringstream VertexStreamString, FragmentStreamString;
         VertexStreamString << vertexFile.rdbuf();
         FragmentStreamString << fragmentFile.rdbuf();
 
@@ -35,7 +35,7 @@ void Shader::CreateShaders(const char* vertexPath, const char* fragmentPath){
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
     glCompileShader(vertexShader);
-    
+
     //Checking errors in this shader
     int success;
     char infoLog[512];
@@ -73,7 +73,7 @@ void Shader::CreateShaders(const char* vertexPath, const char* fragmentPath){
     //Cleanup after the project is used
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-    
+
 };
 
 //- - - - - - End of Shader Code - - - - - -//
@@ -128,7 +128,7 @@ void Framebuffer::FramebufferTexture(int imageH, int imageW)
 	glBindRenderbuffer(GL_RENDERBUFFER, DBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageW, imageH);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DBO);
-	
+
 	//Error Check - See if the framebuffer works
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer is current Failing; It's not complete" << std::endl;
@@ -147,7 +147,7 @@ unsigned int Framebuffer::GetFramebufferTexture()
 }
 
 // End of Framebuffer Class
- 
+
 // Start of Instanced Objects Class
 InstancedObject::InstancedObject(){}
 InstancedObject::~InstancedObject(){}
@@ -159,7 +159,7 @@ void InstancedObject::PrepareObjects(std::vector<float> floorVertices, int objec
 	//Have to convert the vector to a pure array so we can pass as a pointer
 	float verts[floorVertices.size()];
 	for(int i = 0; i < floorVertices.size(); i++){
-		verts[i] = floorVertices.at(i);		
+		verts[i] = floorVertices.at(i);
 	}
 
 	//We can create our own VBO for this new object without a VAO because it's one continous object
@@ -203,16 +203,16 @@ void DrawnNonGizmo::CreateBuffers()
 	//Begin loading in the set of transformations in floorVertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, floorVertices.size() * sizeof(glm::vec3), floorVertices.data(), GL_STATIC_DRAW);
-	
+
     glBindVertexArray(VAO);
-    
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glEnableVertexAttribArray(0);
 
 	//Unbind the objects
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
+
     glUseProgram(shad.shaderProgram);
 }
 
@@ -221,15 +221,15 @@ void DrawnNonGizmo::RenderBuffers(glm::mat4 viewMatrix, float& screenAspect, flo
         glUseProgram(shad.shaderProgram);        // create transformations
 
         glBindVertexArray(VAO);
-    
+
         //Have to use the &[0][0] for all Matrices
 	    unsigned int viewLocation = glGetUniformLocation(shad.shaderProgram ,"viewer");
 	    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
-	
+
 	    glm::mat4 perspective = glm::perspective(glm::radians(FOV), screenAspect, 0.1f, 100.0f);
 	    unsigned int perspectLocation = glGetUniformLocation(shad.shaderProgram ,"perspective");
 	    glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
-	
+
         glDrawArrays(GL_LINES, 0, (SizeTaken * 2 + SizeTaken * 2) * 2 );
 
 	//glBindVertexArray(0);
@@ -255,7 +255,7 @@ void DrawnNonGizmo::CreateGrid()
 		// Vertical Lines
 		floorVertices.push_back(glm::vec3(i * Spacing, 0, -SizeTaken * Spacing));
         floorVertices.push_back(glm::vec3(i * Spacing, 0, SizeTaken * Spacing));
-	
+
 	}
 
 }

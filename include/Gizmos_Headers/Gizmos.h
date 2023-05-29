@@ -1,6 +1,6 @@
 #ifndef GIZMOS_H
 #define GIZMOS_H
-       
+
 //Math libraries from opengl, needed for things like rotational matrices and dot products
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,7 +23,7 @@
 #include "./GizmosExtensions.h"
 
 class Gizmos
-{	
+{
 public:
 Gizmos();
 ~Gizmos();
@@ -48,7 +48,6 @@ unsigned int shaderProgram;
 glm::vec3 SetRotation(float xRotation, float yRotation, float zRotation);
 glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslation);
 glm::vec3 SetScale(float xScale, float yScale, float zScale);
-glm::vec3 SetColor(float red, float green, float blue);
 glm::vec3 SetLightPosition(float xCoord, float yCoord, float zCoord);
 glm::vec3 SetViewPos(float xCoord, float yCoord, float zCoord);
 void SetMaterialStrengths(float ambient, float specular, float diffuse);
@@ -57,9 +56,8 @@ void SetMaterialShine(float materialShine);
 //Override setFunction for equivelency across all axis
 glm::vec3 SetRotation(float totalRotation);
 glm::vec3 SetTranslation(float totalTranslation);
-glm::vec3 SetScale(float totalScale);
-glm::vec3 SetColor(float totalColor);
 glm::vec3 SetLightPosition(float totalPosition);
+glm::vec3 SetScale(float totalScale);
 glm::vec3 SetViewPos(float totalPosition);
 glm::vec3 SetViewPos(glm::vec3 vectorPosition);
 
@@ -77,7 +75,6 @@ glm::vec3 UpdateScale(float totalScale);
 glm::vec3 GetRotation();
 glm::vec3 GetTranslation();
 glm::vec3 GetScale();
-glm::vec3 GetColor();
 glm::vec3 GetMaterialStrengths();
 float GetMaterialShine();
 
@@ -88,20 +85,14 @@ int ID;
 std::string objectName;
 
 bool hasTexture{false};
-std::filesystem::path specularLocation{""};
-std::filesystem::path diffuseLocation{""};
 
 // Simple Example Creations
-
-void CreateCube();
-void CreatePyramid();
-void CreateLight();
-void CreateFloor();
 bool CreateCustomGizmo(const std::string& filePath);
 
+void TexturesLoop();
+void GizmosCleanUp();
 
 // Simple Example Creations
-private:
 unsigned int VBO, VAO, EBO;
 unsigned int modelLoc;
 
@@ -109,24 +100,23 @@ unsigned int modelLoc;
 int totalVerticeArgs;
 int totalVerticeShaderArgs;
 
-//Where the Object is in Space: These methods are handled with setter functions
-glm::vec3 Rotation = glm::vec3(0.0f);
-glm::vec3 Translation = glm::vec3(0.0f);
-glm::vec3 Scale = glm::vec3(1.0f);
-
-//Coloring for the object
-glm::vec3 lightShader = glm::vec3(1.0f);
-glm::vec3 objectColor = glm::vec3(1.0f);
-glm::vec3 lightPosition = glm::vec3(1.0f);
-glm::vec3 viewPosition = glm::vec3(1.0f);
-
 unsigned int imgMap, imgSpecularMap;
 glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+
+// Lighting for the Gizmo
+glm::vec3 lightShader = glm::vec3(1.0f);
+glm::vec3 lightPosition = glm::vec3(1.0f);
+glm::vec3 viewPosition = glm::vec3(1.0f);
 
 glm::vec3 ambientStrength = glm::vec3(0.2f);
 glm::vec3 specularStrength = glm::vec3(0.5f);
 glm::vec3 diffuseStrength = glm::vec3(0.5f);
 float specularShiny = 64.0f;
+
+//Where the Object is in Space: These methods are handled with setter functions
+glm::vec3 Rotation = glm::vec3(0.0f);
+glm::vec3 Translation = glm::vec3(0.0f);
+glm::vec3 Scale = glm::vec3(1.0f);
 
 //Reading from other files
 std::ifstream vertexFile;
@@ -134,14 +124,46 @@ std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
 
-void TexturesLoop();
-void GizmosCleanUp();
-
 };
 
 // End of Gizmo Class
 //
 
+class BasicGizmo : public Gizmos {
+public:
+BasicGizmo();
+~BasicGizmo();
+
+// Overriden Functions for color and lighting
+void GizmosInit();
+void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+void RenderTextures();
+
+// Setter functions for the builder class
+glm::vec3 SetColor(float red, float green, float blue);
+
+// Overridden set functions for constant values in the vector
+glm::vec3 SetColor(float totalColor);
+
+// Getter Functions for Builder Class
+glm::vec3 GetColor();
+
+std::filesystem::path specularLocation{""};
+std::filesystem::path diffuseLocation{""};
+
+// Simple Creation Methods
+void CreateCube();
+void CreatePyramid();
+void CreateLight();
+void CreateFloor();
+private:
+
+//Coloring for the object
+glm::vec3 objectColor = glm::vec3(1.0f);
+
+
+};
+// End of CustomGizmo Class
 
 
 

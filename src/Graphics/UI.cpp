@@ -1,7 +1,7 @@
 #include "../../include/Graphics_Headers/UI.h"
 
 UI::UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowHeight(windowHeight), _windowWidth(windowWidth), _gizmosVec(gizmosVec)
-{ 
+{
 
 }
 
@@ -13,7 +13,7 @@ UI::~UI()
 
 void UI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 {
-}	
+}
 
 void UI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 {
@@ -23,7 +23,7 @@ void UI::ImGuiContextLoop()
 {
 	//All of this information has to be processed for every UI setting that deals with imgui which simply processes out the current window
 	io = &ImGui::GetIO();
-	
+
 	//Find a Difference in Time
 	time = (float)glfwGetTime();
 	io->DeltaTime = time - lastTime;
@@ -36,7 +36,7 @@ void UI::ImGuiContextLoop()
 	glfwGetWindowSize(_window, &tempW, &tempH);
 	glfwGetFramebufferSize(_window, &displayW, &displayH);
 	io->DisplaySize = ImVec2((float)tempW, (float)tempH);
-	
+
 	if(tempW > 0 && tempH > 0)
 		io->DisplayFramebufferScale = ImVec2((float)displayW / tempW, (float)displayH / tempH);
 }
@@ -148,7 +148,7 @@ void UI::SetRenderedTexture(unsigned int _RTO)
 
 // Start of MainUI Class
 MainUI::MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : UI(window, windowHeight, windowWidth, gizmosVec)
-{ 
+{
 
 }
 
@@ -168,8 +168,8 @@ void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
             } //Now Handle Input for Object Selection
             else {
             _GraphicsRef->SelectGizmo(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y));
-            }  
-            
+            }
+
 		}
 		else {
 			//Only need to reset the first touch if we are not actively moving
@@ -178,7 +178,7 @@ void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 	} else {
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), false);
 	}
-}	
+}
 
 void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 {
@@ -186,7 +186,7 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 	if(sceneFocused){
 	//Directions Input
 	// Utilize the Directions enum to provide specific detail of where to move then use the Graphics Ref to manipulate the camera
-	
+
 	// Move Forward
 	if(ImGui::IsKeyPressed(ImGuiKey_W) || ImGui::IsKeyPressed(ImGuiKey_UpArrow)){
 		//Limited Keys so use shift to control y axis
@@ -216,7 +216,7 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 		Directions dir = x_pos;
 		_GraphicsRef->MoveCamDirection(dir);
 	}
-	
+
 	//Move Left
 	if(ImGui::IsKeyPressed(ImGuiKey_A) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow)){
 		Directions dir = x_neg;
@@ -226,13 +226,13 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 
 	//Zoom Callback In Scene
 	if(ImGui::IsKeyPressed(ImGuiKey_I)){
-		_GraphicsRef->ZoomCam(true);	
+		_GraphicsRef->ZoomCam(true);
 	}
 	else if(ImGui::IsKeyPressed(ImGuiKey_O)){
 		_GraphicsRef->ZoomCam(false);
 	}
 	//Zoom Callback In Scene
-	
+
    }
 }
 
@@ -244,7 +244,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui::NewFrame();
-	
+
 	mouse_callback(_GraphicsRef);
 	accept_input(_GraphicsRef);
 	//Set the position and size for the Top bar in relation to screen size
@@ -265,31 +265,30 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	//Create the Scene window at the origin and take up the rest of the space
 	sceneWidth = float(tempW - (tempW / 3.0f));
-	sceneHeight = float(tempH - (tempH / 4.0f));
-
+	sceneHeight = float(tempH - (tempH / 4.6f) - 25.0f);
 
 	//Creation of our own window always starts with Begin()
 	ImGui::Begin("Bottom bar", &show, io->ConfigFlags);
 	//With the bottom dockable bar we want access to things such as the Gizmos and Imports
-	
+
 	//Have to run an additional instance of the Setup for all folder actions
 	Folder.SetupWindow();
-	
-	ImGui::Text("Hello World!");  
+
+	ImGui::Text("Component Access");
 
 	//Create a button in an if statement to use as an on click
 	if(ImGui::Button("Create\nCube", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
 	{
 		_GraphicsRef->CreateCube();
 	}
-	
+
 	ImGui::SameLine();
 
 	if(ImGui::Button("Create\nPyramid", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
 	{
 		_GraphicsRef->CreatePyramid();
 	}
-	
+
 	ImGui::SameLine();
 
 	if(ImGui::Button("Create\nLight", ImVec2(ImGui::GetWindowWidth() / 10.0f, ImGui::GetWindowHeight() / 5.0f)))
@@ -309,7 +308,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	ImGui::End();
 	//Creation of our own window always ends with End()
-	
+
 	//Element for Each Control Panel for the GizmoUIs which we can make a lamba to keep context
 	auto ControlPanelUI = [&](std::shared_ptr<Gizmos> CurrentGizmosRef){
 		// This Control Panel will be able to control the entirety of the object within all the systems
@@ -319,7 +318,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 		//Because we're using std::string we need to create a resizing callback ^^
 		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
-		
+
 		ImGui::Separator();
 		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
 		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
@@ -333,7 +332,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			float updatedRotationX = rotations[0] - CurrentGizmosRef->GetRotation()[0];
 			float updatedRotationY = rotations[1] - CurrentGizmosRef->GetRotation()[1];
 			float updatedRotationZ = rotations[2] - CurrentGizmosRef->GetRotation()[2];
-				
+
 
 			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
 			//the rotation visuals to represent the new rotation of the object
@@ -341,7 +340,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			CurrentGizmosRef->SetRotation(rotations[0], rotations[1], rotations[2]);
 		}
 		//Translation Setter
-		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] }; 
+		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] };
 
 		ImGui::InputFloat3("Translations X Y Z: ", translations);
 		if(ImGui::IsItemDeactivatedAfterEdit()){
@@ -349,7 +348,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			float updatedTranslationX = translations[0] - CurrentGizmosRef->GetTranslation()[0];
 			float updatedTranslationY = -1.0f * (translations[1] - CurrentGizmosRef->GetTranslation()[1]);
 			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
-			
+
 			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
 			//the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
 			CurrentGizmosRef->UpdateTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
@@ -362,18 +361,18 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 		ImGui::InputFloat3("Scale X Y Z: ", scale);
 		if(ImGui::IsItemDeactivatedAfterEdit()){
-			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix 
+			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix
 			if(scale[0] == 0.0f)
 				scale[0] = 0.00000001f;
 			if(scale[1] == 0.0f)
 				scale[1] = 0.00000001f;
 			if(scale[2] == 0.0f)
 				scale[2] = 0.00000001f;
-			
+
 			float updatedScaleX = scale[0] / CurrentGizmosRef->GetScale()[0];
 			float updatedScaleY = scale[1] / CurrentGizmosRef->GetScale()[1];
 			float updatedScaleZ = scale[2] / CurrentGizmosRef->GetScale()[2];
-			
+
 			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
 			//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visual
 			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
@@ -382,7 +381,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 		//Color Setter
 		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
-		
+
 		ImGui::BeginDisabled(CurrentGizmosRef->hasTexture);
 		ImGui::ColorEdit3("Color: ", color);
 		ImGui::EndDisabled();
@@ -392,7 +391,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		ImGui::Separator();
 		//* This is the Textures part of the UI *//
 		Folder.SetupWindow();
-		
+
 		if(ImGui::Button("Diffuse map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
@@ -403,7 +402,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			CurrentGizmosRef->RenderTextures();
     			CurrentGizmosRef->SetColor(0.0f);
 		}
-			
+
 		if(ImGui::Button("Specular map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
@@ -432,7 +431,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		if(ImGui::Button("Delete"))
 		{
 			activeGizmo = nullptr;
-			_GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);			
+			_GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);
 		}
 		ImGui::PopStyleColor();
 		ImGui::SameLine();
@@ -451,7 +450,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 	 * on that object using a specialized Gizmo UI defined in UI. The only way to do this is via looping through all of the Application Gizmos
 	 * but may be able to skip useless objects
 	 */
-	
+
 	for(const auto& GizmoUI : _gizmosVec)
 	{
 		ImGui::PushID(GizmoUI->ID);
@@ -465,7 +464,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	//Creation of top Bar - Contains many controls over the scene like play and pause
 	ImGui::Begin("Top bar", &show, io->ConfigFlags);
-	
+
 	if(ImGui::Button("Create"))
 	{
 		std::string temp = "Create";
@@ -485,14 +484,14 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 
 	//Creation of Sidebar
 	ImGui::Begin("Side bar", &show, io->ConfigFlags);
-	
-	// --- Description of Sidebar UI --- // 
+
+	// --- Description of Sidebar UI --- //
 	/* This will be where the control panel sits when activated which will allow the user to set position, color, scripts, access to different abilities that the Gizmo can actually do, etc.
 	 *
 	 *
 	 *
 	 */
-	
+
 	if(activeGizmo){
 		ControlPanelUI(activeGizmo);
 	}
@@ -500,7 +499,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 	ImGui::End();
 	//End of Sidebar
 
-	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 20.0f));
+	ImGui::SetWindowPos("Main scene", ImVec2(0.0f, 30.0f));
 	ImGui::SetWindowSize("Main scene", ImVec2(sceneWidth, sceneHeight));
 
 	//Creation of our own window always starts with Begin()
@@ -516,8 +515,8 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		sceneFocused = false;
 	}
 
-	ImGui::Image((ImTextureID)RTO, ImVec2(sceneWidth, sceneHeight - 30.0f));
-	
+	ImGui::Image((ImTextureID)RTO, ImVec2(sceneWidth, sceneHeight - 10.0f));
+
 	ImGui::End();
 
         ImGui::Render();
