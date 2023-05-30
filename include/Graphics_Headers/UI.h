@@ -18,7 +18,7 @@
 #include "../../include/Application_Headers/Universal_Consts.h"
 #include "./ImGuiInput.h"
 
-class UI 
+class UI
 {
 public:
 UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
@@ -89,8 +89,8 @@ public:
 MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec);
 ~MainUI();
 
-virtual void SetupMenu();
-virtual void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
+void SetupMenu();
+void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
 
 float sceneWidth;
 float sceneHeight;
@@ -99,7 +99,7 @@ private:
 
 void mouse_callback(std::shared_ptr<Graphics> _GraphicsRef);
 void accept_input(std::shared_ptr<Graphics> _GraphicsRef);
-	
+
 
 };
 

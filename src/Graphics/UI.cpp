@@ -378,6 +378,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
 			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
 		}
+        /*
 
 		//Color Setter
 		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
@@ -387,11 +388,12 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 		ImGui::EndDisabled();
 
 		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
-
+        */
 		ImGui::Separator();
 		//* This is the Textures part of the UI *//
 		Folder.SetupWindow();
 
+        /*
 		if(ImGui::Button("Diffuse map")){
 			//Open up the Folder Finder Window that we will make ourselves
 			ImGui::OpenPopup("FolderFinder");
@@ -415,6 +417,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
     			CurrentGizmosRef->SetColor(0.0f);
 
 		}
+        */
 
 		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
 		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);

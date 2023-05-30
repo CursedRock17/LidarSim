@@ -475,6 +475,15 @@ bool Gizmos::CreateCustomGizmo(const std::string& filePath)
 }
 
 // Now the Handling of BasicGizmo Class
+BasicGizmo::BasicGizmo()
+{
+
+};
+
+BasicGizmo::~BasicGizmo()
+{
+
+};
 
 glm::vec3 BasicGizmo::SetColor(float red, float green, float blue)
 {
