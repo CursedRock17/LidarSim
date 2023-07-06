@@ -11,7 +11,7 @@
 #include "imgui.h"
 
 #include "../../include/Graphics_Headers/Imgui_OpenGL3_Impl.h"
-#include "../../include/Graphics_Headers/FolderUI.h"
+#include "../../include/Graphics_Headers/UIElements.h"
 #include "../../include/Graphics_Headers/Graphics.h"
 #include "../../include/Gizmos_Headers/Gizmos.h"
 
@@ -91,6 +91,9 @@ MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::s
 
 void SetupMenu();
 void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
+
+void ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef);
+void ControlPanelUI(const std::shared_ptr<BasicGizmo>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef);
 
 float sceneWidth;
 float sceneHeight;

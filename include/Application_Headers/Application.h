@@ -1,5 +1,5 @@
 #ifndef APPLICATION_H
-#define APPLICATION_H	
+#define APPLICATION_H
 
 // In Project Directories
 #include "../../include/Gizmos_Headers/Gizmos.h"
@@ -28,7 +28,7 @@ private:
 
 	std::vector<std::shared_ptr<Gizmos>> ApplicationGizmos;
 	std::string mode{"Create"}; // The way the application is running whether, we clicked the play button or not
-	
+
 	void ApplicationLoad();
 	void ApplicationClose();
 

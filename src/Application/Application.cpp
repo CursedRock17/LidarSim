@@ -12,7 +12,7 @@ Application::~Application()
 
 //Allow resizing of window on every frame
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-    { 
+    {
         glViewport(0, 0, width, height);
     }
 
@@ -50,10 +50,10 @@ void Application::ApplicationLoad()
     // Must give each object access to the window and all of the gizmos that will be applied within each scene
 	GraphicsRef = std::make_shared<Graphics>(window, windowWidth, windowHeight, ApplicationGizmos, mode);
 
-	std::shared_ptr<MainUI>MainUIRef = std::make_shared<MainUI>(window, windowHeight, windowWidth, ApplicationGizmos); 
-	
+	std::shared_ptr<MainUI>MainUIRef = std::make_shared<MainUI>(window, windowHeight, windowWidth, ApplicationGizmos);
+
 	GraphicsRef->SimulationSetup();
-	
+
 	//Once we've declared the creation of all our UIs we set the starting UI to just the main interface from there, when we change tabs we can switch
 	//the current UI to whichever one we need
 	CurrentUI = MainUIRef;
@@ -82,8 +82,8 @@ while(!glfwWindowShouldClose(window))
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //Change the color of screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	};
-		
-	//At the start of each iteration of the loop we need to make sure the Application's Gizmos are at their maximum update and each object updates 
+
+	//At the start of each iteration of the loop we need to make sure the Application's Gizmos are at their maximum update and each object updates
 	//To have their Gizmos at max update, because we used vectors which have allocators, we can't pass them as pointers so we have to update
 	//Application Gizmos with the only thing that can change them
 	ApplicationGizmos = GraphicsRef->GetGizmosVec();
@@ -98,7 +98,7 @@ while(!glfwWindowShouldClose(window))
 
 	//Update the Engine Layer
 	GraphicsRef->SimulationLoop();
-	
+
 	//Once we have access to the scene we can remove the Framebuffer
 	mFrame.UnbindFramebuffer();
 	//Once we have updated the framebuffer we can reset the screen
@@ -113,7 +113,7 @@ while(!glfwWindowShouldClose(window))
     // Check Buffers of Data
    	glfwSwapBuffers(window);
 	glfwPollEvents();
-    	
+
 	// Input
    	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	    glfwSetWindowShouldClose(window, true);

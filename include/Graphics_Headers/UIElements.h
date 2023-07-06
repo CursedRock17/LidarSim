@@ -1,12 +1,12 @@
-#ifndef FOLDERUI_H
-#define FOLDERUI_H
+#ifndef UIELEMENTS_H
+#define UIELEMENTS_H
 
 // Standard Libraries
 #include <iostream>
 #include <filesystem>
+#include <memory>
 #include <vector>
 #include <string>
-
 
 // Graphics Libraries
 #include "imgui.h"
@@ -30,5 +30,19 @@ void ReverseDirectory();
 void QueryDirectory();
 
 };
+
+// End of Folder UI
+
+class ElementsBuilder {
+public:
+ElementsBuilder();
+~ElementsBuilder();
+
+float* SetColor(float color[]);
+
+private:
+
+};
+
 
 #endif

@@ -194,7 +194,6 @@ void Graphics::DuplicateGizmo(int targetID)
 {
 	//Just access and create a copy of the Gizmo (Most likely the one we're on) by creating a new one
 	//std::shared_ptr<Gizmos> copiedGizmo = std::make_shared<Gizmos>();
-	std::shared_ptr<Gizmos> copiedGizmp = _gizmosVec.at(targetID);
 
 	//copiedGizmo->ID = _gizmosVec.size() - 1;
 	//copiedGizmo->objectName = copiedGizmo->objectName + " (Copy) ";
@@ -202,7 +201,7 @@ void Graphics::DuplicateGizmo(int targetID)
 	//_gizmosVec.emplace_back(copiedGizmo);
 }
 
-/* Additional OpenGL funcitons */
+/* Additional OpenGL functions */
 
 //Simple Object Creation Functions
 void Graphics::CreateCube()

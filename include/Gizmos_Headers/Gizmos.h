@@ -21,6 +21,7 @@
 #include <filesystem>
 
 #include "./GizmosExtensions.h"
+#include "../Graphics_Headers/UIElements.h"
 
 class Gizmos
 {
@@ -33,9 +34,10 @@ void CreateTextures(int totPoint, std::vector<float> verts, std::vector<int> _in
 
 void RenderTextures();
 
-void GizmosInit();
+virtual void GizmosInit();
 
-void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+virtual void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+virtual void GizmosUILoop();
 
 void RenderContainer();
 //Theis will represent instancing
@@ -124,6 +126,9 @@ std::ifstream fragmentFile;
 std::string vertexBuffer;
 std::string fragmentBuffer;
 
+// Element builder object : init in constructor
+std::unique_ptr<ElementsBuilder> ElementUI;
+
 };
 
 // End of Gizmo Class
@@ -135,12 +140,13 @@ BasicGizmo();
 ~BasicGizmo();
 
 // Overriden Functions for color and lighting
-void GizmosInit();
-void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+virtual void GizmosInit();
+virtual void GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV);
+virtual void GizmosUILoop();
 void RenderTextures();
 
 // Setter functions for the builder class
-glm::vec3 SetColor(float red, float green, float blue);
+glm::vec3 SetColor(float rgb[]);
 
 // Overridden set functions for constant values in the vector
 glm::vec3 SetColor(float totalColor);

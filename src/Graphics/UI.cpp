@@ -1,4 +1,5 @@
 #include "../../include/Graphics_Headers/UI.h"
+#include <iostream>
 
 UI::UI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::shared_ptr<Gizmos>> gizmosVec) : _window(window), _windowHeight(windowHeight), _windowWidth(windowWidth), _gizmosVec(gizmosVec)
 {
@@ -165,7 +166,7 @@ void MainUI::mouse_callback(std::shared_ptr<Graphics> _GraphicsRef)
 		if(ImGui::IsMouseDown(ImGuiMouseButton_Left)){
             if(ImGui::IsKeyDown(ImGuiKey_LeftCtrl)){
 			_GraphicsRef->RotateCam(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y), true);
-            } //Now Handle Input for Object Selection
+            } //Now Handle Input for Object selection
             else {
             _GraphicsRef->SelectGizmo(static_cast<float>(io->MousePos.x), static_cast<float>(io->MousePos.y));
             }
@@ -235,6 +236,178 @@ void MainUI::accept_input(std::shared_ptr<Graphics> _GraphicsRef)
 
    }
 }
+
+void MainUI::ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef)
+{
+		// This Control Panel will be able to control the entirety of the object within all the systems
+		// First it should be able to control the Gizmo's Rotation, Scale, Transform : All the physical Things
+		// It should also house the scripts on it depending on if it's an electronic or robot or whatever
+		// It can control both the physics and electricity of the object
+
+		//Because we're using std::string we need to create a resizing callback ^^
+		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
+
+		ImGui::Separator();
+		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
+		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
+
+		//Rotation Setter
+		float rotations[3] = { CurrentGizmosRef->GetRotation()[0], CurrentGizmosRef->GetRotation()[1], CurrentGizmosRef->GetRotation()[2]};
+
+		ImGui::InputFloat3("Rotations X Y Z: ", rotations);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
+			//We have to create a updated Rotation because otherwise we woould just continous apply the new value instead of update to get that desired value
+			float updatedRotationX = rotations[0] - CurrentGizmosRef->GetRotation()[0];
+			float updatedRotationY = rotations[1] - CurrentGizmosRef->GetRotation()[1];
+			float updatedRotationZ = rotations[2] - CurrentGizmosRef->GetRotation()[2];
+
+
+			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
+			//the rotation visuals to represent the new rotation of the object
+			CurrentGizmosRef->UpdateRotation(updatedRotationX, updatedRotationY, updatedRotationZ);
+			CurrentGizmosRef->SetRotation(rotations[0], rotations[1], rotations[2]);
+		}
+		//Translation Setter
+		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] };
+
+		ImGui::InputFloat3("Translations X Y Z: ", translations);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
+			//We have to create a updated Translation because otherwise we woould just continous apply the new value instead of update to get that desired value
+			float updatedTranslationX = translations[0] - CurrentGizmosRef->GetTranslation()[0];
+			float updatedTranslationY = -1.0f * (translations[1] - CurrentGizmosRef->GetTranslation()[1]);
+			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
+
+			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
+			//the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
+			CurrentGizmosRef->UpdateTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
+			CurrentGizmosRef->SetTranslation(translations[0], translations[1], translations[2]);
+
+		}
+
+		//Scale Setter
+		float scale[3] = { CurrentGizmosRef->GetScale()[0], CurrentGizmosRef->GetScale()[1], CurrentGizmosRef->GetScale()[2] };
+
+		ImGui::InputFloat3("Scale X Y Z: ", scale);
+		if(ImGui::IsItemDeactivatedAfterEdit()){
+			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix
+			if(scale[0] == 0.0f)
+				scale[0] = 0.00000001f;
+			if(scale[1] == 0.0f)
+				scale[1] = 0.00000001f;
+			if(scale[2] == 0.0f)
+				scale[2] = 0.00000001f;
+
+			float updatedScaleX = scale[0] / CurrentGizmosRef->GetScale()[0];
+			float updatedScaleY = scale[1] / CurrentGizmosRef->GetScale()[1];
+			float updatedScaleZ = scale[2] / CurrentGizmosRef->GetScale()[2];
+
+			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
+			//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visual
+			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
+			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
+		}
+
+        CurrentGizmosRef->GizmosUILoop();
+
+            /*
+
+
+		//Color Setter
+		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
+
+		ImGui::BeginDisabled(CurrentGizmosRef->hasTexture);
+		ImGui::ColorEdit3("Color: ", color);
+		ImGui::EndDisabled();
+
+		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
+        */
+		ImGui::Separator();
+		//* This is the Textures part of the UI *//
+		Folder.SetupWindow();
+
+        /*
+		if(ImGui::Button("Diffuse map")){
+			//Open up the Folder Finder Window that we will make ourselves
+			ImGui::OpenPopup("FolderFinder");
+		}
+		ImGui::SameLine();
+		if(ImGui::Button("Set diffuse")){
+			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
+			CurrentGizmosRef->RenderTextures();
+    			CurrentGizmosRef->SetColor(0.0f);
+		}
+
+		if(ImGui::Button("Specular map")){
+			//Open up the Folder Finder Window that we will make ourselves
+			ImGui::OpenPopup("FolderFinder");
+
+		}
+		ImGui::SameLine();
+		if(ImGui::Button("Set specular")){
+			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
+			CurrentGizmosRef->RenderTextures();
+    			CurrentGizmosRef->SetColor(0.0f);
+
+		}
+        */
+
+		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
+		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
+		CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
+
+		float shiny = CurrentGizmosRef->GetMaterialShine();
+		ImGui::InputFloat("Specular Shine", &shiny);
+		CurrentGizmosRef->SetMaterialShine(shiny);
+
+		ImGui::Separator();
+
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
+		//Create a Delete Handler
+		if(ImGui::Button("Delete"))
+		{
+			activeGizmo = nullptr;
+			GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);
+		}
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		if(ImGui::Button("Duplicate")){
+			GraphicsRef->DuplicateGizmo(CurrentGizmosRef->ID);
+		}
+
+	};
+
+void MainUI::ControlPanelUI(const std::shared_ptr<BasicGizmo>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef)
+{
+		// This Control Panel will be able to control the entirety of the object within all the systems
+		// First it should be able to control the Gizmo's Rotation, Scale, Transform : All the physical Things
+		// It should also house the scripts on it depending on if it's an electronic or robot or whatever
+		// It can control both the physics and electricity of the object
+
+		//Because we're using std::string we need to create a resizing callback ^^
+		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
+
+		ImGui::Separator();
+		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
+		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
+
+
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
+		//Create a Delete Handler
+		if(ImGui::Button("Delete"))
+		{
+			activeGizmo = nullptr;
+			GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);
+		}
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		if(ImGui::Button("Duplicate")){
+			GraphicsRef->DuplicateGizmo(CurrentGizmosRef->ID);
+		}
+
+	};
+
 
 void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode)
 {
@@ -309,141 +482,6 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 	ImGui::End();
 	//Creation of our own window always ends with End()
 
-	//Element for Each Control Panel for the GizmoUIs which we can make a lamba to keep context
-	auto ControlPanelUI = [&](std::shared_ptr<Gizmos> CurrentGizmosRef){
-		// This Control Panel will be able to control the entirety of the object within all the systems
-		// First it should be able to control the Gizmo's Rotation, Scale, Transform : All the physical Things
-		// It should also house the scripts on it depending on if it's an electronic or robot or whatever
-		// It can control both the physics and electricity of the object
-
-		//Because we're using std::string we need to create a resizing callback ^^
-		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
-
-		ImGui::Separator();
-		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
-		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
-
-		//Rotation Setter
-		float rotations[3] = { CurrentGizmosRef->GetRotation()[0], CurrentGizmosRef->GetRotation()[1], CurrentGizmosRef->GetRotation()[2]};
-
-		ImGui::InputFloat3("Rotations X Y Z: ", rotations);
-		if(ImGui::IsItemDeactivatedAfterEdit()){
-			//We have to create a updated Rotation because otherwise we woould just continous apply the new value instead of update to get that desired value
-			float updatedRotationX = rotations[0] - CurrentGizmosRef->GetRotation()[0];
-			float updatedRotationY = rotations[1] - CurrentGizmosRef->GetRotation()[1];
-			float updatedRotationZ = rotations[2] - CurrentGizmosRef->GetRotation()[2];
-
-
-			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
-			//the rotation visuals to represent the new rotation of the object
-			CurrentGizmosRef->UpdateRotation(updatedRotationX, updatedRotationY, updatedRotationZ);
-			CurrentGizmosRef->SetRotation(rotations[0], rotations[1], rotations[2]);
-		}
-		//Translation Setter
-		float translations[3] = { CurrentGizmosRef->GetTranslation()[0], CurrentGizmosRef->GetTranslation()[1], CurrentGizmosRef->GetTranslation()[2] };
-
-		ImGui::InputFloat3("Translations X Y Z: ", translations);
-		if(ImGui::IsItemDeactivatedAfterEdit()){
-			//We have to create a updated Translation because otherwise we woould just continous apply the new value instead of update to get that desired value
-			float updatedTranslationX = translations[0] - CurrentGizmosRef->GetTranslation()[0];
-			float updatedTranslationY = -1.0f * (translations[1] - CurrentGizmosRef->GetTranslation()[1]);
-			float updatedTranslationZ = translations[2] - CurrentGizmosRef->GetTranslation()[2];
-
-			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
-			//the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
-			CurrentGizmosRef->UpdateTranslation(updatedTranslationX, updatedTranslationY, updatedTranslationZ);
-			CurrentGizmosRef->SetTranslation(translations[0], translations[1], translations[2]);
-
-		}
-
-		//Scale Setter
-		float scale[3] = { CurrentGizmosRef->GetScale()[0], CurrentGizmosRef->GetScale()[1], CurrentGizmosRef->GetScale()[2] };
-
-		ImGui::InputFloat3("Scale X Y Z: ", scale);
-		if(ImGui::IsItemDeactivatedAfterEdit()){
-			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix
-			if(scale[0] == 0.0f)
-				scale[0] = 0.00000001f;
-			if(scale[1] == 0.0f)
-				scale[1] = 0.00000001f;
-			if(scale[2] == 0.0f)
-				scale[2] = 0.00000001f;
-
-			float updatedScaleX = scale[0] / CurrentGizmosRef->GetScale()[0];
-			float updatedScaleY = scale[1] / CurrentGizmosRef->GetScale()[1];
-			float updatedScaleZ = scale[2] / CurrentGizmosRef->GetScale()[2];
-
-			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
-			//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visual
-			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
-			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
-		}
-        /*
-
-		//Color Setter
-		float color[3] = { CurrentGizmosRef->GetColor()[0], CurrentGizmosRef->GetColor()[1], CurrentGizmosRef->GetColor()[2] };
-
-		ImGui::BeginDisabled(CurrentGizmosRef->hasTexture);
-		ImGui::ColorEdit3("Color: ", color);
-		ImGui::EndDisabled();
-
-		CurrentGizmosRef->SetColor(color[0], color[1], color[2]);
-        */
-		ImGui::Separator();
-		//* This is the Textures part of the UI *//
-		Folder.SetupWindow();
-
-        /*
-		if(ImGui::Button("Diffuse map")){
-			//Open up the Folder Finder Window that we will make ourselves
-			ImGui::OpenPopup("FolderFinder");
-		}
-		ImGui::SameLine();
-		if(ImGui::Button("Set diffuse")){
-			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
-			CurrentGizmosRef->RenderTextures();
-    			CurrentGizmosRef->SetColor(0.0f);
-		}
-
-		if(ImGui::Button("Specular map")){
-			//Open up the Folder Finder Window that we will make ourselves
-			ImGui::OpenPopup("FolderFinder");
-
-		}
-		ImGui::SameLine();
-		if(ImGui::Button("Set specular")){
-			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
-			CurrentGizmosRef->RenderTextures();
-    			CurrentGizmosRef->SetColor(0.0f);
-
-		}
-        */
-
-		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
-		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
-		CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
-
-		float shiny = CurrentGizmosRef->GetMaterialShine();
-		ImGui::InputFloat("Specular Shine", &shiny);
-		CurrentGizmosRef->SetMaterialShine(shiny);
-
-		ImGui::Separator();
-
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
-		//Create a Delete Handler
-		if(ImGui::Button("Delete"))
-		{
-			activeGizmo = nullptr;
-			_GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);
-		}
-		ImGui::PopStyleColor();
-		ImGui::SameLine();
-
-		if(ImGui::Button("Duplicate")){
-			_GraphicsRef->DuplicateGizmo(CurrentGizmosRef->ID);
-		}
-
-	};
 
 	//* End of Textures Changing in UI *//
 
@@ -496,7 +534,7 @@ void MainUI::MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* appli
 	 */
 
 	if(activeGizmo){
-		ControlPanelUI(activeGizmo);
+		ControlPanelUI(activeGizmo, _GraphicsRef);
 	}
 
 	ImGui::End();

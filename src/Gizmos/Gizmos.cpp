@@ -73,6 +73,11 @@ void Gizmos::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FOV)
 	// Orientation of Gizmo
 }
 
+void Gizmos::GizmosUILoop()
+{
+
+}
+
 void Gizmos::TexturesLoop()
 {
 	//Setup Gizmo's Material Makeup
@@ -485,9 +490,9 @@ BasicGizmo::~BasicGizmo()
 
 };
 
-glm::vec3 BasicGizmo::SetColor(float red, float green, float blue)
+glm::vec3 BasicGizmo::SetColor(float rgb[])
 {
-	objectColor = glm::vec3(red, green, blue);
+	objectColor = glm::vec3(rgb[0], rgb[1], rgb[2]);
 	return objectColor;
 }
 
@@ -730,6 +735,38 @@ void BasicGizmo::GizmosLoop(glm::mat4 viewMatrix, float& screenAspect, float &FO
 	glUniformMatrix4fv(perspectLocation, 1, GL_FALSE, &perspective[0][0]);
 
 	// Orientation of Gizmo
+}
+
+void BasicGizmo::GizmosUILoop()
+{
+    // Color Setter
+    float color[3] = { GetColor()[0], GetColor()[1], GetColor()[2] };
+    SetColor(ElementUI->SetColor(color));
+
+    //Rotation Setter
+	float rotations[6] = { GetRotation()[0], GetRotation()[1], GetRotation()[2], 0.0f, 0.0f, 0.0f };
+    float finalRotation[6]  = ElementUI->SetRotation(rotations);
+
+    //the rotation visuals to represent the new rotation of the object
+    SetRotation(rotations[0], rotations[1], rotations[2]);
+    UpdateRotation(rotations[3], rotations[4], rotations[5]);
+
+    //Translation Setter
+    float translations[6] = { GetTranslation()[0], GetTranslation()[1], GetTranslation()[2], 0.0f, 0.0f, 0.0f };
+    float finalTranslation[6] = ElementUI->SetTranslation(translations);
+
+    //the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
+    UpdateTranslation(translations[0], translations[1], translations[2]);
+    SetTranslation(translations[3], translations[4], translations[5]);
+
+    //Scale Setter
+    float scales[6] = { GetScale()[0], GetScale()[1], GetScale()[2] };
+    float finalScales[6] = ElementUI->SetScale(scales);
+
+	//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visuals
+    UpdateScale(scales[0], scales[1], scales[2]);
+	SetScale(scales[3], scales[4], scales[5]);
+
 }
 
 void BasicGizmo::RenderTextures()
