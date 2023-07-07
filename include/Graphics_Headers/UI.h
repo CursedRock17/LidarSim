@@ -92,8 +92,7 @@ MainUI(GLFWwindow* window, int windowHeight, int windowWidth, std::vector<std::s
 void SetupMenu();
 void MenuLoop(std::shared_ptr<Graphics> _GraphicsRef, std::string* application_mode);
 
-void ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef);
-void ControlPanelUI(const std::shared_ptr<BasicGizmo>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef);
+void ControlPanelUI(std::shared_ptr<Gizmos> CurrentGizmosRef, std::shared_ptr<Graphics> GraphicsRef);
 
 float sceneWidth;
 float sceneHeight;

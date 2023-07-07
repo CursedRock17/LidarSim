@@ -4,11 +4,11 @@
 FolderUI::FolderUI(){}
 FolderUI::~FolderUI(){}
 
-void FolderUI::SetupWindow()
+void FolderUI::SetupWindow(const std::string& FolderName)
 {
 //Gain access to all the current files and folder underneath our selected path
 	LoopDirectory();
-	if(ImGui::BeginPopupModal("FolderFinder")){
+	if(ImGui::BeginPopupModal(FolderName.c_str())){
 		ImGui::Text("List Files");
 		//Create a Selectable Object for each path cannot let this path disappear or we lose access to a selectable element
 		for(auto const& path : currentPathsVector){
@@ -24,7 +24,7 @@ void FolderUI::SetupWindow()
                 else {
                 //Once finished looking through all the files allow the program to refresh
 				currentPathsVector.clear();
-                SetupWindow();
+                SetupWindow(FolderName);
                 break;
                 }
 			}
@@ -54,6 +54,7 @@ void FolderUI::LoopDirectory()
 			currentPathsVector.push_back(contents.path());
 		}
 	}
+
 }
 
 
@@ -183,30 +184,9 @@ float ElementsBuilder::SetShiny(float shiny){
 void ElementsBuilder::CreateFolder(const std::string& ButtonName){
 		if(ImGui::Button(ButtonName.c_str())){
 			//Open up the Folder Finder Window that we will make ourselves
-			ImGui::OpenPopup("FolderFinder");
+			ImGui::OpenPopup("ElementFolder");
 		}
 		ImGui::Separator();
 }
 // Elements Builder Class End
-
-
-		//* This is the Textures part of the UI *//
-        /*
-
-		ImGui::SameLine();
-		if(ImGui::Button("Set diffuse")){
-			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
-			CurrentGizmosRef->RenderTextures();
-    			CurrentGizmosRef->SetColor(0.0f);
-		}
-
-		ImGui::SameLine();
-		if(ImGui::Button("Set specular")){
-			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
-			CurrentGizmosRef->RenderTextures();
-    			CurrentGizmosRef->SetColor(0.0f);
-
-		}
-
-*/
 

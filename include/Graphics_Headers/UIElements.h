@@ -17,7 +17,7 @@ public:
 FolderUI();
 ~FolderUI();
 
-void SetupWindow();
+void SetupWindow(const std::string& FolderName);
 std::filesystem::path GetTargetPath();
 
 private:
@@ -51,7 +51,9 @@ float* SetStrengths(float strength[]);
 float SetShiny(float shiny);
 void CreateFolder(const std::string& ButtonName);
 
+FolderUI ElementFolder;
 private:
+
 
 };
 
