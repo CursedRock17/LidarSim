@@ -52,7 +52,7 @@ glm::vec3 SetTranslation(float xTranslation, float yTranslation, float zTranslat
 glm::vec3 SetScale(float xScale, float yScale, float zScale);
 glm::vec3 SetLightPosition(float xCoord, float yCoord, float zCoord);
 glm::vec3 SetViewPos(float xCoord, float yCoord, float zCoord);
-void SetMaterialStrengths(float ambient, float specular, float diffuse);
+void SetMaterialStrengths(float asd[]);
 void SetMaterialShine(float materialShine);
 
 //Override setFunction for equivelency across all axis

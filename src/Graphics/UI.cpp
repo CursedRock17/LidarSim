@@ -248,6 +248,7 @@ void MainUI::ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, con
 		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
 
 		ImGui::Separator();
+        /*
 		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
 		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
 
@@ -306,7 +307,7 @@ void MainUI::ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, con
 			CurrentGizmosRef->UpdateScale(updatedScaleX, updatedScaleY, updatedScaleZ);
 			CurrentGizmosRef->SetScale(scale[0], scale[1], scale[2]);
 		}
-
+*/
         CurrentGizmosRef->GizmosUILoop();
 
             /*
@@ -349,48 +350,17 @@ void MainUI::ControlPanelUI(const std::shared_ptr<Gizmos>& CurrentGizmosRef, con
     			CurrentGizmosRef->SetColor(0.0f);
 
 		}
-        */
 
 		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
 		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
-		CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
+		//CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
 
 		float shiny = CurrentGizmosRef->GetMaterialShine();
 		ImGui::InputFloat("Specular Shine", &shiny);
 		CurrentGizmosRef->SetMaterialShine(shiny);
+        */
 
 		ImGui::Separator();
-
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
-		//Create a Delete Handler
-		if(ImGui::Button("Delete"))
-		{
-			activeGizmo = nullptr;
-			GraphicsRef->DeleteGizmo(CurrentGizmosRef->ID);
-		}
-		ImGui::PopStyleColor();
-		ImGui::SameLine();
-
-		if(ImGui::Button("Duplicate")){
-			GraphicsRef->DuplicateGizmo(CurrentGizmosRef->ID);
-		}
-
-	};
-
-void MainUI::ControlPanelUI(const std::shared_ptr<BasicGizmo>& CurrentGizmosRef, const std::shared_ptr<Graphics>& GraphicsRef)
-{
-		// This Control Panel will be able to control the entirety of the object within all the systems
-		// First it should be able to control the Gizmo's Rotation, Scale, Transform : All the physical Things
-		// It should also house the scripts on it depending on if it's an electronic or robot or whatever
-		// It can control both the physics and electricity of the object
-
-		//Because we're using std::string we need to create a resizing callback ^^
-		ImGui_InputText("Name: ", &CurrentGizmosRef->objectName);
-
-		ImGui::Separator();
-		//For all the Setter Functions we are able to utilze the IsItemDeactivatedAfterEdit() to update any values that may have changed without needing to loop over
-		//Any functions that update the object so we are able to update the object just a single time which improves preformance. All of these models will be set up in the same way
-
 
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 0, 0, 0.45));
 		//Create a Delete Handler

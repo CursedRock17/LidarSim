@@ -33,12 +33,23 @@ void QueryDirectory();
 
 // End of Folder UI
 
+struct InputFloatState {
+    float* floats;
+    bool activated = false;
+};
+
 class ElementsBuilder {
 public:
 ElementsBuilder();
 ~ElementsBuilder();
 
 float* SetColor(float color[]);
+InputFloatState SetRotation(float rotation[]);
+InputFloatState SetTranslation(float translation[]);
+InputFloatState SetScale(float scale[]);
+float* SetStrengths(float strength[]);
+float SetShiny(float shiny);
+void CreateFolder(const std::string& ButtonName);
 
 private:
 

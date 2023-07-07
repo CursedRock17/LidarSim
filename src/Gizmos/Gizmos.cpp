@@ -138,11 +138,11 @@ glm::vec3 Gizmos::SetViewPos(float xCoord, float yCoord, float zCoord)
 	return viewPosition;
 }
 
-void Gizmos::SetMaterialStrengths(float ambient, float specular, float diffuse)
+void Gizmos::SetMaterialStrengths(float asd[]) // ambient, specular, diffuse
 {
-	ambientStrength = glm::vec3(ambient);
-	specularStrength = glm::vec3(specular);
-	diffuseStrength = glm::vec3(diffuse);
+	ambientStrength = glm::vec3(asd[0]);
+	specularStrength = glm::vec3(asd[1]);
+	diffuseStrength = glm::vec3(asd[2]);
 }
 
 void Gizmos::SetMaterialShine(float materialShine)
@@ -743,29 +743,56 @@ void BasicGizmo::GizmosUILoop()
     float color[3] = { GetColor()[0], GetColor()[1], GetColor()[2] };
     SetColor(ElementUI->SetColor(color));
 
+
     //Rotation Setter
-	float rotations[6] = { GetRotation()[0], GetRotation()[1], GetRotation()[2], 0.0f, 0.0f, 0.0f };
-    float finalRotation[6]  = ElementUI->SetRotation(rotations);
+    InputFloatState rotationState;
+    glm::vec3 rotation = GetRotation();
+	float rotations[6] = { rotation[0], rotation[1], rotation[2], rotation[0], rotation[1], rotation[2] };
+    rotationState = ElementUI->SetRotation(rotations);
 
     //the rotation visuals to represent the new rotation of the object
-    SetRotation(rotations[0], rotations[1], rotations[2]);
-    UpdateRotation(rotations[3], rotations[4], rotations[5]);
+    if(rotationState.activated){
+        SetRotation(rotationState.floats[0], rotationState.floats[1], rotationState.floats[2]);
+        UpdateRotation(rotationState.floats[3], rotationState.floats[4], rotationState.floats[5]);
+    }
 
     //Translation Setter
-    float translations[6] = { GetTranslation()[0], GetTranslation()[1], GetTranslation()[2], 0.0f, 0.0f, 0.0f };
-    float finalTranslation[6] = ElementUI->SetTranslation(translations);
+    InputFloatState translationState;
+    glm::vec3 translation = GetTranslation();
+    float translations[6] = { translation[0], translation[1], translation[2], translation[0], translation[1], translation[2] };
+    translationState = ElementUI->SetTranslation(translations);
 
     //the translation visuals to represent the new location where we must update the space to get the target then showcase that target in numbers
-    UpdateTranslation(translations[0], translations[1], translations[2]);
-    SetTranslation(translations[3], translations[4], translations[5]);
+    if(translationState.activated){
+        UpdateTranslation(translationState.floats[0], translationState.floats[1], translationState.floats[2]);
+        SetTranslation(translationState.floats[3], translationState.floats[4], translationState.floats[5]);
+    }
+
 
     //Scale Setter
-    float scales[6] = { GetScale()[0], GetScale()[1], GetScale()[2] };
-    float finalScales[6] = ElementUI->SetScale(scales);
+    InputFloatState scaleState;
+    glm::vec3 scale = GetScale();
+    float scales[6] = { scale[0], scale[1], scale[2], scale[0], scale[1], scale[2] };
+    scaleState = ElementUI->SetScale(scales);
 
 	//the scale visuals to represent the new scale of the object which must actually update the scale then just represent it as a visuals
-    UpdateScale(scales[0], scales[1], scales[2]);
-	SetScale(scales[3], scales[4], scales[5]);
+	if(scaleState.activated) {
+        UpdateScale(scaleState.floats[0], scaleState.floats[1], scaleState.floats[2]);
+        SetScale(scaleState.floats[3], scaleState.floats[4], scaleState.floats[5]);
+    }
+
+    //Setup the diffuse and secular texture maps
+    ElementUI->CreateFolder("Diffuse map");
+
+
+    ElementUI->CreateFolder("Specular map");
+
+    float strengths[3] = { GetMaterialStrengths()[0], GetMaterialStrengths()[1], GetMaterialStrengths()[2] };
+    SetMaterialStrengths(ElementUI->SetStrengths(strengths));
+
+    float shiny = GetMaterialShine();
+    SetMaterialShine(ElementUI->SetShiny(shiny));
+
 
 }
 

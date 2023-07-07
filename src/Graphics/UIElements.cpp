@@ -94,66 +94,105 @@ float* ElementsBuilder::SetColor(float color[]){
         return color;
 }
 
-float* ElementsBuilder::SetRotation(float rotation[]){
+InputFloatState ElementsBuilder::SetRotation(float rotation[]){
         // Rotation Setter
+        InputFloatState rotationState;
         float rotations[3] = { rotation[0], rotation[1], rotation[2]  };
 		ImGui::InputFloat3("Rotations X Y Z: ", rotations);
 		if(ImGui::IsItemDeactivatedAfterEdit()){
+            rotationState.activated = true;
 			//We have to create a updated Rotation because otherwise we woould just continous apply the new value instead of update to get that desired value
 			//Take the Gizmos value then subtract that new value to rotate the object, x much more compared to the original where x is the new value, then just update
-			rotation[3]  = rotation[0] - rotations[0];
-			rotation[4]  = rotation[1] - rotations[1];
-			rotation[5]  = rotation[2] - rotations[2];
+			rotation[0]  = rotations[0] - rotation[0];
+			rotation[1]  = rotations[1] - rotation[1];
+			rotation[2]  = rotations[2] - rotation[2];
+
+            rotation[3] = rotations[0];
+            rotation[4] = rotations[1];
+            rotation[5] = rotations[2];
         }
 
 
         ImGui::Separator();
-        return rotation;
+        rotationState.floats = rotation;
+        return rotationState;
 }
 
-float* ElementsBuilder::SetTranslation(float translation[]){
+InputFloatState ElementsBuilder::SetTranslation(float translation[]){
+        //Translation Setter
+        InputFloatState translationState;
 		float translations[3] = { translation[0], translation[1], translation[2] };
 	    ImGui::InputFloat3("Translations X Y Z: ", translations);
 		if(ImGui::IsItemDeactivatedAfterEdit()){
+            translationState.activated = true;
 			//We have to create a updated Translation because otherwise we woould just continous apply the new value instead of update to get that desired value
 			//Take the Gizmos value then subtract that new value to displace the object, x much more compared to the original where x is the new value, then just update
-			translation[3] = translation[0] - translations[0];
-			translation[4] = -1.0f * translation[1] - translations[1];
-			translation[5] = translation[2] - translations[2];
+			translation[0] = translations[0] - translation[0];
+			translation[1] = -1.0f * (translations[1] - translation[1]);
+			translation[2] = translations[2] - translation[2];
+
+            translation[3] = translations[0];
+            translation[4] = translations[1];
+            translation[5] = translations[2];
         }
 
-    return translation;
+	ImGui::Separator();
+    translationState.floats = translation;
+    return translationState;
 }
 
-float* ElementsBuilder::SetScale(float scale[]){
+InputFloatState ElementsBuilder::SetScale(float scale[]){
 		//Scale Setter
-		float scales[3] = { scale[0], scale[1], scale[2] };
+        InputFloatState scaleState;
+        float scales[3] = { scale[0], scale[1], scale[2] };
 		ImGui::InputFloat3("Scale X Y Z: ", scales);
 		if(ImGui::IsItemDeactivatedAfterEdit()){
+            scaleState.activated = true;
 			//We have to create a updated Scale because 0 will create an irreverisble effect on the model matrix
-			if(scale[0] == 0.0f)
-				scale[0] = 0.00000001f;
-			if(scale[1] == 0.0f)
-				scale[1] = 0.00000001f;
-			if(scale[2] == 0.0f)
-				scale[2] = 0.00000001f;
+			if(scales[0] == 0.0f)
+				scales[0] = 0.00000001f;
+			if(scales[1] == 0.0f)
+				scales[1] = 0.00000001f;
+			if(scales[2] == 0.0f)
+				scales[2] = 0.00000001f;
 
 			//Take the Gizmos value then subtract that new value to scale the object, x much more compared to the original where x is the new value, then just update
-			 scale[3] = scale[0] / scales[0];
-			 scale[4] = scale[1] / scales[1];
-			 scale[5] = scale[2] / scales[2];
+		 scale[0] = scales[0] / scale[0];
+		 scale[1] = scales[1] / scale[1];
+		 scale[2] = scales[2] / scale[2];
+
+         scale[3] = scales[0];
+         scale[4] = scales[1];
+         scale[5] = scales[2];
         }
-        return scale;
+		ImGui::Separator();
+        scaleState.floats = scale;
+        return scaleState;
+}
+
+float* ElementsBuilder::SetStrengths(float strength[]){
+		ImGui::DragFloat3("Material Strengths", strength, 0.01f, 0.0f, 1.0f);
+        return strength;
+}
+
+float ElementsBuilder::SetShiny(float shiny){
+		ImGui::InputFloat("Specular Shine", &shiny);
+        return shiny;
+}
+
+void ElementsBuilder::CreateFolder(const std::string& ButtonName){
+		if(ImGui::Button(ButtonName.c_str())){
+			//Open up the Folder Finder Window that we will make ourselves
+			ImGui::OpenPopup("FolderFinder");
+		}
+		ImGui::Separator();
 }
 // Elements Builder Class End
 
 
 		//* This is the Textures part of the UI *//
+        /*
 
-		if(ImGui::Button("Diffuse map")){
-			//Open up the Folder Finder Window that we will make ourselves
-			ImGui::OpenPopup("FolderFinder");
-		}
 		ImGui::SameLine();
 		if(ImGui::Button("Set diffuse")){
 			CurrentGizmosRef->diffuseLocation = Folder.GetTargetPath();
@@ -161,11 +200,6 @@ float* ElementsBuilder::SetScale(float scale[]){
     			CurrentGizmosRef->SetColor(0.0f);
 		}
 
-		if(ImGui::Button("Specular map")){
-			//Open up the Folder Finder Window that we will make ourselves
-			ImGui::OpenPopup("FolderFinder");
-
-		}
 		ImGui::SameLine();
 		if(ImGui::Button("Set specular")){
 			CurrentGizmosRef->specularLocation = Folder.GetTargetPath();
@@ -174,12 +208,5 @@ float* ElementsBuilder::SetScale(float scale[]){
 
 		}
 
-		float strengths[3] = { CurrentGizmosRef->GetMaterialStrengths()[0], CurrentGizmosRef->GetMaterialStrengths()[1], CurrentGizmosRef->GetMaterialStrengths()[2] };
-		ImGui::DragFloat3("Material Strengths", strengths, 0.01f, 0.0f, 1.0f);
-		CurrentGizmosRef->SetMaterialStrengths( strengths[0], strengths[1], strengths[2] );
+*/
 
-		float shiny = CurrentGizmosRef->GetMaterialShine();
-		ImGui::InputFloat("Specular Shine", &shiny);
-		CurrentGizmosRef->SetMaterialShine(shiny);
-
-		ImGui::Separator();
